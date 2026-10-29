@@ -25,16 +25,18 @@ assert.deepEqual(views.visibleEntries().map(t=>[t.id,t._viewDate]),[
 ],'Done includes every completed occurrence from all months');
 
 let saved=0;
+const carryTasks=[
+  {id:'single',date:'2026-10-29',done:false,repeat:'none'},
+  {id:'finished',date:'2026-10-29',done:true,repeat:'none'},
+  {id:'project',date:'2026-10-29',done:false,repeat:'none',project:true},
+  {id:'repeat',date:'2026-10-29',done:false,repeat:'weekly'}
+];
 const carrying=new Function('tasks','autoCarry','today','save',section('function nextWorkday(value){',"$('#autoCarry').checked")+'return {carryOverdue,nextWorkday}')(
-  [
-    {id:'single',date:'2026-10-29',done:false,repeat:'none'},
-    {id:'finished',date:'2026-10-29',done:true,repeat:'none'},
-    {id:'project',date:'2026-10-29',done:false,repeat:'none',project:true},
-    {id:'repeat',date:'2026-10-29',done:false,repeat:'weekly'}
-  ],true,()=> '2026-10-31',()=>saved++);
+  carryTasks,true,()=> '2026-10-31',()=>saved++);
 assert.equal(carrying.nextWorkday('2026-10-30'),'2026-11-02');
 assert.equal(carrying.carryOverdue(),true);
 assert.equal(saved,1);
+assert.deepEqual(carryTasks.map(t=>t.date),['2026-11-02','2026-10-29','2026-10-29','2026-10-29']);
 
 const sidebarSource=section('function setupSidebarWidth(){','function status(){');
 const listeners={},attrs={},stored={};let width='',desktop=true;
