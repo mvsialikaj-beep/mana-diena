@@ -13,6 +13,18 @@ assert(html.includes('<link rel="manifest" href="./manifest.webmanifest">'));
 const planner=[...html.matchAll(/<script(?:\s[^>]*)?>([\s\S]*?)<\/script>/g)].map(x=>x[1]).filter(Boolean)[0];
 new Function(planner);
 function section(start,end){let a=planner.indexOf(start),b=planner.indexOf(end,a);assert(a>=0&&b>a,`Missing ${start}`);return planner.slice(a,b)}
+const motivationElement={dataset:{},textContent:''};
+const motivation=new Function('$',section('const motivationMessages=[','renderDailyMotivation();setInterval')+'return {motivationMessages,motivationForDay,currentRigaDay,renderDailyMotivation}')(
+  ()=>motivationElement);
+assert(motivation.motivationMessages.length>=30);
+assert.equal(new Set(motivation.motivationMessages).size,motivation.motivationMessages.length);
+assert(motivation.motivationMessages.every(message=>message.length<=150));
+assert.equal(motivation.currentRigaDay(new Date('2026-10-28T21:59:00Z')),'2026-10-28');
+assert.equal(motivation.currentRigaDay(new Date('2026-10-28T22:01:00Z')),'2026-10-29');
+motivation.renderDailyMotivation(new Date('2026-10-28T22:01:00Z'));
+assert.equal(motivationElement.textContent,motivation.motivationForDay('2026-10-29'));
+assert.notEqual(motivation.motivationForDay('2026-10-29'),motivation.motivationForDay('2026-10-30'));
+assert(html.includes('class="motivation-strip"'));
 const recurrence=new Function(section('function occurs(t,d){','function isDone(t,d){')+'return {occurs,repeatLabel}')();
 const repeatTask={date:'2026-10-29',repeat:'weekly',repeatInterval:2};
 assert.equal(recurrence.occurs(repeatTask,'2026-11-05'),false);
@@ -59,7 +71,7 @@ assert.equal(carrying.carryOverdue(),true);
 assert.equal(saved,1);
 assert.deepEqual(carryTasks.map(t=>t.date),['2026-11-02','2026-10-29','2026-10-29','2026-10-29']);
 
-const sidebarSource=section('function setupSidebarWidth(){','function status(){');
+const sidebarSource=section('function setupSidebarWidth(){','const motivationMessages=[');
 const listeners={},attrs={},stored={};let width='',desktop=true;
 const layout={clientWidth:1100,style:{setProperty(_,value){width=value}},getBoundingClientRect(){return {right:1100}}};
 const handle={classList:{add(){},remove(){}},setAttribute(name,value){attrs[name]=value},getAttribute(name){return attrs[name]},setPointerCapture(){},addEventListener(name,fn){listeners[name]=fn}};
