@@ -29,5 +29,8 @@ assert(fields['#namedayDate'].textContent.includes('29. oktobris'));
 renderNamedays(new Date('2026-10-29T22:30:00Z'));
 assert.equal(fields['#namedayNames'].textContent, data['10-30'].join(', '),
   'The day must follow Riga time at midnight');
+renderNamedays(new Date('2028-02-28T22:30:00Z'));
+assert.equal(fields['#namedayNames'].textContent, 'Šajā dienā vārdadienu nav.',
+  'The leap-day placeholder must not be shown as a name');
 console.log('Name-day data and Riga date rollover verified.');
 
