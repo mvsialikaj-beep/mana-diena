@@ -2,9 +2,30 @@ const assert=require('node:assert/strict');
 const fs=require('node:fs');
 const path=require('node:path');
 const html=fs.readFileSync(process.argv[2]||path.join(__dirname,'..','index.html'),'utf8');
+const assetDir=path.dirname(process.argv[2]||path.join(__dirname,'..','index.html'));
+const logo=fs.readFileSync(path.join(assetDir,'mv-logo.png'));
+const manifest=JSON.parse(fs.readFileSync(path.join(assetDir,'manifest.webmanifest'),'utf8'));
+assert.equal(logo.subarray(0,8).toString('hex'),'89504e470d0a1a0a');
+assert.equal(manifest.icons[0].sizes,`${logo.readUInt32BE(16)}x${logo.readUInt32BE(20)}`);
+assert(html.includes('<img src="./mv-logo.png" alt=""'));
+assert(html.includes('<link rel="icon" type="image/png" href="./mv-logo.png">'));
+assert(html.includes('<link rel="manifest" href="./manifest.webmanifest">'));
 const planner=[...html.matchAll(/<script(?:\s[^>]*)?>([\s\S]*?)<\/script>/g)].map(x=>x[1]).filter(Boolean)[0];
 new Function(planner);
 function section(start,end){let a=planner.indexOf(start),b=planner.indexOf(end,a);assert(a>=0&&b>a,`Missing ${start}`);return planner.slice(a,b)}
+const recurrence=new Function(section('function occurs(t,d){','function isDone(t,d){')+'return {occurs,repeatLabel}')();
+const repeatTask={date:'2026-10-29',repeat:'weekly',repeatInterval:2};
+assert.equal(recurrence.occurs(repeatTask,'2026-11-05'),false);
+assert.equal(recurrence.occurs(repeatTask,'2026-11-12'),true);
+assert.equal(recurrence.repeatLabel(repeatTask),'Katru otro nedēļu');
+assert.equal(recurrence.occurs({...repeatTask,repeatInterval:undefined},'2026-11-05'),true,'Existing weekly tasks keep their schedule');
+assert.equal(recurrence.occurs({...repeatTask,repeat:'daily'},'2026-10-30'),false);
+assert.equal(recurrence.occurs({...repeatTask,repeat:'daily'},'2026-11-02'),true);
+assert.equal(recurrence.occurs({...repeatTask,repeat:'monthly'},'2026-11-30'),false);
+assert.equal(recurrence.occurs({...repeatTask,repeat:'monthly'},'2026-12-29'),true);
+assert.equal(recurrence.occurs({...repeatTask,repeat:'yearly'},'2027-10-29'),false);
+assert.equal(recurrence.occurs({...repeatTask,repeat:'yearly'},'2028-10-30'),true);
+assert(html.includes('id="repeatInterval" min="1" max="12"'));
 
 const tasks=[
   {id:'open-old',text:'Old',date:'2026-08-10',done:false,repeat:'none'},

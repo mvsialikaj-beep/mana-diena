@@ -1,0 +1,17 @@
+{
+  "name": "Mana diena — plānotājs",
+  "short_name": "Mana diena",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#f3f5f6",
+  "theme_color": "#f3f5f6",
+  "icons": [
+    {
+      "src": "./mv-logo.png",
+      "sizes": "1254x1254",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
