@@ -13,3 +13,5 @@ jobs:
       - uses: actions/checkout@v4
       - name: Pārbaudīt sinhronizāciju un uzdevumu darbības
         run: node tests/sync-interactions.test.cjs
+      - name: Pārbaudīt Latvijas vārdadienas
+        run: node tests/namedays.test.cjs
