@@ -44,9 +44,9 @@ const checkboxHandler = section(planner, 'check.onchange=()=>{', 'let body=docum
 const check = { checked: true };
 const staleTask = original[0];
 const tasks = syncHarness.getTasks();
-const handler = new Function('check', 'tasks', 't', 'date', 'setCompletion',
+const handler = new Function('check', 'tasks', 't', 'taskDay', 'setCompletion',
   checkboxHandler + 'return check.onchange')(check, tasks, staleTask,
-    { value: '2026-10-29' }, completion);
+    '2026-10-29', completion);
 handler();
 assert.equal(tasks[0].done, true, 'Checkbox must update the current task after a remote edit');
 check.checked = false;
@@ -76,4 +76,3 @@ assert.equal(tasks[0].comments[0].text, input.value,
 assert.equal(open.one, true);
 assert.equal(saved, 3);
 console.log('Sync, checkbox, and comment regression tests passed.');
-
