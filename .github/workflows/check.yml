@@ -17,5 +17,7 @@ jobs:
         run: node tests/planner-views.test.cjs
       - name: Pārbaudīt darba un ikdienas skatus
         run: node tests/workspaces-theme.test.cjs
+      - name: Pārbaudīt kategorijas un laika secību
+        run: node tests/categories-timing.test.cjs
       - name: Pārbaudīt Latvijas vārdadienas
         run: node tests/namedays.test.cjs

@@ -22,7 +22,7 @@ assert.deepEqual(scope.workspaceTasks().map(t=>t.id),['old-work','work-category'
 scope.select('personal');
 assert.deepEqual(scope.workspaceTasks().map(t=>t.id),['private-task','private-category','private-note']);
 
-const categorySource=section('function categorySequence(){','function swapCategory(');
+const categorySource=section('function categoryRecord(','function swapCategory(');
 const workCategories=new Function('tasks','defaultCategories','activeWorkspace','workspaceTasks',categorySource+'return categorySequence')(
   tasks,['Amazon','Mācības'],'work',()=>tasks.filter(t=>scope.taskWorkspace(t)==='work'))();
 const privateCategories=new Function('tasks','defaultCategories','activeWorkspace','workspaceTasks',categorySource+'return categorySequence')(
