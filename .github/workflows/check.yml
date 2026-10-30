@@ -23,5 +23,9 @@ jobs:
         run: node tests/account-isolation-modal.test.cjs
       - name: Pārbaudīt dienas un laika atgādinājumus
         run: node tests/day-reminder.test.cjs
+      - name: Pārbaudīt fona paziņojumu pieslēgšanu
+        run: node tests/background-push-client.test.cjs
+      - name: Pārbaudīt servera atgādinājumu laikus
+        run: node tests/background-schedule.test.mjs
       - name: Pārbaudīt Latvijas vārdadienas
         run: node tests/namedays.test.cjs
