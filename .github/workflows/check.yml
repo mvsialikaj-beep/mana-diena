@@ -19,5 +19,7 @@ jobs:
         run: node tests/workspaces-theme.test.cjs
       - name: Pārbaudīt kategorijas un laika secību
         run: node tests/categories-timing.test.cjs
+      - name: Pārbaudīt kontu izolāciju un uzdevuma logu
+        run: node tests/account-isolation-modal.test.cjs
       - name: Pārbaudīt Latvijas vārdadienas
         run: node tests/namedays.test.cjs
