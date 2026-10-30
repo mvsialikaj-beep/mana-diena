@@ -21,5 +21,7 @@ jobs:
         run: node tests/categories-timing.test.cjs
       - name: Pārbaudīt kontu izolāciju un uzdevuma logu
         run: node tests/account-isolation-modal.test.cjs
+      - name: Pārbaudīt dienas un laika atgādinājumus
+        run: node tests/day-reminder.test.cjs
       - name: Pārbaudīt Latvijas vārdadienas
         run: node tests/namedays.test.cjs
