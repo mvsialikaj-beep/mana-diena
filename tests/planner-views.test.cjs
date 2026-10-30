@@ -53,13 +53,14 @@ const tasks=[
   {id:'open-new',text:'New',date:'2026-11-10',done:false,repeat:'none'},
   {id:'done-old',text:'Done old',date:'2026-07-01',done:true,completedAt:'2026-08-01T10:00:00Z',repeat:'none'},
   {id:'done-new',text:'Done new',date:'2026-09-01',done:true,completedAt:'2026-10-01T10:00:00Z',repeat:'none'},
-  {id:'repeat',text:'Weekly',date:'2026-09-01',repeat:'weekly',completedDates:{'2026-09-03':true,'2026-10-01':true}}
+  {id:'repeat',text:'Weekly',date:'2026-09-01',repeat:'weekly',completedDates:{'2026-09-03':true,'2026-10-01':true}},
+  {id:'private',text:'Private',date:'2026-10-29',done:false,repeat:'none',workspace:'personal'}
 ];
 const date={value:'2026-10-29'};
 const occurs=(t,d)=>t.date===d;
 const isDone=(t,d)=>t.repeat==='weekly'?!!t.completedDates?.[d]:!!t.done;
-const views=new Function('tasks','filter','date','today','occurs','isDone',section('let expandedTasks={};','function render(){')+'return {visibleEntries,setFilter:value=>filter=value}')(
-  tasks,'all',date,()=> '2026-10-29',occurs,isDone);
+const views=new Function('tasks','filter','date','today','occurs','isDone','workspaceTasks',section('let expandedTasks={};','function render(){')+'return {visibleEntries,setFilter:value=>filter=value}')(
+  tasks,'all',date,()=> '2026-10-29',occurs,isDone,()=>tasks.filter(t=>t.workspace!=='personal'));
 assert.deepEqual(views.visibleEntries().map(t=>t.id),['open-old','open-new','repeat'],'All excludes completed work across months');
 views.setFilter('done');
 assert.deepEqual(views.visibleEntries().map(t=>[t.id,t._viewDate]),[
