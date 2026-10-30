@@ -15,5 +15,7 @@ jobs:
         run: node tests/sync-interactions.test.cjs
       - name: Pārbaudīt uzdevumu skatus un izkārtojumu
         run: node tests/planner-views.test.cjs
+      - name: Pārbaudīt darba un ikdienas skatus
+        run: node tests/workspaces-theme.test.cjs
       - name: Pārbaudīt Latvijas vārdadienas
         run: node tests/namedays.test.cjs
