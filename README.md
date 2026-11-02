@@ -6,6 +6,8 @@ Uzdevumus un kategoriju blokus var pārvilkt aiz sešu punktu roktura ar peli va
 
 Atverot uzdevumu, izvēlies **Bloka krāsa**, lai mainītu tikai tā krāsu. Kategorijas bloka krāsu var izvēlēties tās **⋯ iestatījumos** vai kategoriju pārvaldē. **Parastā krāsa** atjauno sākotnējo izskatu. Krāsas glabājas kopā ar uzdevumiem un kategoriju secību, tāpēc pierakstītam lietotājam tās sinhronizējas starp ierīcēm.
 
+Prioritārie darbi un pārējie darbi atrodas atsevišķās sadaļās. Katras sadaļas krāsu var mainīt tās **⋯ iestatījumos**; krāsa saglabājas atsevišķi Darba un Ikdienas skatam.
+
 ## Fona paziņojumi telefonā
 
 1. Atver lietotni telefonā un pieraksties ar to pašu kontu, ar kuru sinhronizē uzdevumus.
