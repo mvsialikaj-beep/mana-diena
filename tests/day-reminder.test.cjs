@@ -17,6 +17,7 @@ const saved = [];
 const tasks = [
   {id:'daily',text:'Dienas darbs',date:'2026-10-30',done:false,dayReminder:true,time:''},
   {id:'timed',text:'Sapulce',date:'2026-10-30',done:false,dayReminder:true,time:'10:00'},
+  {id:'custom',text:'Pēcpusdienas darbs',date:'2026-10-30',done:false,dayReminder:true,reminderTime:'12:30',time:''},
   {id:'done',text:'Pabeigts',date:'2026-10-30',done:true,dayReminder:true,time:''},
   {id:'off',text:'Bez atgādinājuma',date:'2026-10-30',done:false,dayReminder:false,time:''}
 ];
@@ -37,12 +38,38 @@ assert.equal(notices.length, 2, 'Daily reminders fire once per task and date');
 check(new Date('2026-10-30T09:46:00'));
 assert.equal(notices.at(-1).title, 'Drīz: Sapulce', '15 minute reminder still fires');
 assert.equal(notices.length, 3);
-assert.equal(saved.length, 3);
+check(new Date('2026-10-30T12:29:00'));
+assert.equal(notices.length, 3, 'Custom reminder waits until its chosen time');
+check(new Date('2026-10-30T12:30:00'));
+assert.equal(notices.at(-1).title, 'Šodien ieplānots: Pēcpusdienas darbs');
+assert.equal(saved.length, 4);
 
 assert(html.includes('id="dayReminder"'));
+assert(html.includes('id="reminderTime" type="time"'));
 assert(html.includes("dayReminder:$('#dayReminder').checked"));
+assert(html.includes("reminderTime:$('#dayReminder').checked?$('#reminderTime').value:''"));
 assert(html.includes("$('#dayReminder').checked=!!t.dayReminder"));
+assert(html.includes("$('#reminderTime').value=t.reminderTime||'09:00'"));
 assert(html.includes("navigator.serviceWorker.register('./sw.js')"));
+const safeTaskStart = planner.indexOf('function safeTask(t){');
+const safeTaskEnd = planner.indexOf('try{reminded=', safeTaskStart);
+const safeTask = new Function(planner.slice(safeTaskStart, safeTaskEnd) + 'return safeTask;')();
+const sample = {id:'check',text:'Darbs',date:'2026-10-30',done:false};
+assert(safeTask({...sample, reminderTime:'16:45'}));
+assert.equal(safeTask({...sample, reminderTime:'25:00'}), false);
+const reminderField = {hidden:false};
+const reminderCheck = {checked:false};
+const reminderTime = {value:'',disabled:false};
+const fields = {'#dayReminder':reminderCheck,'#reminderTime':reminderTime,'#reminderTimeField':reminderField};
+const syncReminderFields = new Function('$', planner.slice(planner.indexOf('function syncReminderFields(){'), planner.indexOf('function categorySequence(){')) + 'return syncReminderFields;')(selector => fields[selector]);
+syncReminderFields();
+assert.equal(reminderField.hidden, true);
+assert.equal(reminderTime.disabled, true);
+reminderCheck.checked = true;
+syncReminderFields();
+assert.equal(reminderField.hidden, false);
+assert.equal(reminderTime.disabled, false);
+assert.equal(reminderTime.value, '09:00');
 
 (async () => {
   const phoneNotices = [];

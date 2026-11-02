@@ -9,6 +9,11 @@ const task = { id: 'one', text: 'Darbs', date: '2026-10-30',
 assert.deepEqual(reminderEvents(task, new Date('2026-10-30T07:00:00Z')).map(e => e.type), ['day']);
 assert.deepEqual(reminderEvents(task, new Date('2026-10-30T11:46:00Z')).map(e => e.type), ['day', 'before_time']);
 assert.deepEqual(reminderEvents({ ...task, done: true }, new Date('2026-10-30T11:46:00Z')), []);
+const custom = { ...task, reminderTime: '12:30' };
+assert.deepEqual(reminderEvents(custom, new Date('2026-10-30T10:29:00Z')), []);
+assert.deepEqual(reminderEvents(custom, new Date('2026-10-30T10:30:00Z')).map(e => e.type), ['day']);
+assert.deepEqual(reminderEvents({ ...custom, reminderTime: 'invalid' }, new Date('2026-10-30T07:00:00Z')).map(e => e.type), ['day']);
+assert.deepEqual(reminderEvents({ ...custom, dayReminder: false }, new Date('2026-10-30T10:30:00Z')), []);
 
 const weekly = { text: 'Nedēļas darbs', date: '2026-10-30',
   done: false, repeat: 'weekly', repeatInterval: 2 };

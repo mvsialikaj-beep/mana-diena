@@ -18,7 +18,7 @@ Pēc ieslēgšanas spied **Nosūtīt testa paziņojumu**. Ja aplikācija ziņo, 
 
 Lai pārbaudītu aizvērtu aplikāciju, spied **Tests pēc 30 sekundēm** un uzreiz aizver aplikāciju. Serveris nosūtīs paziņojumu pēc 30 sekundēm, nepaļaujoties uz atvērtu lapu.
 
-Uzdevumam var ieslēgt atgādinājumu tā dienā no plkst. 09:00. Uzdevumiem ar norādītu laiku atgādinājums 15 minūtes pirms sākuma darbojas automātiski. Servera plānotājs pārbauda atgādinājumus katru minūti, tāpēc lietotnei nav jābūt atvērtai.
+Uzdevumam var ieslēgt atgādinājumu tā dienā un izvēlēties laiku 24 h formātā. Iepriekš izveidotajiem dienas atgādinājumiem noklusējums ir plkst. 09:00. Uzdevumiem ar norādītu laiku atgādinājums 15 minūtes pirms sākuma darbojas automātiski. Servera plānotājs pārbauda atgādinājumus katru minūti, tāpēc lietotnei nav jābūt atvērtai.
 
 ## Uzturēšana
 

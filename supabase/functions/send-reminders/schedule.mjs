@@ -84,10 +84,11 @@ export function reminderEvents(task, now) {
   if (!task || task.kind) return [];
   const current = rigaClock(now);
   const validTime = typeof task.time === 'string' && /^(?:[01]\d|2[0-3]):[0-5]\d$/.test(task.time);
+  const reminderTime = typeof task.reminderTime === 'string' && /^(?:[01]\d|2[0-3]):[0-5]\d$/.test(task.reminderTime)
+    ? task.reminderTime : '09:00';
   const events = [];
   if (task.dayReminder && occurs(task, current.day) && !isDone(task, current.day)) {
-    const startTime = validTime && task.time < '09:00' ? '00:00' : '09:00';
-    if (current.time >= startTime && (!validTime || current.time < task.time)) {
+    if (current.time >= reminderTime) {
       events.push({ day: current.day, type: 'day', title: `Šodien ieplānots: ${task.text}`,
         body: validTime ? `Plkst. ${task.time}` : (task.category || 'Uzdevums bez norādīta laika') });
     }
