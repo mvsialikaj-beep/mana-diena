@@ -10,6 +10,8 @@ Personīgs dienas plānotājs ar darba un ikdienas uzdevumiem. Lietotne darbojas
 
 Pēc ieslēgšanas spied **Nosūtīt testa paziņojumu**. Ja aplikācija ziņo, ka paziņojums nosūtīts, bet tas neparādās, iPhone sadaļā **Iestatījumi > Paziņojumi > Mana diena** pārbaudi atļaujas, kā arī Focus režīmu. Pārbaudes poga sūta paziņojumu tieši uz ierīci, kurā tā nospiesta.
 
+Lai pārbaudītu aizvērtu aplikāciju, spied **Tests pēc 30 sekundēm** un uzreiz aizver aplikāciju. Serveris nosūtīs paziņojumu pēc 30 sekundēm, nepaļaujoties uz atvērtu lapu.
+
 Uzdevumam var ieslēgt atgādinājumu tā dienā no plkst. 09:00. Uzdevumiem ar norādītu laiku atgādinājums 15 minūtes pirms sākuma darbojas automātiski. Servera plānotājs pārbauda atgādinājumus katru minūti, tāpēc lietotnei nav jābūt atvērtai.
 
 ## Uzturēšana

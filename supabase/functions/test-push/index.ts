@@ -24,7 +24,12 @@ Deno.serve(async request => {
   if (identityError || !identity.user) return reply(401, { error: 'Invalid session' });
 
   let endpoint: string | undefined;
-  try { endpoint = (await request.json()).endpoint; } catch {}
+  let delaySeconds = 0;
+  try {
+    const body = await request.json();
+    endpoint = body.endpoint;
+    if (body.delaySeconds === 30) delaySeconds = 30;
+  } catch {}
   if (typeof endpoint !== 'string' || endpoint.length > 2000)
     return reply(400, { error: 'Device subscription missing' });
 
@@ -39,21 +44,36 @@ Deno.serve(async request => {
     return reply(503, { error: 'Push configuration unavailable' });
   setVapidDetails('https://mvsialikaj-beep.github.io/mana-diena/',
     config.vapid_public, config.vapid_private);
-  try {
-    await sendNotification({ endpoint: subscription.endpoint,
-      keys: { p256dh: subscription.p256dh, auth: subscription.auth } },
-      JSON.stringify({ title: 'Mana diena - pārbaude',
-        body: 'Ja redzi šo paziņojumu, fona paziņojumi darbojas.',
-        tag: `mana-diena-test-${Date.now()}`,
-        url: 'https://mvsialikaj-beep.github.io/mana-diena/' }),
-      { TTL: 300, urgency: 'high' });
-    return reply(200, { accepted: true });
-  } catch (error) {
-    const statusCode = Number((error as { statusCode?: number }).statusCode);
-    if (statusCode === 404 || statusCode === 410)
-      await db.from('push_subscriptions').delete().eq('user_id', identity.user.id)
-        .eq('endpoint', endpoint);
-    return reply(502, { error: 'Push service rejected the notification',
-      expired: statusCode === 404 || statusCode === 410 });
+  async function deliver() {
+    try {
+      await sendNotification({ endpoint: subscription.endpoint,
+        keys: { p256dh: subscription.p256dh, auth: subscription.auth } },
+        JSON.stringify({ title: 'Mana diena - pārbaude',
+          body: delaySeconds ? 'Paziņojums pienāca pēc aplikācijas aizvēršanas.'
+            : 'Ja redzi šo paziņojumu, fona paziņojumi darbojas.',
+          tag: `mana-diena-test-${Date.now()}`,
+          url: 'https://mvsialikaj-beep.github.io/mana-diena/' }),
+        { TTL: 300, urgency: 'high' });
+      console.info('Push test accepted by provider', { delaySeconds });
+      return { accepted: true, expired: false };
+    } catch (error) {
+      const statusCode = Number((error as { statusCode?: number }).statusCode);
+      const expired = statusCode === 404 || statusCode === 410;
+      if (expired) await db.from('push_subscriptions').delete()
+        .eq('user_id', identity.user.id).eq('endpoint', endpoint);
+      console.error('Push test rejected by provider', { statusCode, delaySeconds });
+      return { accepted: false, expired };
+    }
   }
+
+  if (delaySeconds) {
+    EdgeRuntime.waitUntil((async () => {
+      await new Promise(resolve => setTimeout(resolve, delaySeconds * 1000));
+      await deliver();
+    })());
+    return reply(202, { scheduled: true });
+  }
+  const result = await deliver();
+  return result.accepted ? reply(200, result)
+    : reply(502, { error: 'Push service rejected the notification', expired: result.expired });
 });

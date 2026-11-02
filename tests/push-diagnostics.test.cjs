@@ -12,8 +12,8 @@ assert(source.includes("if (!token) return reply(401"));
 
 const sync = [...html.matchAll(/<script(?:\s[^>]*)?>([\s\S]*?)<\/script>/g)]
   .map(match => match[1]).filter(Boolean)[1];
-const start = sync.indexOf('async function sendPushTest(){');
-const end = sync.indexOf("document.querySelector('#pushTest').onclick=sendPushTest;", start);
+const start = sync.indexOf('async function sendPushTest(delaySeconds=0){');
+const end = sync.indexOf("document.querySelector('#pushTest').onclick=()=>sendPushTest(0);", start);
 assert(start >= 0 && end > start);
 
 const button = { disabled: false };
@@ -28,13 +28,20 @@ const test = new Function('document', 'navigator', 'Notification', 'window', 'cl
       pushManager: { getSubscription: async () => subscription }
     }) } },
     { permission: 'granted' }, { Notification: function Notification() {} },
-    { functions: { invoke: async (...args) => { called = args; return { data: { accepted: true } }; } } },
+    { functions: { invoke: async (...args) => {
+      called = args;
+      return { data: args[1].body.delaySeconds ? { scheduled: true } : { accepted: true } };
+    } } },
     { id: 'account-one' }, async () => {}, message => { status = message; });
 
 test().then(() => {
   assert.equal(called[0], 'test-push');
-  assert.deepEqual(called[1], { body: { endpoint: subscription.endpoint } });
+  assert.deepEqual(called[1], { body: { endpoint: subscription.endpoint, delaySeconds: 0 } });
   assert.equal(button.disabled, false);
   assert(status.includes('nosūtīts'));
-  console.log('Push diagnostics and device targeting verified.');
+  return test(30);
+}).then(() => {
+  assert.deepEqual(called[1], { body: { endpoint: subscription.endpoint, delaySeconds: 30 } });
+  assert(status.includes('aizver aplikāciju'));
+  console.log('Immediate and closed-app push diagnostics verified.');
 }).catch(error => { console.error(error); process.exitCode = 1; });
