@@ -79,4 +79,13 @@ assert(html.includes('data-workspace="work"')&&html.includes('data-workspace="pe
 assert(html.includes('id="themeToggle"'));
 assert(html.includes('html[data-theme=dark] .card'));
 assert(html.includes('color-scheme:dark'));
+const repeatSource=section('const everydayOption=',"let cf=$('#categoryFilter')");
+const repeatOption={isConnected:false,remove(){this.isConnected=false}};
+const repeatSelect={value:'none',options:[{},{},{}],add(option){option.isConnected=true}};
+const repeatOptions=new Function('document','$','activeWorkspace',repeatSource+'return {syncRepeatOptions,setWorkspace:value=>activeWorkspace=value}')(
+  {createElement:()=>repeatOption},()=>repeatSelect,'personal');
+assert.equal(repeatOption.isConnected,true,'Personal view offers every-day recurrence');
+repeatSelect.value='everyday';repeatOptions.setWorkspace('work');repeatOptions.syncRepeatOptions();
+assert.equal(repeatOption.isConnected,false,'Work view keeps its weekday recurrence choices');
+assert.equal(repeatSelect.value,'none');
 console.log('Work and personal views, legacy data, categories, and theme toggle verified.');

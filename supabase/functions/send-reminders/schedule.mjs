@@ -22,21 +22,26 @@ export function occurs(task, day) {
   if (!task || task.kind || !/^\d{4}-\d\d-\d\d$/.test(task.date || '')) return false;
   if (task.postponedDates?.[day]) return false;
   if (task.postponedDates && Object.values(task.postponedDates).includes(day)) return true;
+  const personal = task.workspace === 'personal';
   const repeat = task.repeat || 'none';
   const target = dateAtNoon(day);
   if (Number.isNaN(target.getTime())) return false;
   if (repeat === 'none') {
-    if (!task.project) return task.date === day;
+    if (!task.project || personal) return task.date === day;
     const weekday = target.getUTCDay();
     return day >= task.date && weekday !== 0 && weekday !== 6 &&
       (!task.done || day <= (task.completedOn || task.date));
   }
-  if (day < task.date || [0, 6].includes(target.getUTCDay())) return false;
+  if (day < task.date || ((!personal || repeat === 'daily' || repeat === 'weekdays') &&
+    [0, 6].includes(target.getUTCDay()))) return false;
   const start = dateAtNoon(task.date);
   if (Number.isNaN(start.getTime())) return false;
   const interval = Number.isInteger(task.repeatInterval) && task.repeatInterval >= 1 && task.repeatInterval <= 12
     ? task.repeatInterval : 1;
-  if (repeat === 'daily' || repeat === 'weekdays') {
+  if (repeat === 'everyday' && personal) {
+    return Math.round((target - start) / 86400000) % interval === 0;
+  }
+  if (repeat === 'daily' || repeat === 'weekdays' || repeat === 'everyday') {
     const first = nextWorkday(new Date(start));
     if (target < first) return false;
     const days = Math.round((target - first) / 86400000);
@@ -49,7 +54,7 @@ export function occurs(task, day) {
     return elapsed % interval === 0;
   }
   if (repeat === 'weekly') {
-    const first = nextWorkday(new Date(start));
+    const first = personal ? new Date(start) : nextWorkday(new Date(start));
     return target >= first && Math.round((target - first) / 86400000) % (interval * 7) === 0;
   }
   if (repeat === 'monthly') {
@@ -59,7 +64,7 @@ export function occurs(task, day) {
       if (distance < 0 || distance % interval !== 0) continue;
       const candidate = new Date(Date.UTC(month.getUTCFullYear(), month.getUTCMonth(), start.getUTCDate(), 12));
       if (candidate.getUTCMonth() !== month.getUTCMonth()) continue;
-      if (sameDay(nextWorkday(candidate), target)) return true;
+      if (sameDay(personal ? candidate : nextWorkday(candidate), target)) return true;
     }
     return false;
   }
@@ -68,7 +73,7 @@ export function occurs(task, day) {
       if (year < start.getUTCFullYear() || (year - start.getUTCFullYear()) % interval !== 0) continue;
       const candidate = new Date(Date.UTC(year, start.getUTCMonth(), start.getUTCDate(), 12));
       if (candidate.getUTCMonth() !== start.getUTCMonth()) continue;
-      if (sameDay(nextWorkday(candidate), target)) return true;
+      if (sameDay(personal ? candidate : nextWorkday(candidate), target)) return true;
     }
   }
   return false;

@@ -46,6 +46,17 @@ assert.equal(recurrence.occurs({...repeatTask,repeat:'monthly'},'2026-11-30'),fa
 assert.equal(recurrence.occurs({...repeatTask,repeat:'monthly'},'2026-12-29'),true);
 assert.equal(recurrence.occurs({...repeatTask,repeat:'yearly'},'2027-10-29'),false);
 assert.equal(recurrence.occurs({...repeatTask,repeat:'yearly'},'2028-10-30'),true);
+const personalDaily={date:'2026-10-30',repeat:'everyday',workspace:'personal'};
+assert.equal(recurrence.occurs(personalDaily,'2026-10-31'),true);
+assert.equal(recurrence.occurs(personalDaily,'2026-11-01'),true);
+assert.equal(recurrence.occurs({...personalDaily,repeatInterval:2},'2026-10-31'),false);
+assert.equal(recurrence.occurs({...personalDaily,repeatInterval:2},'2026-11-01'),true);
+assert.equal(recurrence.repeatLabel({...personalDaily,repeatInterval:2}),'Katru otro dienu');
+assert.equal(recurrence.occurs({...personalDaily,repeat:'daily'},'2026-10-31'),false);
+assert.equal(recurrence.occurs({...personalDaily,repeat:'weekly',date:'2026-10-31'},'2026-11-07'),true);
+assert.equal(recurrence.occurs({...personalDaily,repeat:'none',project:true},'2026-11-02'),false);
+assert.equal(recurrence.occurs({...personalDaily,repeat:'none',project:true,date:'2026-10-31'},'2026-10-31'),true);
+assert.equal(recurrence.occurs({...personalDaily,workspace:'work'},'2026-10-31'),false);
 assert(html.includes('id="repeatInterval" min="1" max="12"'));
 
 const tasks=[
@@ -72,14 +83,15 @@ const carryTasks=[
   {id:'single',date:'2026-10-29',done:false,repeat:'none'},
   {id:'finished',date:'2026-10-29',done:true,repeat:'none'},
   {id:'project',date:'2026-10-29',done:false,repeat:'none',project:true},
-  {id:'repeat',date:'2026-10-29',done:false,repeat:'weekly'}
+  {id:'repeat',date:'2026-10-29',done:false,repeat:'weekly'},
+  {id:'personal',date:'2026-10-29',done:false,repeat:'none',workspace:'personal'}
 ];
-const carrying=new Function('tasks','autoCarry','today','save',section('function nextWorkday(value){',"$('#autoCarry').checked")+'return {carryOverdue,nextWorkday}')(
-  carryTasks,true,()=> '2026-10-31',()=>saved++);
+const carrying=new Function('tasks','autoCarry','today','save','taskWorkspace',section('function nextWorkday(value){',"$('#autoCarry').checked")+'return {carryOverdue,nextWorkday}')(
+  carryTasks,true,()=> '2026-10-31',()=>saved++,t=>t.workspace==='personal'?'personal':'work');
 assert.equal(carrying.nextWorkday('2026-10-30'),'2026-11-02');
 assert.equal(carrying.carryOverdue(),true);
 assert.equal(saved,1);
-assert.deepEqual(carryTasks.map(t=>t.date),['2026-11-02','2026-10-29','2026-10-29','2026-10-29']);
+assert.deepEqual(carryTasks.map(t=>t.date),['2026-11-02','2026-10-29','2026-10-29','2026-10-29','2026-10-29']);
 
 const sidebarSource=section('function setupSidebarWidth(){','const motivationMessages=[');
 const listeners={},attrs={},stored={};let width='',desktop=true;

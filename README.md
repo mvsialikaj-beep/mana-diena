@@ -4,6 +4,10 @@ Personīgs dienas plānotājs ar darba un ikdienas uzdevumiem. Lietotne darbojas
 
 Uzdevumus un kategoriju blokus var pārvilkt aiz sešu punktu roktura ar peli vai pirkstu. Uzdevumu var pārvilkt arī uz citu kategoriju tajā pašā sadaļā. Darbi ar norādītu laiku pēc noklusējuma ir hronoloģiskā secībā, bet tos var manuāli pārkārtot. Prioritārie darbi paliek savā sadaļā virs pārējiem. Ar tastatūru fokusu uz roktura var pārvietot ar bulttaustiņiem.
 
+Atver uzdevumu un spied **Kopēt**, lai jauna uzdevuma formā pārņemtu tā saturu un iestatījumus. Kopijai pēc noklusējuma ir kalendārā izvēlētā diena; paveikšanas atzīmes, kontrolsaraksta progress un vecie komentāri netiek pārnesti.
+
+Ikdienas skatā vienreizējie uzdevumi, tostarp projekti, ir redzami tikai izvēlētajā datumā. Nepaveiktu darbu automātiska pārcelšana attiecas tikai uz Darba skatu. Ikdienas skatā atkārtošanos var izvēlēties katru dienu, arī brīvdienās, vai tikai darbadienās. Nedēļas, mēneša un gada atkārtojumi Ikdienas skatā var būt brīvdienās; Darba skatā tie saglabā darbadienu noteikumus.
+
 Atverot uzdevumu, izvēlies **Bloka krāsa**, lai mainītu tikai tā krāsu. Kategorijas bloka krāsu var izvēlēties tās **⋯ iestatījumos** vai kategoriju pārvaldē. **Parastā krāsa** atjauno sākotnējo izskatu. Krāsas glabājas kopā ar uzdevumiem un kategoriju secību, tāpēc pierakstītam lietotājam tās sinhronizējas starp ierīcēm.
 
 Prioritārie darbi un pārējie darbi atrodas atsevišķās sadaļās. Katras sadaļas krāsu var mainīt tās **⋯ iestatījumos**; krāsa saglabājas atsevišķi Darba un Ikdienas skatam.
