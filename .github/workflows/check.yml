@@ -27,6 +27,8 @@ jobs:
         run: node tests/background-push-client.test.cjs
       - name: Pārbaudīt servera atgādinājumu laikus
         run: node tests/background-schedule.test.mjs
+      - name: Pārbaudīt uzdevumu pārvilkšanu ar peli un pirkstu
+        run: node tests/task-drag.test.cjs
       - name: Pārbaudīt paziņojumu diagnostiku
         run: node tests/push-diagnostics.test.cjs
       - name: Pārbaudīt Latvijas vārdadienas

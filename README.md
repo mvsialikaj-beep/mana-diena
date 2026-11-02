@@ -2,6 +2,8 @@
 
 Personīgs dienas plānotājs ar darba un ikdienas uzdevumiem. Lietotne darbojas GitHub Pages, bet uzdevumi un fona paziņojumu abonementi glabājas Supabase projektā `szjzigtavauimamgiaoe`.
 
+Uzdevumu secību kategorijā var mainīt, satverot sešu punktu rokturi ar peli vai pirkstu. Darbi ar norādītu laiku vienmēr paliek hronoloģiskā secībā, bet prioritārie darbi virs pārējiem. Ar tastatūru fokusu uz roktura var pārvietot ar bulttaustiņiem.
+
 ## Fona paziņojumi telefonā
 
 1. Atver lietotni telefonā un pieraksties ar to pašu kontu, ar kuru sinhronizē uzdevumus.
