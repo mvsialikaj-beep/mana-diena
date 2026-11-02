@@ -62,5 +62,5 @@ assert.deepEqual(ordered.groups[1][1].map(t=>t.id),['priority']);
 assert(ordering.compareTimelineTasks({time:'09:00',priority:false,text:'A'},{time:'',priority:true,text:'B'})<0);
 assert(ordering.compareTimelineTasks({time:'09:00',priority:false,text:'A'},{time:'14:00',priority:true,text:'B'})<0);
 assert(html.includes("type==='timed'||filter!=='open'&&t.category"),'Timed rows show their category');
-assert(html.includes("filter==='open'&&type!=='timed'&&!cf.value"),'Chronological rows cannot be manually reordered');
+assert(html.includes("type==='timed'?'timedOrder':'sortOrder'"),'Timed rows can be reordered after their chronological default');
 console.log('Category deletion and chronological timed-task ordering verified.');

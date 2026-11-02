@@ -27,6 +27,10 @@ jobs:
         run: node tests/background-push-client.test.cjs
       - name: Pārbaudīt servera atgādinājumu laikus
         run: node tests/background-schedule.test.mjs
+      - name: Pārbaudīt kategoriju bloku pārvilkšanu
+        run: node tests/category-drag.test.cjs
+      - name: Pārbaudīt bloku krāsu izvēli
+        run: node tests/block-color.test.cjs
       - name: Pārbaudīt uzdevumu pārvilkšanu ar peli un pirkstu
         run: node tests/task-drag.test.cjs
       - name: Pārbaudīt paziņojumu diagnostiku

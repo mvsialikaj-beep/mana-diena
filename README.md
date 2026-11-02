@@ -2,7 +2,9 @@
 
 Personīgs dienas plānotājs ar darba un ikdienas uzdevumiem. Lietotne darbojas GitHub Pages, bet uzdevumi un fona paziņojumu abonementi glabājas Supabase projektā `szjzigtavauimamgiaoe`.
 
-Uzdevumu secību kategorijā var mainīt, satverot sešu punktu rokturi ar peli vai pirkstu. Darbi ar norādītu laiku vienmēr paliek hronoloģiskā secībā, bet prioritārie darbi virs pārējiem. Ar tastatūru fokusu uz roktura var pārvietot ar bulttaustiņiem.
+Uzdevumus un kategoriju blokus var pārvilkt aiz sešu punktu roktura ar peli vai pirkstu. Uzdevumu var pārvilkt arī uz citu kategoriju tajā pašā sadaļā. Darbi ar norādītu laiku pēc noklusējuma ir hronoloģiskā secībā, bet tos var manuāli pārkārtot. Prioritārie darbi paliek savā sadaļā virs pārējiem. Ar tastatūru fokusu uz roktura var pārvietot ar bulttaustiņiem.
+
+Atverot uzdevumu, izvēlies **Bloka krāsa**, lai mainītu tikai tā krāsu. Kategorijas bloka krāsu var izvēlēties pie tā virsraksta vai kategoriju pārvaldē. **Parastā krāsa** atjauno sākotnējo izskatu. Krāsas glabājas kopā ar uzdevumiem un kategoriju secību, tāpēc pierakstītam lietotājam tās sinhronizējas starp ierīcēm.
 
 ## Fona paziņojumi telefonā
 
