@@ -37,5 +37,8 @@ assert.equal(record.categoryColors.Amazon, undefined);
 assert.equal(saves, 2);
 assert(html.includes("colorInput.type='color'"));
 assert(html.includes("colorInput.className='category-color-input'"));
+assert(html.includes("settings.className='category-settings'"));
+assert(html.includes('head.append(settings)'));
+assert(!html.includes('head.append(colorInput)'));
 assert(html.includes('.task.custom-color'));
 console.log('Task and category color selection, contrast, and validation verified.');

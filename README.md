@@ -4,7 +4,7 @@ Personīgs dienas plānotājs ar darba un ikdienas uzdevumiem. Lietotne darbojas
 
 Uzdevumus un kategoriju blokus var pārvilkt aiz sešu punktu roktura ar peli vai pirkstu. Uzdevumu var pārvilkt arī uz citu kategoriju tajā pašā sadaļā. Darbi ar norādītu laiku pēc noklusējuma ir hronoloģiskā secībā, bet tos var manuāli pārkārtot. Prioritārie darbi paliek savā sadaļā virs pārējiem. Ar tastatūru fokusu uz roktura var pārvietot ar bulttaustiņiem.
 
-Atverot uzdevumu, izvēlies **Bloka krāsa**, lai mainītu tikai tā krāsu. Kategorijas bloka krāsu var izvēlēties pie tā virsraksta vai kategoriju pārvaldē. **Parastā krāsa** atjauno sākotnējo izskatu. Krāsas glabājas kopā ar uzdevumiem un kategoriju secību, tāpēc pierakstītam lietotājam tās sinhronizējas starp ierīcēm.
+Atverot uzdevumu, izvēlies **Bloka krāsa**, lai mainītu tikai tā krāsu. Kategorijas bloka krāsu var izvēlēties tās **⋯ iestatījumos** vai kategoriju pārvaldē. **Parastā krāsa** atjauno sākotnējo izskatu. Krāsas glabājas kopā ar uzdevumiem un kategoriju secību, tāpēc pierakstītam lietotājam tās sinhronizējas starp ierīcēm.
 
 ## Fona paziņojumi telefonā
 
