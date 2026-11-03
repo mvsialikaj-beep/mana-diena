@@ -86,6 +86,9 @@ const scheduledViews=new Function('tasks','filter','date','today','occurs','isDo
 assert.deepEqual(scheduledViews.visibleEntries().map(t=>t.id),['today'],'Scheduled work in To do belongs to the chosen day');
 scheduledViews.setFilter('all');
 assert.deepEqual(scheduledViews.visibleEntries().map(t=>t.id),['today','future'],'All keeps other dates');
+assert(html.includes("timeBadge.className='task-schedule-time'"));
+assert(html.includes("timeBadge.textContent=t.time;title.append(timeBadge)"));
+assert(html.includes('.task-schedule-time{'));
 
 let saved=0;
 const carryTasks=[

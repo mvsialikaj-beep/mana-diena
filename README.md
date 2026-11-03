@@ -10,6 +10,8 @@ Ikdienas skatā vienreizējie uzdevumi, tostarp projekti, ir redzami tikai izvē
 
 Darba skatā automātiskā pārcelšana attiecas tikai uz vienreizējiem uzdevumiem bez norādīta laika. Laikā ieplānotie darbi paliek savā izvēlētajā datumā, arī tad, ja tos nepabeidz vai noņem paveikšanas atzīmi. Filtrs **Jāizdara** rāda šai dienai paredzētos darbus, bet **Visi** joprojām rāda nepabeigtos darbus no visiem datumiem.
 
+Uzdevumam norādītais laiks 24 h formātā redzams pie tā nosaukuma arī tad, kad uzdevums ir aizvērts.
+
 Atverot uzdevumu, izvēlies **Bloka krāsa**, lai mainītu tikai tā krāsu. Kategorijas bloka krāsu var izvēlēties tās **⋯ iestatījumos** vai kategoriju pārvaldē. **Parastā krāsa** atjauno sākotnējo izskatu. Krāsas glabājas kopā ar uzdevumiem un kategoriju secību, tāpēc pierakstītam lietotājam tās sinhronizējas starp ierīcēm.
 
 Prioritārie darbi un pārējie darbi atrodas atsevišķās sadaļās. Katras sadaļas krāsu var mainīt tās **⋯ iestatījumos**; krāsa saglabājas atsevišķi Darba un Ikdienas skatam.
