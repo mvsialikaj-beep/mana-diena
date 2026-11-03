@@ -52,6 +52,15 @@ assert.equal(tasks[0].done, true, 'Checkbox must update the current task after a
 check.checked = false;
 handler();
 assert.equal(tasks[0].done, false, 'Completed task must be reversible');
+const selectedDay = {value:'2026-11-01'};
+const reopening = new Function('save','document','filter','autoCarry','workdayTarget','taskWorkspace','date','alignSideMonth',
+  section(planner, 'function setCompletion(t,day,done){', 'function occurs(t,d){') + 'return setCompletion')(
+    () => {}, {querySelectorAll:() => filterButtons}, 'done', true, () => '2026-11-03',
+    () => 'work', selectedDay, () => {});
+const timedDone = {id:'timed',date:'2026-11-01',time:'14:00',done:true,repeat:'none'};
+reopening(timedDone,'2026-11-01',false);
+assert.equal(timedDone.date,'2026-11-01','Reopened scheduled work stays on its original date');
+assert.equal(selectedDay.value,'2026-11-01');
 
 class Element {
   constructor() { this.children = []; this.dataset = {}; this.value = ''; }

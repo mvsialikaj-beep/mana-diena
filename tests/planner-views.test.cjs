@@ -77,6 +77,15 @@ views.setFilter('done');
 assert.deepEqual(views.visibleEntries().map(t=>[t.id,t._viewDate]),[
   ['done-old','2026-08-01'],['done-new','2026-10-01'],['repeat','2026-09-03'],['repeat','2026-10-01']
 ],'Done includes every completed occurrence from all months');
+const scheduled=[
+  {id:'today',date:'2026-11-03',time:'10:00',done:false,repeat:'none'},
+  {id:'future',date:'2026-11-11',time:'11:00',done:false,repeat:'none'}
+];
+const scheduledViews=new Function('tasks','filter','date','today','occurs','isDone','workspaceTasks',section('let expandedTasks={};','function render(){')+'return {visibleEntries,setFilter:value=>filter=value}')(
+  scheduled,'open',{value:'2026-11-03'},()=> '2026-11-03',(t,d)=>t.date===d,t=>t.done,()=>scheduled);
+assert.deepEqual(scheduledViews.visibleEntries().map(t=>t.id),['today'],'Scheduled work in To do belongs to the chosen day');
+scheduledViews.setFilter('all');
+assert.deepEqual(scheduledViews.visibleEntries().map(t=>t.id),['today','future'],'All keeps other dates');
 
 let saved=0;
 const carryTasks=[
@@ -84,6 +93,7 @@ const carryTasks=[
   {id:'finished',date:'2026-10-29',done:true,repeat:'none'},
   {id:'project',date:'2026-10-29',done:false,repeat:'none',project:true},
   {id:'repeat',date:'2026-10-29',done:false,repeat:'weekly'},
+  {id:'timed',date:'2026-10-29',done:false,repeat:'none',time:'14:00'},
   {id:'personal',date:'2026-10-29',done:false,repeat:'none',workspace:'personal'}
 ];
 const carrying=new Function('tasks','autoCarry','today','save','taskWorkspace',section('function nextWorkday(value){',"$('#autoCarry').checked")+'return {carryOverdue,nextWorkday}')(
@@ -91,7 +101,7 @@ const carrying=new Function('tasks','autoCarry','today','save','taskWorkspace',s
 assert.equal(carrying.nextWorkday('2026-10-30'),'2026-11-02');
 assert.equal(carrying.carryOverdue(),true);
 assert.equal(saved,1);
-assert.deepEqual(carryTasks.map(t=>t.date),['2026-11-02','2026-10-29','2026-10-29','2026-10-29','2026-10-29']);
+assert.deepEqual(carryTasks.map(t=>t.date),['2026-11-02','2026-10-29','2026-10-29','2026-10-29','2026-10-29','2026-10-29']);
 
 const sidebarSource=section('function setupSidebarWidth(){','const motivationMessages=[');
 const listeners={},attrs={},stored={};let width='',desktop=true;
