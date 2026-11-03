@@ -1,4 +1,4 @@
-# Mana diena
+# Mana ikdiena
 
 Personīgs dienas plānotājs ar darba un ikdienas uzdevumiem. Lietotne darbojas GitHub Pages, bet uzdevumi un fona paziņojumu abonementi glabājas Supabase projektā `szjzigtavauimamgiaoe`.
 
@@ -22,7 +22,7 @@ Prioritārie darbi un pārējie darbi atrodas atsevišķās sadaļās. Katras sa
 2. Sadaļā **Iestatījumi un datu kopija** spied **Ieslēgt fona paziņojumus** un atļauj paziņojumus.
 3. iPhone telefonā vispirms pievieno lietotni sākuma ekrānam un atver to no turienes.
 
-Pēc ieslēgšanas spied **Nosūtīt testa paziņojumu**. Ja aplikācija ziņo, ka paziņojums nosūtīts, bet tas neparādās, iPhone sadaļā **Iestatījumi > Paziņojumi > Mana diena** pārbaudi atļaujas, kā arī Focus režīmu. Pārbaudes poga sūta paziņojumu tieši uz ierīci, kurā tā nospiesta.
+Pēc ieslēgšanas spied **Nosūtīt testa paziņojumu**. Ja aplikācija ziņo, ka paziņojums nosūtīts, bet tas neparādās, iPhone sadaļā **Iestatījumi > Paziņojumi > Mana ikdiena** pārbaudi atļaujas, kā arī Focus režīmu. Pārbaudes poga sūta paziņojumu tieši uz ierīci, kurā tā nospiesta.
 
 Lai pārbaudītu aizvērtu aplikāciju, spied **Tests pēc 30 sekundēm** un uzreiz aizver aplikāciju. Serveris nosūtīs paziņojumu pēc 30 sekundēm, nepaļaujoties uz atvērtu lapu.
 

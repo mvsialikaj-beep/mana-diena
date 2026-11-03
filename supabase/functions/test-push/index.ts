@@ -48,7 +48,7 @@ Deno.serve(async request => {
     try {
       await sendNotification({ endpoint: subscription.endpoint,
         keys: { p256dh: subscription.p256dh, auth: subscription.auth } },
-        JSON.stringify({ title: 'Mana diena - pārbaude',
+        JSON.stringify({ title: 'Mana ikdiena - pārbaude',
           body: delaySeconds ? 'Paziņojums pienāca pēc aplikācijas aizvēršanas.'
             : 'Ja redzi šo paziņojumu, fona paziņojumi darbojas.',
           tag: `mana-diena-test-${Date.now()}`,

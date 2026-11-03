@@ -1,7 +1,7 @@
 self.addEventListener('push', event => {
   let message = {};
   try { message = event.data?.json() || {}; } catch {}
-  const title = typeof message.title === 'string' ? message.title : 'Mana diena';
+  const title = typeof message.title === 'string' ? message.title : 'Mana ikdiena';
   const body = typeof message.body === 'string' ? message.body : 'Tev ir ieplānots uzdevums.';
   const url = typeof message.url === 'string' ? message.url : self.registration.scope;
   event.waitUntil(self.registration.showNotification(title, {

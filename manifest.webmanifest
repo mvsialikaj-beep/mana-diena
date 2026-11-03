@@ -1,6 +1,6 @@
 {
-  "name": "Mana diena - plānotājs",
-  "short_name": "Mana diena",
+  "name": "Mana ikdiena",
+  "short_name": "Mana ikdiena",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
