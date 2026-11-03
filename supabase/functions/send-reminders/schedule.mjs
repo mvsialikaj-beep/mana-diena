@@ -85,6 +85,24 @@ export function isDone(task, day) {
   return !!task.done;
 }
 
+function repeatStartDay(task, currentDay) {
+  if (!task.repeat || task.repeat === 'none')
+    return currentDay >= task.date && !task.done ? task.date : null;
+  const cursor = dateAtNoon(currentDay);
+  const first = dateAtNoon(task.date);
+  for (let i = 0; i < 5000 && cursor >= first; i++) {
+    const day = cursor.toISOString().slice(0, 10);
+    if (occurs(task, day)) return isDone(task, day) ? null : day;
+    cursor.setUTCDate(cursor.getUTCDate() - 1);
+  }
+  return null;
+}
+
+function wallMinutes(day, time) {
+  return Date.UTC(Number(day.slice(0, 4)), Number(day.slice(5, 7)) - 1,
+    Number(day.slice(8, 10)), Number(time.slice(0, 2)), Number(time.slice(3, 5))) / 60000;
+}
+
 export function reminderEvents(task, now) {
   if (!task || task.kind) return [];
   const current = rigaClock(now);
@@ -105,6 +123,14 @@ export function reminderEvents(task, now) {
         events.push({ day: upcoming.day, type: 'before_time', title: `Drīz: ${task.text}`,
           body: `Ieplānots plkst. ${task.time} (${upcoming.day}).` });
         break;
+      }
+    }
+    if (task.nagReminder) {
+      const startDay = repeatStartDay(task, current.day);
+      if (startDay) {
+        const slot = Math.floor((wallMinutes(current.day, current.time) - wallMinutes(startDay, task.time)) / 15);
+        if (slot >= 0) events.push({ day: startDay, type: `repeat_${slot}`,
+          title: `Vēl jāizdara: ${task.text}`, body: `Ieplānots plkst. ${task.time}. Atzīmē uzdevumu kā paveiktu, lai apturētu atgādinājumus.` });
       }
     }
   }

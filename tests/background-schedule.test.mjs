@@ -16,6 +16,19 @@ assert.deepEqual(reminderEvents(custom, new Date('2026-10-30T10:30:00Z')).map(e 
 assert.deepEqual(reminderEvents({ ...custom, reminderTime: 'invalid' }, new Date('2026-10-30T07:00:00Z')).map(e => e.type), ['day']);
 assert.deepEqual(reminderEvents({ ...custom, dayReminder: false }, new Date('2026-10-30T10:30:00Z')), []);
 
+const persistent = { ...task, dayReminder: false, nagReminder: true };
+assert.deepEqual(reminderEvents(persistent, new Date('2026-10-30T11:44:00Z')).map(e => e.type), []);
+assert.deepEqual(reminderEvents(persistent, new Date('2026-10-30T11:46:00Z')).map(e => e.type), ['before_time']);
+assert.deepEqual(reminderEvents(persistent, new Date('2026-10-30T12:00:00Z')).map(e => e.type), ['repeat_0']);
+assert.deepEqual(reminderEvents(persistent, new Date('2026-10-30T12:14:00Z')).map(e => e.type), ['repeat_0']);
+assert.deepEqual(reminderEvents(persistent, new Date('2026-10-30T12:15:00Z')).map(e => e.type), ['repeat_1']);
+assert.deepEqual(reminderEvents(persistent, new Date('2026-10-31T12:00:00Z')).map(e => e.type), ['repeat_96']);
+assert.deepEqual(reminderEvents({ ...persistent, done: true }, new Date('2026-10-31T12:00:00Z')), []);
+const recurringPersistent = { ...persistent, repeat: 'weekly', date: '2026-10-30' };
+assert.deepEqual(reminderEvents(recurringPersistent, new Date('2026-10-31T12:00:00Z')).map(e => e.type), ['repeat_96']);
+assert.deepEqual(reminderEvents({ ...recurringPersistent, completedDates: { '2026-10-30': true } }, new Date('2026-10-31T12:00:00Z')), []);
+assert.deepEqual(reminderEvents(recurringPersistent, new Date('2026-11-06T12:00:00Z')).map(e => e.type), ['repeat_0']);
+
 const weekly = { text: 'Nedēļas darbs', date: '2026-10-30',
   done: false, repeat: 'weekly', repeatInterval: 2 };
 assert(occurs(weekly, '2026-10-30'));

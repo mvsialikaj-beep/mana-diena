@@ -28,6 +28,8 @@ Lai pārbaudītu aizvērtu aplikāciju, spied **Tests pēc 30 sekundēm** un uzr
 
 Uzdevumam var ieslēgt atgādinājumu tā dienā un izvēlēties laiku 24 h formātā. Iepriekš izveidotajiem dienas atgādinājumiem noklusējums ir plkst. 09:00. Uzdevumiem ar norādītu laiku atgādinājums 15 minūtes pirms sākuma darbojas automātiski. Servera plānotājs pārbauda atgādinājumus katru minūti, tāpēc lietotnei nav jābūt atvērtai.
 
+Uzdevumam ar norādītu laiku papildus var ieslēgt atkārtotu atgādinājumu ik pēc 15 minūtēm. Pirmais atkārtojums pienāk ieplānotajā laikā, un paziņojumi turpinās arī nākamajās dienās, tostarp naktī, līdz uzdevums ir atzīmēts kā paveikts. Atkārtotam uzdevumam nākamais ieplānotais gadījums sāk jaunu atgādinājumu ciklu. Šī izvēle pēc noklusējuma ir izslēgta.
+
 ## Uzturēšana
 
 - `supabase/functions/send-reminders/` satur servera nosūtīšanu un laika aprēķinus.

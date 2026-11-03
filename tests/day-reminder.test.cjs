@@ -50,6 +50,8 @@ assert(html.includes("dayReminder:$('#dayReminder').checked"));
 assert(html.includes("reminderTime:$('#dayReminder').checked?$('#reminderTime').value:''"));
 assert(html.includes("$('#dayReminder').checked=!!task.dayReminder"));
 assert(html.includes("$('#reminderTime').value=task.reminderTime||'09:00'"));
+assert(html.includes('id="nagReminder"'));
+assert(html.includes("nagReminder:$('#nagReminder').checked&&!!$('#time').value"));
 assert(html.includes("navigator.serviceWorker.register('./sw.js')"));
 const safeTaskStart = planner.indexOf('function safeTask(t){');
 const safeTaskEnd = planner.indexOf('try{reminded=', safeTaskStart);
@@ -57,6 +59,8 @@ const safeTask = new Function(planner.slice(safeTaskStart, safeTaskEnd) + 'retur
 const sample = {id:'check',text:'Darbs',date:'2026-10-30',done:false};
 assert(safeTask({...sample, reminderTime:'16:45'}));
 assert.equal(safeTask({...sample, reminderTime:'25:00'}), false);
+assert(safeTask({...sample, nagReminder:true}));
+assert.equal(safeTask({...sample, nagReminder:'true'}), false);
 const reminderField = {hidden:false};
 const reminderCheck = {checked:false};
 const reminderTime = {value:'',disabled:false};
@@ -72,6 +76,22 @@ assert.equal(reminderTime.disabled, false);
 assert.equal(reminderTime.value, '09:00');
 
 (async () => {
+  const repeatNotices = [];
+  function RepeatNotification(title) { repeatNotices.push(title); }
+  RepeatNotification.permission = 'granted';
+  const repeated = [{id:'repeat',text:'Atkārtots darbs',date:'2026-10-30',done:false,time:'14:00',nagReminder:true}];
+  const repeatCheck = new Function('tasks','Notification','window','occurs','isDone','reminded','localStorage','reminderKey','today','navigator',
+    planner.slice(start,end) + 'return checkReminders;')(
+      repeated,RepeatNotification,{Notification:RepeatNotification},(task,day)=>task.date===day,task=>task.done,{},
+      {setItem(){}},'reminders',()=> '2026-10-30',{});
+  repeatCheck(new Date('2026-10-30T14:00:00'));
+  repeatCheck(new Date('2026-10-30T14:14:00'));
+  repeatCheck(new Date('2026-10-30T14:15:00'));
+  assert.deepEqual(repeatNotices,['Vēl jāizdara: Atkārtots darbs','Vēl jāizdara: Atkārtots darbs']);
+  repeated[0].done=true;
+  repeatCheck(new Date('2026-10-30T14:30:00'));
+  assert.equal(repeatNotices.length,2,'Completed tasks stop repeat notifications');
+
   const phoneNotices = [];
   function MobileNotification() { throw new Error('Use service worker'); }
   MobileNotification.permission = 'granted';
