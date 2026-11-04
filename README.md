@@ -18,6 +18,8 @@ Prioritārie darbi un pārējie darbi atrodas atsevišķās sadaļās. Katras sa
 
 Sadaļā **Iestatījumi un datu kopija > Dizaina pielāgošana** var izvēlēties fontu, teksta lielumu, atstarpes, stūru noapaļojumu un krāsas galvenajām lietotnes sadaļām. Katrai krāsai ir sava atiestatīšanas poga; var atjaunot arī visu sākotnējo dizainu. Šie izskata iestatījumi glabājas konkrētajā ierīcē un darbojas abos plānotāja skatos. Atsevišķu uzdevumu un kategoriju krāsas paliek spēkā; prioritāšu un pārējo darbu globālā krāsa pārņem šīm sadaļām iepriekš izvēlētu atsevišķu krāsu, līdz globālo izvēli atiestata.
 
+Tajā pašā vietā atsevišķi var mainīt teksta biezumu virsrakstiem, uzdevumu un kategoriju nosaukumiem, pogām un pārējam tekstam. Katrai grupai pieejams parasts, vidējs, pustrekns, trekns un ļoti trekns variants.
+
 ## Fona paziņojumi telefonā
 
 1. Atver lietotni telefonā un pieraksties ar to pašu kontu, ar kuru sinhronizē uzdevumus.

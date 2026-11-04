@@ -31,6 +31,17 @@
     tahoma: 'Tahoma, Geneva, sans-serif',
     georgia: 'Georgia, "Times New Roman", serif'
   };
+  const weightFields = [
+    ['headingWeight', 'headings', '700'],
+    ['taskWeight', 'tasks', '700'],
+    ['categoryWeight', 'categories', '700'],
+    ['controlWeight', 'controls', '600'],
+    ['bodyWeight', 'body', '400']
+  ];
+  const weightOptions = [
+    ['400', 'Parasts'], ['500', 'Vidējs'], ['600', 'Pustrekns'],
+    ['700', 'Trekns'], ['800', 'Ļoti trekns']
+  ];
   let saved = {};
   try { saved = JSON.parse(localStorage.getItem(storageKey) || '{}') || {}; } catch {}
   const settings = {
@@ -40,6 +51,9 @@
     corners: Number.isInteger(saved.corners) && saved.corners >= 8 && saved.corners <= 24 ? saved.corners : 16,
     colors: {}
   };
+  for (const [key, , initial] of weightFields) {
+    settings[key] = weightOptions.some(([value]) => value === String(saved[key])) ? String(saved[key]) : initial;
+  }
   for (const [key] of sections) {
     const value = saved.colors?.[key];
     if (typeof value === 'string' && /^#[0-9a-fA-F]{6}$/.test(value)) settings.colors[key] = value;
@@ -111,6 +125,12 @@
     ['verdana', 'Verdana'], ['tahoma', 'Tahoma'], ['georgia', 'Georgia']
   ]);
   addRange('Teksta lielums', 'size', 14, 22, ' px');
+  addHeading('Teksta biezums');
+  addSelect('Virsraksti', 'headingWeight', weightOptions);
+  addSelect('Uzdevumu nosaukumi', 'taskWeight', weightOptions);
+  addSelect('Kategoriju nosaukumi', 'categoryWeight', weightOptions);
+  addSelect('Pogas un lauku nosaukumi', 'controlWeight', weightOptions);
+  addSelect('Apraksti un pārējais teksts', 'bodyWeight', weightOptions);
   addSelect('Atstarpes', 'density', [
     ['normal', 'Parastās'], ['compact', 'Mazākas'], ['roomy', 'Plašākas']
   ]);
@@ -158,6 +178,10 @@
   resetAll.addEventListener('click', () => {
     settings.font = 'default'; settings.size = 16;
     settings.density = 'normal'; settings.corners = 16;
+    for (const [key, , initial] of weightFields) {
+      settings[key] = initial;
+      content.querySelector('#design-' + key).value = initial;
+    }
     settings.colors = {};
     content.querySelector('#design-font').value = 'default';
     content.querySelector('#design-density').value = 'normal';
@@ -185,6 +209,10 @@
     root.style.setProperty('--design-font', fonts[settings.font] || 'Arial, Helvetica, sans-serif');
     root.toggleAttribute('data-design-size', settings.size !== 16);
     root.style.setProperty('--design-size', settings.size + 'px');
+    for (const [key, attribute, initial] of weightFields) {
+      root.toggleAttribute('data-design-weight-' + attribute, settings[key] !== initial);
+      root.style.setProperty('--design-weight-' + attribute, settings[key]);
+    }
     root.dataset.designDensity = settings.density;
     root.toggleAttribute('data-design-corners', settings.corners !== 16);
     root.style.setProperty('--design-corners', settings.corners + 'px');
