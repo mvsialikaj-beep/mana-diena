@@ -8,6 +8,8 @@ Atver uzdevumu un spied **Kopēt**, lai jauna uzdevuma formā pārņemtu tā sat
 
 Ikdienas skatā vienreizējie uzdevumi, tostarp projekti, ir redzami tikai izvēlētajā datumā. Nepaveiktu darbu automātiska pārcelšana attiecas tikai uz Darba skatu. Ikdienas skatā atkārtošanos var izvēlēties katru dienu, arī brīvdienās, vai tikai darbadienās. Nedēļas, mēneša un gada atkārtojumi Ikdienas skatā var būt brīvdienās; Darba skatā tie saglabā darbadienu noteikumus.
 
+Darba skatā kalendāra sestdienas un svētdienas ir neuzkrītošas, bet joprojām atveramas. Ikdienas skatā brīvdienas izskatās kā parastas kalendāra dienas.
+
 Darba skatā automātiskā pārcelšana attiecas tikai uz vienreizējiem uzdevumiem bez norādīta laika. Laikā ieplānotie darbi paliek savā izvēlētajā datumā, arī tad, ja tos nepabeidz vai noņem paveikšanas atzīmi. Filtrs **Jāizdara** rāda šai dienai paredzētos darbus, bet **Visi** joprojām rāda nepabeigtos darbus no visiem datumiem.
 
 Uzdevumam norādītais laiks 24 h formātā redzams pie tā nosaukuma arī tad, kad uzdevums ir aizvērts.
