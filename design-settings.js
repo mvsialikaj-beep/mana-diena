@@ -23,6 +23,39 @@
     ['text', 'Pamatteksts', '#23313d', '#eef3f5']
   ];
   const sectionKeys = new Set(sections.map(([key]) => key));
+  const fineGroups = [
+    ['Uzdevumu kartītes', [
+      ['taskSurface','Kartītes fons','#fcfdfd','#23323a'],
+      ['taskInk','Nosaukums un apraksts','#263740','#e8f0f3'],
+      ['taskOutline','Kartītes rāmis','#dce5e8','#4b606a'],
+      ['taskTimeSurface','Laika atzīmes fons','#eaf4f7','#314a55'],
+      ['taskTimeInk','Laika atzīmes teksts','#275365','#e4f3f7'],
+      ['taskDone','Paveikta darba teksts','#82909a','#9caeb7'],
+      ['taskCheck','Atzīmēta izvēles rūtiņa','#4f8190','#75a8b7']
+    ]],
+    ['Kategorijas', [
+      ['categorySurface','Kategorijas fons','#eef4f6','#2e424b'],
+      ['categoryInk','Kategorijas teksts','#34424d','#edf3f5'],
+      ['categoryOutline','Kategorijas rāmis','#cbd9de','#526570'],
+      ['categoryDot','Kategorijas punkts','#8d99a2','#a9c1cb']
+    ]],
+    ['Kalendāra dienas', [
+      ['holidaySurface','Svētku dienas fons','#fceeee','#623b43'],
+      ['holidayInk','Svētku dienas datums','#b34c55','#ffdee1'],
+      ['holidayOutline','Svētku dienas rāmis','#c85b65','#d58c94'],
+      ['weekendInk','Brīvdienas datums','#9daab0','#81949d'],
+      ['todayOutline','Šodienas rāmis','#97bcc5','#9ac7d4'],
+      ['selectedSurface','Izvēlētās dienas fons','#dceef2','#3b5661'],
+      ['selectedInk','Izvēlētās dienas datums','#204f5d','#ffffff']
+    ]],
+    ['Citi rāmji', [
+      ['cardOutline','Lielo paneļu rāmis','#e1e7e9','#40535b'],
+      ['sectionOutline','Prioritāšu un darbu sadaļu rāmis','#d8e5eb','#4b6671']
+    ]]
+  ];
+  const fineColors = fineGroups.flatMap(([,items])=>items);
+  const frameDefaults = {taskBorder:1,categoryBorder:0,holidayBorder:0,cardBorder:1,sectionBorder:1,
+    taskRadius:12,categoryRadius:9,holidayRadius:10,taskShadow:'default',taskBorderStyle:'solid',categoryBorderStyle:'solid'};
   const fonts = {
     default: '',
     system: 'system-ui, -apple-system, "Segoe UI", sans-serif',
@@ -49,7 +82,7 @@
     size: Number.isInteger(saved.size) && saved.size >= 14 && saved.size <= 22 ? saved.size : 16,
     density: ['normal', 'compact', 'roomy'].includes(saved.density) ? saved.density : 'normal',
     corners: Number.isInteger(saved.corners) && saved.corners >= 8 && saved.corners <= 24 ? saved.corners : 16,
-    colors: {}
+    colors: {}, fineColors: {}, frames: {...frameDefaults}
   };
   for (const [key, , initial] of weightFields) {
     settings[key] = weightOptions.some(([value]) => value === String(saved[key])) ? String(saved[key]) : initial;
@@ -57,6 +90,16 @@
   for (const [key] of sections) {
     const value = saved.colors?.[key];
     if (typeof value === 'string' && /^#[0-9a-fA-F]{6}$/.test(value)) settings.colors[key] = value;
+  }
+  for (const [key] of fineColors) {
+    const value = saved.fineColors?.[key];
+    if (typeof value === 'string' && /^#[0-9a-fA-F]{6}$/.test(value)) settings.fineColors[key] = value;
+  }
+  for (const [key, initial] of Object.entries(frameDefaults)) {
+    const value=saved.frames?.[key];
+    const max=key==='holidayBorder'?4:key.endsWith('Border')?5:key==='holidayRadius'?18:24;
+    if (typeof initial==='number' && Number.isInteger(value) && value>=0 && value<=max) settings.frames[key]=value;
+    if (typeof initial==='string' && (key==='taskShadow'?['default','none','soft','strong']:['solid','dashed','dotted']).includes(value)) settings.frames[key]=value;
   }
 
   const details = document.createElement('details');
@@ -171,6 +214,55 @@
     grid.append(row);
     colorInputs.set(key, { input, light, dark });
   }
+  const fineInputs = new Map();
+  addHeading('Detalizētas krāsas un rāmji');
+  for (const [title, items] of fineGroups) {
+    const group=document.createElement('details');group.className='design-subgroup';
+    const heading=document.createElement('summary');heading.textContent=title;group.append(heading);
+    const rows=document.createElement('div');rows.className='design-color-grid';group.append(rows);content.append(group);
+    for (const [key,label,light,dark] of items) {
+      const row=document.createElement('div');row.className='design-color-row';
+      const name=document.createElement('label');name.textContent=label;
+      const input=document.createElement('input');input.type='color';input.id='design-fine-'+key;
+      input.value=settings.fineColors[key]||(root.dataset.theme==='dark'?dark:light);name.htmlFor=input.id;
+      const reset=document.createElement('button');reset.type='button';reset.textContent='↺';
+      reset.title='Atjaunot sākotnējo krāsu: '+label;reset.setAttribute('aria-label',reset.title);
+      reset.disabled=!settings.fineColors[key];
+      input.addEventListener('input',()=>{settings.fineColors[key]=input.value;reset.disabled=false;apply();persist()});
+      reset.addEventListener('click',()=>{delete settings.fineColors[key];input.value=root.dataset.theme==='dark'?dark:light;reset.disabled=true;apply();persist()});
+      row.append(name,input,reset);rows.append(row);fineInputs.set(key,{input,light,dark});
+    }
+  }
+  const frameGroup=document.createElement('details');frameGroup.className='design-subgroup';
+  const frameHeading=document.createElement('summary');frameHeading.textContent='Rāmji un stūri';frameGroup.append(frameHeading);
+  const frameBody=document.createElement('div');frameBody.className='design-frame-grid';frameGroup.append(frameBody);content.append(frameGroup);
+  const frameControls=new Map();
+  const frameFields=[
+    ['taskBorder','Uzdevuma rāmja biezums',0,5],['categoryBorder','Kategorijas rāmja biezums',0,5],
+    ['holidayBorder','Svētku dienas rāmja biezums',0,4],['cardBorder','Paneļa rāmja biezums',0,5],
+    ['sectionBorder','Sadaļas rāmja biezums',0,5],['taskRadius','Uzdevuma stūri',0,24],
+    ['categoryRadius','Kategorijas stūri',0,24],['holidayRadius','Kalendāra dienas stūri',0,18]
+  ];
+  for(const [key,label,min,max] of frameFields){
+    const wrap=document.createElement('label');wrap.className='design-control';
+    const title=document.createElement('span');title.textContent=label+' ';
+    const output=document.createElement('output');output.textContent=settings.frames[key]+' px';title.append(output);
+    const input=document.createElement('input');input.id='design-frame-'+key;input.type='range';
+    input.min=min;input.max=max;input.step='1';input.value=settings.frames[key];
+    input.addEventListener('input',()=>{settings.frames[key]=Number(input.value);output.textContent=input.value+' px';apply();persist()});
+    wrap.append(title,input);frameBody.append(wrap);frameControls.set(key,{input,output});
+  }
+  for(const [key,label,options] of [
+    ['taskBorderStyle','Uzdevuma rāmja līnija',[['solid','Vienlaidu'],['dashed','Pārtraukta'],['dotted','Punktota']]],
+    ['categoryBorderStyle','Kategorijas rāmja līnija',[['solid','Vienlaidu'],['dashed','Pārtraukta'],['dotted','Punktota']]],
+    ['taskShadow','Uzdevuma ēna',[['default','Noklusētā'],['none','Bez ēnas'],['soft','Viegla'],['strong','Izteikta']]]
+  ]){
+    const wrap=document.createElement('label');wrap.className='design-control';wrap.textContent=label;
+    const select=document.createElement('select');select.id='design-frame-'+key;
+    for(const [value,text] of options){const option=document.createElement('option');option.value=value;option.textContent=text;select.append(option)}
+    select.value=settings.frames[key];select.addEventListener('change',()=>{settings.frames[key]=select.value;apply();persist()});
+    wrap.append(select);frameBody.append(wrap);frameControls.set(key,{input:select});
+  }
   const resetAll = document.createElement('button');
   resetAll.type = 'button';
   resetAll.id = 'designReset';
@@ -182,7 +274,7 @@
       settings[key] = initial;
       content.querySelector('#design-' + key).value = initial;
     }
-    settings.colors = {};
+    settings.colors = {};settings.fineColors={};settings.frames={...frameDefaults};
     content.querySelector('#design-font').value = 'default';
     content.querySelector('#design-density').value = 'normal';
     for (const key of ['size', 'corners']) {
@@ -194,6 +286,8 @@
       input.value = root.dataset.theme === 'dark' ? dark : light;
       input.nextElementSibling.disabled = true;
     }
+    for (const {input,light,dark} of fineInputs.values()) {input.value=root.dataset.theme==='dark'?dark:light;input.nextElementSibling.disabled=true}
+    for(const [key,{input,output}] of frameControls){input.value=frameDefaults[key];if(output)output.textContent=frameDefaults[key]+' px'}
     apply(); persist();
   });
   content.append(resetAll);
@@ -229,6 +323,23 @@
         root.style.removeProperty('--design-' + key + '-ink');
       }
     }
+    for(const [key] of fineColors){
+      const color=settings.fineColors[key],attr='data-fine-'+key.toLowerCase();
+      root.toggleAttribute(attr,!!color);
+      if(color)root.style.setProperty('--fine-'+key,color);
+      else root.style.removeProperty('--fine-'+key);
+    }
+    for(const [kind,surface,ink] of [['task','taskSurface','taskInk'],['category','categorySurface','categoryInk'],['holiday','holidaySurface','holidayInk']]){
+      const value=settings.fineColors[ink]||(settings.fineColors[surface]?inkFor(settings.fineColors[surface]):'');
+      root.toggleAttribute('data-fine-'+kind+'-readable',!!value);
+      if(value)root.style.setProperty('--fine-'+kind+'-readable',value);
+      else root.style.removeProperty('--fine-'+kind+'-readable');
+    }
+    for(const [key,initial] of Object.entries(frameDefaults)){
+      const value=settings.frames[key];root.toggleAttribute('data-frame-'+key.toLowerCase(),value!==initial);
+      root.style.setProperty('--frame-'+key,typeof value==='number'?value+'px':value);
+    }
+    root.dataset.frameTaskshadow=settings.frames.taskShadow;
   }
   function persist() {
     try { localStorage.setItem(storageKey, JSON.stringify(settings)); } catch {}
@@ -237,6 +348,7 @@
     for (const [key, {input, light, dark}] of colorInputs) {
       if (!settings.colors[key]) input.value = root.dataset.theme === 'dark' ? dark : light;
     }
+    for(const [key,{input,light,dark}] of fineInputs){if(!settings.fineColors[key])input.value=root.dataset.theme==='dark'?dark:light}
   }).observe(root, {attributes:true, attributeFilter:['data-theme']});
   apply();
 })();

@@ -9,6 +9,8 @@ const source = fs.readFileSync(path.join(rootPath, 'design-settings.js'), 'utf8'
 assert(html.includes('<script src="./design-settings.js"></script>'));
 assert(html.includes('html[data-design-priority] .task-section.priority-section'));
 assert(html.includes('html[data-design-tasks] .task:not(.custom-color)'));
+assert(html.includes('html[data-fine-holidaysurface] .side-calendar-grid button.work-holiday'));
+assert(html.includes('html[data-frame-taskborder] .task'));
 
 class Element {
   constructor(tag = 'div') {
@@ -58,12 +60,31 @@ const taskColor = details.querySelector('#design-color-tasks');
 taskColor.value='#222222'; taskColor.events.input();
 assert(root.attributes.has('data-design-tasks'));
 assert.equal(root.style.values['--design-tasks-ink'],'#ffffff');
+const holidayColor=details.querySelector('#design-fine-holidaySurface');
+holidayColor.value='#221133';holidayColor.events.input();
+assert(root.attributes.has('data-fine-holidaysurface'));
+assert.equal(root.style.values['--fine-holiday-readable'],'#ffffff');
+const taskOutline=details.querySelector('#design-fine-taskOutline');
+taskOutline.value='#aabbcc';taskOutline.events.input();
+assert.equal(root.style.values['--fine-taskOutline'],'#aabbcc');
+const taskBorder=details.querySelector('#design-frame-taskBorder');
+taskBorder.value='3';taskBorder.events.input();
+assert(root.attributes.has('data-frame-taskborder'));
+assert.equal(root.style.values['--frame-taskBorder'],'3px');
+const taskShadow=details.querySelector('#design-frame-taskShadow');
+taskShadow.value='strong';taskShadow.events.change();
+assert.equal(root.dataset.frameTaskshadow,'strong');
+assert.equal(JSON.parse(store.get('mana-ikdiena-design-v1')).frames.taskShadow,'strong');
 root.dataset.theme='dark'; themeChanged();
 assert.equal(details.querySelector('#design-color-page').value,'#142129');
+assert.equal(details.querySelector('#design-fine-holidaySurface').value,'#221133');
 details.querySelector('#designReset').events.click();
 assert(!root.attributes.has('data-design-font'));
 assert(!root.attributes.has('data-design-tasks'));
 assert(!root.attributes.has('data-design-weight-headings'));
 assert(!root.attributes.has('data-design-weight-tasks'));
+assert(!root.attributes.has('data-fine-holidaysurface'));
+assert(!root.attributes.has('data-frame-taskborder'));
+assert.equal(root.dataset.frameTaskshadow,'default');
 assert.equal(JSON.parse(store.get('mana-ikdiena-design-v1')).font,'default');
 console.log('Design settings, persistence, color contrast, theme and reset verified.');
