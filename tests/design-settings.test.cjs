@@ -6,7 +6,7 @@ const vm = require('node:vm');
 const rootPath = path.join(__dirname, '..');
 const html = fs.readFileSync(path.join(rootPath, 'index.html'), 'utf8');
 const source = fs.readFileSync(path.join(rootPath, 'design-settings.js'), 'utf8');
-assert(html.includes('<script src="./design-settings.js"></script>'));
+assert(html.includes('<script src="./design-settings.js?v=3"></script>'));
 assert(html.includes('html[data-design-priority] .task-section.priority-section'));
 assert(html.includes('html[data-design-tasks] .task:not(.custom-color)'));
 assert(html.includes('html[data-fine-holidaysurface] .side-calendar-grid button.work-holiday'));
