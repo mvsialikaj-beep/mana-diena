@@ -44,7 +44,7 @@ assert(html.includes("$('#workspaceHeading').textContent=activeWorkspace==='work
 class Element{constructor(){this.children=[];this.textContent=''}append(...items){this.children.push(...items)}replaceChildren(...items){this.children=[...items]}setAttribute(){}}
 const notesList=new Element(),noteForm={},noteText={value:'Jauna privāta piezīme'};let notesSaved=0;
 const notes=new Function('$','document','tasks','workspaceTasks','activeWorkspace','today','save','appendLinks','confirm',section('function renderNotes(){','function nextWorkday')+'return renderNotes')(
-  selector=>({'#notesList':notesList,'#noteForm':noteForm,'#noteText':noteText})[selector],
+  selector=>({'#notesList':notesList,'#noteForm':noteForm,'#noteText':noteText,'#noteOpen':{},'#noteClose':{},'#noteDialog':{close(){}}})[selector],
   {createElement:()=>new Element()},tasks,scope.workspaceTasks,'personal',()=> '2026-10-30',()=>notesSaved++,
   (target,value)=>{target.textContent=value},()=>true);
 notes();

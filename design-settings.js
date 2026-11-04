@@ -59,6 +59,14 @@
   const fonts = {
     default: '',
     system: 'system-ui, -apple-system, "Segoe UI", sans-serif',
+    segoe: '"Segoe UI", system-ui, sans-serif',
+    calibri: 'Calibri, "Segoe UI", sans-serif',
+    aptos: 'Aptos, Calibri, sans-serif',
+    helvetica: '"Helvetica Neue", Helvetica, Arial, sans-serif',
+    trebuchet: '"Trebuchet MS", sans-serif',
+    cambria: 'Cambria, Georgia, serif',
+    palatino: '"Palatino Linotype", Palatino, Georgia, serif',
+    monospace: 'Consolas, Menlo, monospace',
     arial: 'Arial, Helvetica, sans-serif',
     verdana: 'Verdana, Geneva, sans-serif',
     tahoma: 'Tahoma, Geneva, sans-serif',
@@ -72,7 +80,7 @@
     ['bodyWeight', 'body', '400']
   ];
   const weightOptions = [
-    ['400', 'Parasts'], ['500', 'Vidējs'], ['600', 'Pustrekns'],
+    ['300', 'Viegls'], ['400', 'Parasts'], ['500', 'Vidējs'], ['600', 'Pustrekns'],
     ['700', 'Trekns'], ['800', 'Ļoti trekns']
   ];
   let saved = {};
@@ -82,6 +90,7 @@
     size: Number.isInteger(saved.size) && saved.size >= 14 && saved.size <= 22 ? saved.size : 16,
     density: ['normal', 'compact', 'roomy'].includes(saved.density) ? saved.density : 'normal',
     corners: Number.isInteger(saved.corners) && saved.corners >= 8 && saved.corners <= 24 ? saved.corners : 16,
+    lineHeight: ['normal','relaxed','wide'].includes(saved.lineHeight)?saved.lineHeight:'normal',
     colors: {}, fineColors: {}, frames: {...frameDefaults}
   };
   for (const [key, , initial] of weightFields) {
@@ -165,9 +174,10 @@
   addHeading('Teksts un izkārtojums');
   addSelect('Fonts', 'font', [
     ['default', 'Noklusētais'], ['system', 'Sistēmas fonts'], ['arial', 'Arial'],
-    ['verdana', 'Verdana'], ['tahoma', 'Tahoma'], ['georgia', 'Georgia']
+    ['verdana', 'Verdana'], ['tahoma', 'Tahoma'], ['georgia', 'Georgia'], ['segoe','Segoe UI'], ['calibri','Calibri'], ['aptos','Aptos'], ['helvetica','Helvetica'], ['trebuchet','Trebuchet MS'], ['cambria','Cambria'], ['palatino','Palatino'], ['monospace','Consolas / Menlo']
   ]);
   addRange('Teksta lielums', 'size', 14, 22, ' px');
+  addSelect('Rindstarpa','lineHeight',[['normal','Parasta'],['relaxed','Brīvāka'],['wide','Plaša']]);
   addHeading('Teksta biezums');
   addSelect('Virsraksti', 'headingWeight', weightOptions);
   addSelect('Uzdevumu nosaukumi', 'taskWeight', weightOptions);
@@ -269,6 +279,7 @@
   resetAll.textContent = 'Atjaunot sākotnējo dizainu';
   resetAll.addEventListener('click', () => {
     settings.font = 'default'; settings.size = 16;
+    settings.lineHeight='normal';content.querySelector('#design-lineHeight').value='normal';
     settings.density = 'normal'; settings.corners = 16;
     for (const [key, , initial] of weightFields) {
       settings[key] = initial;
@@ -307,6 +318,7 @@
       root.toggleAttribute('data-design-weight-' + attribute, settings[key] !== initial);
       root.style.setProperty('--design-weight-' + attribute, settings[key]);
     }
+    root.dataset.designLineHeight=settings.lineHeight;
     root.dataset.designDensity = settings.density;
     root.toggleAttribute('data-design-corners', settings.corners !== 16);
     root.style.setProperty('--design-corners', settings.corners + 'px');
