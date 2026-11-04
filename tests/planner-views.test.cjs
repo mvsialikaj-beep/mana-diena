@@ -1,6 +1,7 @@
 const assert=require('node:assert/strict');
 const fs=require('node:fs');
 const path=require('node:path');
+require('../holidays.js');
 const html=fs.readFileSync(process.argv[2]||path.join(__dirname,'..','index.html'),'utf8');
 assert(!html.includes('—'));
 const assetDir=path.dirname(process.argv[2]||path.join(__dirname,'..','index.html'));

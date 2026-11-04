@@ -1,3 +1,4 @@
+import './holidays.js';
 const formatRiga = new Intl.DateTimeFormat('en-GB', {
   timeZone: 'Europe/Riga', year: 'numeric', month: '2-digit', day: '2-digit',
   hour: '2-digit', minute: '2-digit', hourCycle: 'h23'
@@ -12,10 +13,7 @@ export function rigaClock(instant) {
 const dateAtNoon = day => new Date(`${day}T12:00:00Z`);
 const sameDay = (a, b) => a.toISOString().slice(0, 10) === b.toISOString().slice(0, 10);
 function nextWorkday(date) {
-  const weekday = date.getUTCDay();
-  if (weekday === 6) date.setUTCDate(date.getUTCDate() + 2);
-  if (weekday === 0) date.setUTCDate(date.getUTCDate() + 1);
-  return date;
+  return dateAtNoon(LATVIAN_HOLIDAYS.nextWorkday(date.toISOString().slice(0, 10), true));
 }
 
 export function occurs(task, day) {
@@ -23,13 +21,13 @@ export function occurs(task, day) {
   if (task.postponedDates?.[day]) return false;
   if (task.postponedDates && Object.values(task.postponedDates).includes(day)) return true;
   const personal = task.workspace === 'personal';
+  if (!personal && !LATVIAN_HOLIDAYS.isWorkday(day)) return false;
   const repeat = task.repeat || 'none';
   const target = dateAtNoon(day);
   if (Number.isNaN(target.getTime())) return false;
   if (repeat === 'none') {
     if (!task.project || personal) return task.date === day;
-    const weekday = target.getUTCDay();
-    return day >= task.date && weekday !== 0 && weekday !== 6 &&
+    return day >= task.date &&
       (!task.done || day <= (task.completedOn || task.date));
   }
   if (day < task.date || ((!personal || repeat === 'daily' || repeat === 'weekdays') &&
@@ -44,18 +42,19 @@ export function occurs(task, day) {
   if (repeat === 'daily' || repeat === 'weekdays' || repeat === 'everyday') {
     const first = nextWorkday(new Date(start));
     if (target < first) return false;
-    const days = Math.round((target - first) / 86400000);
-    const weeks = Math.floor(days / 7);
-    let elapsed = weeks * 5;
-    for (let i = 1; i <= days % 7; i++) {
-      const weekday = (first.getUTCDay() + i) % 7;
-      if (weekday !== 0 && weekday !== 6) elapsed++;
-    }
+    const elapsed = LATVIAN_HOLIDAYS.countWorkdays(first.toISOString().slice(0, 10), day);
     return elapsed % interval === 0;
   }
   if (repeat === 'weekly') {
     const first = personal ? new Date(start) : nextWorkday(new Date(start));
-    return target >= first && Math.round((target - first) / 86400000) % (interval * 7) === 0;
+    if (personal) return target >= first && Math.round((target - first) / 86400000) % (interval * 7) === 0;
+    const weeks = Math.floor((target - first) / (86400000 * 7 * interval));
+    for (let n = Math.max(0, weeks - 1); n <= weeks + 1; n++) {
+      const candidate = new Date(first);
+      candidate.setUTCDate(candidate.getUTCDate() + n * interval * 7);
+      if (sameDay(nextWorkday(candidate), target)) return true;
+    }
+    return false;
   }
   if (repeat === 'monthly') {
     for (let offset = 0; offset <= 1; offset++) {
@@ -86,8 +85,10 @@ export function isDone(task, day) {
 }
 
 function repeatStartDay(task, currentDay) {
-  if (!task.repeat || task.repeat === 'none')
-    return currentDay >= task.date && !task.done ? task.date : null;
+  if (!task.repeat || task.repeat === 'none') {
+    const start = task.workspace === 'personal' ? task.date : LATVIAN_HOLIDAYS.nextWorkday(task.date, true);
+    return currentDay >= start && !task.done ? start : null;
+  }
   const cursor = dateAtNoon(currentDay);
   const first = dateAtNoon(task.date);
   for (let i = 0; i < 5000 && cursor >= first; i++) {

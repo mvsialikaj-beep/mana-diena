@@ -1,6 +1,7 @@
 const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const path = require('node:path');
+require('../holidays.js');
 
 const html = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
 const planner = [...html.matchAll(/<script(?:\s[^>]*)?>([\s\S]*?)<\/script>/g)]
@@ -30,12 +31,15 @@ assert(dayButton(7).className.includes('selected'));
 assert(!dayButton(7).className.includes('today'));
 assert(!dayButton(7).className.includes('has-tasks'));
 assert(!dayButton(9).className.includes('work-weekend'));
+assert(dayButton(18).className.includes('work-holiday'));
+assert(dayButton(18).attributes['aria-label'].includes('proklamēšanas diena'));
 
 calendar.setWorkspace('personal');
 calendar.renderSideCalendar();
 for (const day of [7,8]) assert(!dayButton(day).className.includes('work-weekend'));
 assert(dayButton(7).className.includes('today'));
 assert(dayButton(7).className.includes('has-tasks'));
-assert(planner.includes("let weekend=isWorkWeekend(d);day.className="),
+assert(!dayButton(18).className.includes('work-holiday'));
+assert(planner.includes("let weekend=isWorkWeekend(d),holiday=workHoliday(value)"),
   'The date picker uses the same workspace weekend rule');
 console.log('Work weekends are muted; personal weekends stay active.');

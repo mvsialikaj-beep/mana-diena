@@ -8,7 +8,7 @@ Atver uzdevumu un spied **Kopēt**, lai jauna uzdevuma formā pārņemtu tā sat
 
 Ikdienas skatā vienreizējie uzdevumi, tostarp projekti, ir redzami tikai izvēlētajā datumā. Nepaveiktu darbu automātiska pārcelšana attiecas tikai uz Darba skatu. Ikdienas skatā atkārtošanos var izvēlēties katru dienu, arī brīvdienās, vai tikai darbadienās. Nedēļas, mēneša un gada atkārtojumi Ikdienas skatā var būt brīvdienās; Darba skatā tie saglabā darbadienu noteikumus.
 
-Darba skatā kalendāra sestdienas un svētdienas ir neuzkrītošas, bet joprojām atveramas. Ikdienas skatā brīvdienas izskatās kā parastas kalendāra dienas.
+Darba skatā kalendāra sestdienas un svētdienas ir neuzkrītošas, bet joprojām atveramas. Latvijas oficiālās svētku dienas ir atzīmētas sarkanā krāsā ar nosaukumu. Darba uzdevumu sākuma datumam var izvēlēties tikai darbadienu; atkārtojumi, projektu dienas un atgādinājumi izlaiž svētku dienas. Ja esošs nepabeigts vienreizējs uzdevums ir ieplānots nākotnes svētku dienā, tas tiek pārcelts uz nākamo darbadienu. Ikdienas skatā svētku dienas neierobežo uzdevumus. Aprēķini balstās uz [Latvijas svētku dienu likumu](https://likumi.lv/ta/id/72608-par-svetku-un-atceres-dienam); 2028. gada Dziesmu svētku datums - uz [Ministru kabineta rīkojumu](https://likumi.lv/ta/id/367734-par-xxviii-visparejo-latviesu-dziesmu-un-xviiideju-svetku-norises-laiku).
 
 Darba skatā automātiskā pārcelšana attiecas tikai uz vienreizējiem uzdevumiem bez norādīta laika. Laikā ieplānotie darbi paliek savā izvēlētajā datumā, arī tad, ja tos nepabeidz vai noņem paveikšanas atzīmi. Filtrs **Jāizdara** rāda šai dienai paredzētos darbus, bet **Visi** joprojām rāda nepabeigtos darbus no visiem datumiem.
 
