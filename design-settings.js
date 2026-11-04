@@ -36,7 +36,7 @@
     ['Kategorijas', [
       ['categorySurface','Kategorijas fons','#eef4f6','#2e424b'],
       ['categoryInk','Kategorijas teksts','#34424d','#edf3f5'],
-      ['categoryOutline','Kategorijas rāmis','#cbd9de','#526570'],
+      ['categoryOutline','Kategorijas bloka rāmis','#cbd9de','#526570'],
       ['categoryDot','Kategorijas punkts','#8d99a2','#a9c1cb']
     ]],
     ['Kalendāra dienas', [
@@ -238,7 +238,7 @@
   const frameBody=document.createElement('div');frameBody.className='design-frame-grid';frameGroup.append(frameBody);content.append(frameGroup);
   const frameControls=new Map();
   const frameFields=[
-    ['taskBorder','Uzdevuma rāmja biezums',0,5],['categoryBorder','Kategorijas rāmja biezums',0,5],
+    ['taskBorder','Uzdevuma rāmja biezums',0,5],['categoryBorder','Kategorijas bloka rāmja biezums',0,5],
     ['holidayBorder','Svētku dienas rāmja biezums',0,4],['cardBorder','Paneļa rāmja biezums',0,5],
     ['sectionBorder','Sadaļas rāmja biezums',0,5],['taskRadius','Uzdevuma stūri',0,24],
     ['categoryRadius','Kategorijas stūri',0,24],['holidayRadius','Kalendāra dienas stūri',0,18]

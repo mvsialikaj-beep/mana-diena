@@ -11,6 +11,8 @@ assert(html.includes('html[data-design-priority] .task-section.priority-section'
 assert(html.includes('html[data-design-tasks] .task:not(.custom-color)'));
 assert(html.includes('html[data-fine-holidaysurface] .side-calendar-grid button.work-holiday'));
 assert(html.includes('html[data-frame-taskborder] .task'));
+assert(html.includes('html[data-frame-categoryborder] .task-group[data-category-name]'));
+assert(html.includes("group.style.setProperty('--category-frame-color'"));
 
 class Element {
   constructor(tag = 'div') {

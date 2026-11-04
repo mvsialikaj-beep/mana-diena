@@ -22,7 +22,7 @@ Sadaļā **Iestatījumi un datu kopija > Dizaina pielāgošana** var izvēlētie
 
 Tajā pašā vietā atsevišķi var mainīt teksta biezumu virsrakstiem, uzdevumu un kategoriju nosaukumiem, pogām un pārējam tekstam. Katrai grupai pieejams parasts, vidējs, pustrekns, trekns un ļoti trekns variants.
 
-Zem **Detalizētas krāsas un rāmji** ir atsevišķi salokāmi iestatījumi uzdevumu kartītēm, kategoriju virsrakstiem, kalendāra dienām un paneļu rāmjiem. Var mainīt fonu, tekstu, kontūru un akcentus, kā arī rāmja biezumu, līnijas veidu, stūru noapaļojumu un uzdevumu ēnu. Svētku dienu krāsas darbojas tikai Darba skatā, kur tās tiek rādītas. Katru krāsu var atiestatīt atsevišķi, bet **Atjaunot sākotnējo dizainu** atiestata visus iestatījumus. Atsevišķa uzdevuma vai kategorijas iepriekš izvēlētajai krāsai ir priekšroka pār vispārējo fona un teksta krāsu.
+Zem **Detalizētas krāsas un rāmji** ir atsevišķi salokāmi iestatījumi uzdevumu kartītēm, kategoriju blokiem, kalendāra dienām un paneļu rāmjiem. Kategorijas rāmja biezums un krāsa attiecas uz visu bloku ar uzdevumiem, ne tikai virsrakstu. Var mainīt fonu, tekstu, kontūru un akcentus, kā arī rāmja biezumu, līnijas veidu, stūru noapaļojumu un uzdevumu ēnu. Svētku dienu krāsas darbojas tikai Darba skatā, kur tās tiek rādītas. Katru krāsu var atiestatīt atsevišķi, bet **Atjaunot sākotnējo dizainu** atiestata visus iestatījumus. Atsevišķa uzdevuma vai kategorijas iepriekš izvēlētajai krāsai ir priekšroka pār vispārējo fona un teksta krāsu.
 
 ## Fona paziņojumi telefonā
 
