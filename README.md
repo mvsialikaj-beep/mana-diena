@@ -16,6 +16,8 @@ Atverot uzdevumu, izvēlies **Bloka krāsa**, lai mainītu tikai tā krāsu. Kat
 
 Prioritārie darbi un pārējie darbi atrodas atsevišķās sadaļās. Katras sadaļas krāsu var mainīt tās **⋯ iestatījumos**; krāsa saglabājas atsevišķi Darba un Ikdienas skatam.
 
+Sadaļā **Iestatījumi un datu kopija > Dizaina pielāgošana** var izvēlēties fontu, teksta lielumu, atstarpes, stūru noapaļojumu un krāsas galvenajām lietotnes sadaļām. Katrai krāsai ir sava atiestatīšanas poga; var atjaunot arī visu sākotnējo dizainu. Šie izskata iestatījumi glabājas konkrētajā ierīcē un darbojas abos plānotāja skatos. Atsevišķu uzdevumu un kategoriju krāsas paliek spēkā; prioritāšu un pārējo darbu globālā krāsa pārņem šīm sadaļām iepriekš izvēlētu atsevišķu krāsu, līdz globālo izvēli atiestata.
+
 ## Fona paziņojumi telefonā
 
 1. Atver lietotni telefonā un pieraksties ar to pašu kontu, ar kuru sinhronizē uzdevumus.
