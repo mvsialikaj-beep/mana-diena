@@ -105,10 +105,10 @@ const carryTasks=[
   {id:'timed',date:'2026-10-29',done:false,repeat:'none',time:'14:00'},
   {id:'personal',date:'2026-10-29',done:false,repeat:'none',workspace:'personal'}
 ];
-const carrying=new Function('tasks','autoCarry','today','save','taskWorkspace',section('function nextWorkday(value){',"$('#autoCarry').checked")+'return {carryOverdue,nextWorkday}')(
-  carryTasks,true,()=> '2026-10-31',()=>saved++,t=>t.workspace==='personal'?'personal':'work');
+let paused=false; const carrying=new Function('document','tasks','autoCarry','today','save','taskWorkspace',section('function nextWorkday(value){',"$('#autoCarry').checked")+'return {carryOverdue,nextWorkday}')(
+  {documentElement:{hasAttribute:()=>paused}},carryTasks,true,()=> '2026-10-31',()=>saved++,t=>t.workspace==='personal'?'personal':'work');
 assert.equal(carrying.nextWorkday('2026-10-30'),'2026-11-02');
-assert.equal(carrying.carryOverdue(),true);
+paused=true; assert.equal(carrying.carryOverdue(),false); paused=false; assert.equal(carrying.carryOverdue(),true);
 assert.equal(saved,1);
 assert.deepEqual(carryTasks.map(t=>t.date),['2026-11-02','2026-10-29','2026-10-29','2026-10-29','2026-10-29','2026-10-29']);
 
