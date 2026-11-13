@@ -205,6 +205,43 @@
   grid.className = 'design-color-grid';
   content.append(grid);
   const colorInputs = new Map();
+
+  const gradientControls = new Map();
+  const directions = ['90','135','180','45'];
+  const gradients = Object.create(null);
+  function addGradient(key, input, reset, row) {
+    const details = document.createElement('details');
+    const summary = document.createElement('summary');
+    summary.textContent = 'Gradients';
+    const end = document.createElement('input');
+    end.type = 'color';
+    end.setAttribute('aria-label','Gradienta otrā krāsa');
+    const direction = document.createElement('select');
+    direction.setAttribute('aria-label','Gradienta virziens');
+    for (const [value,label] of [['90','Pa labi'],['135','Diagonāli lejup'],['180','Uz leju'],['45','Diagonāli augšup']]) {
+      const option = document.createElement('option');
+      option.value=value; option.textContent=label; direction.append(option);
+    }
+    const clear = document.createElement('button');
+    clear.type='button'; clear.textContent='Vienkrāsains';
+    const savedGradient = saved.gradients?.[key];
+    if (/^#[0-9a-f]{6}$/i.test(savedGradient?.end || '') && directions.includes(savedGradient?.angle)) gradients[key]=savedGradient;
+    end.value=gradients[key]?.end || input.value;
+    direction.value=gradients[key]?.angle || '135';
+    details.open=!!gradients[key];
+    function change() {
+      gradients[key]={end:end.value,angle:direction.value};
+      apply(); persist();
+    }
+    function remove() { delete gradients[key]; apply(); persist(); }
+    end.addEventListener('input',change);
+    direction.addEventListener('change',change);
+    clear.addEventListener('click',remove);
+    reset.addEventListener('click',remove);
+    details.append(summary,end,direction,clear);
+    row.append(details);
+    gradientControls.set(key,input);
+  }
   for (const [key, label, light, dark] of sections) {
     const row = document.createElement('div');
     row.className = 'design-color-row';
@@ -235,6 +272,7 @@
     row.append(name, input, reset);
     grid.append(row);
     colorInputs.set(key, { input, light, dark });
+    if(key!=='text') addGradient(key,input,reset,row);
   }
   const fineInputs = new Map();
   addHeading('Detalizētas krāsas un rāmji');
@@ -253,6 +291,7 @@
       input.addEventListener('input',()=>{settings.fineColors[key]=input.value;reset.disabled=false;apply();persist()});
       reset.addEventListener('click',()=>{delete settings.fineColors[key];input.value=root.dataset.theme==='dark'?dark:light;reset.disabled=true;apply();persist()});
       row.append(name,input,reset);rows.append(row);fineInputs.set(key,{input,light,dark});
+      if(key.endsWith('Surface')) addGradient(key,input,reset,row);
     }
   }
   const frameGroup=document.createElement('details');frameGroup.className='design-subgroup';
@@ -298,6 +337,7 @@
       settings[key] = initial;
       content.querySelector('#design-' + key).value = initial;
     }
+    for(const key of Object.keys(gradients)) delete gradients[key];
     settings.colors = {};settings.fineColors={};settings.frames={...frameDefaults};
     content.querySelector('#design-font').value = 'default';
     content.querySelector('#design-density').value = 'normal';
@@ -366,15 +406,22 @@
       root.style.setProperty('--frame-'+key,typeof value==='number'?value+'px':value);
     }
     root.dataset.frameTaskshadow=settings.frames.taskShadow;
+    for(const [key,input] of gradientControls){
+      const gradient=gradients[key];
+      root.toggleAttribute('data-gradient-'+key.toLowerCase(),!!gradient);
+      if(gradient) root.style.setProperty('--gradient-'+key,'linear-gradient('+gradient.angle+'deg,'+input.value+','+gradient.end+')');
+      else root.style.removeProperty('--gradient-'+key);
+    }
   }
   function persist() {
-    try { localStorage.setItem(storageKey, JSON.stringify(settings)); } catch {}
+    try { localStorage.setItem(storageKey, JSON.stringify({...settings, gradients})); } catch {}
   }
   new MutationObserver(() => {
     for (const [key, {input, light, dark}] of colorInputs) {
       if (!settings.colors[key]) input.value = root.dataset.theme === 'dark' ? dark : light;
     }
     for(const [key,{input,light,dark}] of fineInputs){if(!settings.fineColors[key])input.value=root.dataset.theme==='dark'?dark:light}
+    apply();
   }).observe(root, {attributes:true, attributeFilter:['data-theme']});
   apply();
 })();
