@@ -123,10 +123,17 @@
   details.append(content);
   panel.querySelector('summary').insertAdjacentElement('afterend', details);
 
+  const typography = document.createElement('details');
+  typography.className = 'design-typography';
+  const typographyTitle = document.createElement('summary');
+  typographyTitle.textContent = 'Fonts un izkārtojums';
+  typography.append(typographyTitle);
+  content.append(typography);
+  let controls = typography;
   const addHeading = title => {
     const heading = document.createElement('h4');
     heading.textContent = title;
-    content.append(heading);
+    controls.append(heading);
   };
   const addSelect = (label, key, options) => {
     const wrapper = document.createElement('label');
@@ -146,7 +153,7 @@
       apply(); persist();
     });
     wrapper.append(select);
-    content.append(wrapper);
+    controls.append(wrapper);
   };
   const addRange = (label, key, min, max, suffix) => {
     const wrapper = document.createElement('label');
@@ -169,7 +176,7 @@
       apply(); persist();
     });
     wrapper.append(title, input);
-    content.append(wrapper);
+    controls.append(wrapper);
   };
 
   addHeading('Teksts un izkārtojums');
@@ -181,13 +188,42 @@
   const fontSample = document.createElement('p');
   fontSample.textContent = 'Ātrais brūnais lapsēns. Ģ, ķ, ļ, ņ, š, ž.';
   fontSample.className = 'font-sample';
-  content.append(fontSample);
+  typography.append(fontSample);
   const fontShortcut = document.querySelector('#fontOpen');
-  if (fontShortcut) fontShortcut.onclick = () => {
-    panel.open = true;
-    details.open = true;
-    content.querySelector('#design-font').focus();
-  };
+  if (fontShortcut) {
+    const close = document.createElement('button');
+    close.type = 'button';
+    close.textContent = 'Aizvērt';
+    fontShortcut.setAttribute('aria-controls',details.id);
+    fontShortcut.setAttribute('aria-expanded','false');
+    function hidePanel() {
+      details.open = false;
+      details.classList.remove('design-floating');
+      summary.classList.remove('design-panel-heading');
+      close.remove();
+      panel.querySelector('summary').insertAdjacentElement('afterend',details);
+      fontShortcut.setAttribute('aria-expanded','false');
+      fontShortcut.focus({preventScroll:true});
+    }
+    close.addEventListener('click', event => {event.preventDefault();hidePanel()});
+    summary.addEventListener('click', event => {
+      if(details.classList.contains('design-floating')) event.preventDefault();
+    });
+    details.addEventListener('keydown', event => {
+      if(event.key==='Escape' && details.classList.contains('design-floating')) hidePanel();
+    });
+    fontShortcut.onclick = () => {
+      if(details.classList.contains('design-floating')) return hidePanel();
+      document.body.append(details);
+      details.classList.add('design-floating');
+      summary.classList.add('design-panel-heading');
+      summary.append(close);
+      details.open = true;
+      details.scrollTop = 0;
+      fontShortcut.setAttribute('aria-expanded','true');
+      close.focus({preventScroll:true});
+    };
+  }
   addSelect('Burtu atstarpes','tracking',[['normal','Parastas'],['roomy','Brīvākas'],['wide','Plašas']]);
   addSelect('Rindstarpa','lineHeight',[['normal','Parasta'],['relaxed','Brīvāka'],['wide','Plaša']]);
   addHeading('Teksta biezums');
@@ -200,6 +236,7 @@
     ['normal', 'Parastās'], ['compact', 'Mazākas'], ['roomy', 'Plašākas']
   ]);
   addRange('Stūru noapaļojums', 'corners', 8, 24, ' px');
+  controls = content;
   addHeading('Sadaļu krāsas');
   const grid = document.createElement('div');
   grid.className = 'design-color-grid';
