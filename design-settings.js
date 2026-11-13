@@ -335,11 +335,13 @@
       preview.style.background=gradientBackground(input.value, gradients[key] || {end:end.value,angle:angle.control.value,start:start.control.value,finish:finish.control.value});
     });
     details.open=!!gradients[key];
+    if (gradients[key]) reset.disabled=false;
     function change() {
       gradients[key]={end:end.value,angle:angle.control.value,start:start.control.value,finish:finish.control.value};
+      reset.disabled=false;
       apply(); persist();
     }
-    function remove() { delete gradients[key]; apply(); persist(); }
+    function remove() { delete gradients[key]; reset.disabled=!(settings.colors[key] || settings.fineColors[key]); apply(); persist(); }
     end.addEventListener('input',change);
     for(const {control} of [angle,start,finish]) control.addEventListener('input',change);
     clear.addEventListener('click',remove);
@@ -366,7 +368,7 @@
     name.textContent = label;
     const reset = document.createElement('button');
     reset.type = 'button';
-    reset.textContent = '↺';
+    reset.textContent = 'Atjaunot sākotnējo krāsu';
     reset.title = 'Atjaunot sākotnējo krāsu: ' + label;
     reset.setAttribute('aria-label', reset.title);
     reset.disabled = !settings.colors[key];
@@ -383,7 +385,7 @@
     });
     row.append(name, input, reset);
     grid.append(row);
-    colorInputs.set(key, { input, light, dark });
+    colorInputs.set(key, { input, light, dark, reset });
     if(key!=='text') addGradient(key,input,reset,row);
     else addEyedropper(input,row);
   }
@@ -398,12 +400,12 @@
       const name=document.createElement('label');name.textContent=label;
       const input=document.createElement('input');input.type='color';input.id='design-fine-'+key;
       input.value=settings.fineColors[key]||(root.dataset.theme==='dark'?dark:light);name.htmlFor=input.id;
-      const reset=document.createElement('button');reset.type='button';reset.textContent='↺';
+      const reset=document.createElement('button');reset.type='button';reset.textContent='Atjaunot sākotnējo krāsu';
       reset.title='Atjaunot sākotnējo krāsu: '+label;reset.setAttribute('aria-label',reset.title);
       reset.disabled=!settings.fineColors[key];
       input.addEventListener('input',()=>{settings.fineColors[key]=input.value;reset.disabled=false;apply();persist()});
       reset.addEventListener('click',()=>{delete settings.fineColors[key];input.value=root.dataset.theme==='dark'?dark:light;reset.disabled=true;apply();persist()});
-      row.append(name,input,reset);rows.append(row);fineInputs.set(key,{input,light,dark});
+      row.append(name,input,reset);rows.append(row);fineInputs.set(key,{input,light,dark,reset});
       if(key.endsWith('Surface')) addGradient(key,input,reset,row);
       else addEyedropper(input,row);
     }
@@ -460,11 +462,11 @@
       input.value = settings[key];
       input.closest('label').querySelector('output').textContent = settings[key] + (key === 'size' ? ' px' : ' px');
     }
-    for (const [key, {input, light, dark}] of colorInputs) {
+    for (const [key, {input, light, dark, reset}] of colorInputs) {
       input.value = root.dataset.theme === 'dark' ? dark : light;
-      input.nextElementSibling.disabled = true;
+      reset.disabled = true;
     }
-    for (const {input,light,dark} of fineInputs.values()) {input.value=root.dataset.theme==='dark'?dark:light;input.nextElementSibling.disabled=true}
+    for (const {input,light,dark,reset} of fineInputs.values()) {input.value=root.dataset.theme==='dark'?dark:light;reset.disabled=true}
     for(const [key,{input,output}] of frameControls){input.value=frameDefaults[key];if(output)output.textContent=frameDefaults[key]+' px'}
     apply(); persist();
   });
@@ -534,7 +536,7 @@
     try { localStorage.setItem(storageKey, JSON.stringify({...settings, gradients})); } catch {}
   }
   new MutationObserver(() => {
-    for (const [key, {input, light, dark}] of colorInputs) {
+    for (const [key, {input, light, dark, reset}] of colorInputs) {
       if (!settings.colors[key]) input.value = root.dataset.theme === 'dark' ? dark : light;
     }
     for(const [key,{input,light,dark}] of fineInputs){if(!settings.fineColors[key])input.value=root.dataset.theme==='dark'?dark:light}
