@@ -78,33 +78,33 @@ html[data-theme=dark] .category-card h3{color:#eef3f5}
 
 /* Optional design controls. Existing per-task and per-category colors keep priority. */
 .design-settings{margin-top:16px;padding-top:15px}.design-settings>summary{font-size:14px;font-weight:700;color:inherit}.design-settings-content{display:grid;gap:11px;min-width:0;padding:12px 0}.design-settings-content h4{margin:13px 0 0}.design-control{display:grid;gap:5px;min-width:0;font-size:13px;font-weight:600}.design-control select,.design-control input{width:100%;min-width:0}.design-control input[type=range]{padding:0;accent-color:var(--blue)}.design-control output{font-variant-numeric:tabular-nums}.design-color-grid{display:grid;gap:6px}.design-color-row{display:grid;grid-template-columns:minmax(0,1fr) 43px 34px;align-items:center;gap:7px;min-width:0;padding:5px 0;border-bottom:1px solid var(--line);font-size:12px}.design-color-row label{min-width:0;overflow-wrap:anywhere}.design-color-row input[type=color]{width:43px;min-width:43px;height:34px;min-height:34px;padding:2px;cursor:pointer}.design-color-row button{width:34px;min-width:34px;min-height:34px;margin:0;padding:0;font-size:19px}.design-color-row button:disabled{opacity:.35;cursor:default}#designReset{justify-self:start;margin-top:10px}html[data-theme=dark] .design-color-row{border-color:#435660}
-html:where(:not([data-studio]))[data-design-font] body,html:where(:not([data-studio]))[data-design-font] button,html:where(:not([data-studio]))[data-design-font] input,html:where(:not([data-studio]))[data-design-font] select,html:where(:not([data-studio]))[data-design-font] textarea{font-family:var(--design-font)!important}
-html:where(:not([data-studio]))[data-design-size] body{font-size:var(--design-size)}html:where(:not([data-studio]))[data-design-size] .task-toggle,html:where(:not([data-studio]))[data-design-size] .tasktitle,html:where(:not([data-studio]))[data-design-size] .desc,html:where(:not([data-studio]))[data-design-size] .comment,html:where(:not([data-studio]))[data-design-size] .group-title,html:where(:not([data-studio]))[data-design-size] .note-item,html:where(:not([data-studio]))[data-design-size] .daily-motivation-text,html:where(:not([data-studio]))[data-design-size] .namedays p{font-size:var(--design-size)!important}html:where(:not([data-studio]))[data-design-size] button,html:where(:not([data-studio]))[data-design-size] input:not([type=color]):not([type=range]):not([type=checkbox]),html:where(:not([data-studio]))[data-design-size] select,html:where(:not([data-studio]))[data-design-size] textarea,html:where(:not([data-studio]))[data-design-size] .form label,html:where(:not([data-studio]))[data-design-size] .side p,html:where(:not([data-studio]))[data-design-size] .settings-panel summary{font-size:max(14px,calc(var(--design-size) * .88))!important}html:where(:not([data-studio]))[data-design-size] .sectionhead h2{font-size:calc(var(--design-size) * 1.4)!important}html:where(:not([data-studio]))[data-design-size] .brand{font-size:calc(var(--design-size) * 1.2)!important}
-html:where(:not([data-studio]))[data-design-density=compact] .main,html:where(:not([data-studio]))[data-design-density=compact] .side,html:where(:not([data-studio]))[data-design-density=compact] .category-card{padding:16px}html:where(:not([data-studio]))[data-design-density=compact] .task{padding:8px}html:where(:not([data-studio]))[data-design-density=compact] .task-section{padding:9px}html:where(:not([data-studio]))[data-design-density=roomy] .main,html:where(:not([data-studio]))[data-design-density=roomy] .side,html:where(:not([data-studio]))[data-design-density=roomy] .category-card{padding:32px}html:where(:not([data-studio]))[data-design-density=roomy] .task{padding:20px}html:where(:not([data-studio]))[data-design-density=roomy] .task-section{padding:20px}@media(max-width:700px){html:where(:not([data-studio]))[data-design-density=roomy] .main,html:where(:not([data-studio]))[data-design-density=roomy] .side,html:where(:not([data-studio]))[data-design-density=roomy] .category-card{padding:20px}html:where(:not([data-studio]))[data-design-density=roomy] .task{padding:14px}}
-html:where(:not([data-studio]))[data-design-corners] .card{border-radius:var(--design-corners)}html:where(:not([data-studio]))[data-design-corners] .task,html:where(:not([data-studio]))[data-design-corners] .task-section,html:where(:not([data-studio]))[data-design-corners] .group-head,html:where(:not([data-studio]))[data-design-corners] .namedays,html:where(:not([data-studio]))[data-design-corners] .note-item,html:where(:not([data-studio]))[data-design-corners] button,html:where(:not([data-studio]))[data-design-corners] input,html:where(:not([data-studio]))[data-design-corners] select,html:where(:not([data-studio]))[data-design-corners] textarea{border-radius:calc(var(--design-corners) * .65)}
-html:where(:not([data-studio]))[data-design-text] body,html:where(:not([data-studio]))[data-design-text] .task:not(.custom-color) .tasktitle,html:where(:not([data-studio]))[data-design-text] .task:not(.custom-color) .desc,html:where(:not([data-studio]))[data-design-text] .group-title,html:where(:not([data-studio]))[data-design-text] .sectionhead h2,html:where(:not([data-studio]))[data-design-text] .side h3{color:var(--design-text)}
-html:where(:not([data-studio]))[data-design-page] body{background:var(--design-page);color:var(--design-page-ink)}
-html:where(:not([data-studio]))[data-design-header] header{background:var(--design-header);border-color:color-mix(in srgb,var(--design-header-ink) 25%,transparent)}html:where(:not([data-studio]))[data-design-header] header .brand,html:where(:not([data-studio]))[data-design-header] header .topright{color:var(--design-header-ink)}
-html:where(:not([data-studio]))[data-design-motivation] .motivation-strip{background:var(--design-motivation);border-color:color-mix(in srgb,var(--design-motivation-ink) 22%,transparent)}html:where(:not([data-studio]))[data-design-motivation] .daily-motivation-text,html:where(:not([data-studio]))[data-design-motivation] .daily-motivation-label,html:where(:not([data-studio]))[data-design-motivation] .motivation-expand-label,html:where(:not([data-studio]))[data-design-motivation] .motivation-explanation,html:where(:not([data-studio]))[data-design-motivation] .motivation-explanation strong{color:var(--design-motivation-ink)}
-html:where(:not([data-studio]))[data-design-main] .card.main{background:var(--design-main);color:var(--design-main-ink)}html:where(:not([data-studio]))[data-design-main] .main .sectionhead h2,html:where(:not([data-studio]))[data-design-main] .main .muted,html:where(:not([data-studio]))[data-design-main] .main .empty{color:var(--design-main-ink)}
-html:where(:not([data-studio]))[data-design-categories] .category-card{background:var(--design-categories);color:var(--design-categories-ink)}html:where(:not([data-studio]))[data-design-categories] .category-card h3,html:where(:not([data-studio]))[data-design-categories] .category-card summary,html:where(:not([data-studio]))[data-design-categories] .empty-categories-label{color:var(--design-categories-ink)}
-html:where(:not([data-studio]))[data-design-sidebar] .card.side{background:var(--design-sidebar);color:var(--design-sidebar-ink)}html:where(:not([data-studio]))[data-design-sidebar] .side>h3,html:where(:not([data-studio]))[data-design-sidebar] .side>.eyebrow,html:where(:not([data-studio]))[data-design-sidebar] .side>p,html:where(:not([data-studio]))[data-design-sidebar] .side>.big,html:where(:not([data-studio]))[data-design-sidebar] .side>.settings-panel>summary{color:var(--design-sidebar-ink)}
-html:where(:not([data-studio]))[data-design-sidebar] .side-calendar-head,html:where(:not([data-studio]))[data-design-sidebar] .side-calendar-head button,html:where(:not([data-studio]))[data-design-sidebar] .side-calendar-grid span,html:where(:not([data-studio]))[data-design-sidebar] .side-calendar-grid button,html:where(:not([data-studio]))[data-design-sidebar] .settings-panel summary,html:where(:not([data-studio]))[data-design-sidebar] .settings-panel h4,html:where(:not([data-studio]))[data-design-sidebar] .settings-panel p,html:where(:not([data-studio]))[data-design-sidebar] .settings-panel .notice,html:where(:not([data-studio]))[data-design-sidebar] .settings-panel .settings-checkbox,html:where(:not([data-studio]))[data-design-sidebar] .settings-panel .sync-label{color:var(--design-sidebar-ink)}html:where(:not([data-studio]))[data-design-sidebar]:not([data-design-notes]) .notes-panel h4,html:where(:not([data-studio]))[data-design-sidebar]:not([data-design-notes]) .notes-panel p{color:var(--design-sidebar-ink)}html:where(:not([data-studio]))[data-design-sidebar] .side-calendar,html:where(:not([data-studio]))[data-design-sidebar] .notes-panel,html:where(:not([data-studio]))[data-design-sidebar] .settings-panel,html:where(:not([data-studio]))[data-design-sidebar] .sideblock{border-color:color-mix(in srgb,var(--design-sidebar-ink) 25%,transparent)}
-html:where(:not([data-studio]))[data-design-priority] .task-section.priority-section{background:var(--design-priority);border-color:color-mix(in srgb,var(--design-priority-ink) 25%,transparent)}html:where(:not([data-studio]))[data-design-priority] .task-section.priority-section>.priority-section-label{color:var(--design-priority-ink);border-color:color-mix(in srgb,var(--design-priority-ink) 25%,transparent)}
-html:where(:not([data-studio]))[data-design-regular] .task-section:not(.priority-section){background:var(--design-regular);border-color:color-mix(in srgb,var(--design-regular-ink) 25%,transparent)}html:where(:not([data-studio]))[data-design-regular] .task-section:not(.priority-section)>.priority-section-label{color:var(--design-regular-ink);border-color:color-mix(in srgb,var(--design-regular-ink) 25%,transparent)}
-html:where(:not([data-studio]))[data-design-tasks] .task:not(.custom-color){background:var(--design-tasks);border-color:color-mix(in srgb,var(--design-tasks-ink) 22%,transparent)}html:where(:not([data-studio]))[data-design-tasks] .task:not(.custom-color) .task-toggle,html:where(:not([data-studio]))[data-design-tasks] .task:not(.custom-color) .tasktitle,html:where(:not([data-studio]))[data-design-tasks] .task:not(.custom-color) .desc,html:where(:not([data-studio]))[data-design-tasks] .task:not(.custom-color) .description-preview,html:where(:not([data-studio]))[data-design-tasks] .task:not(.custom-color) .comment-shortcut{color:var(--design-tasks-ink)}
-html:where(:not([data-studio]))[data-design-tasks] .task:not(.custom-color) .description-toggle,html:where(:not([data-studio]))[data-design-tasks] .task:not(.custom-color) .comments,html:where(:not([data-studio]))[data-design-tasks] .task:not(.custom-color) .task-priority-mark,html:where(:not([data-studio]))[data-design-tasks] .task:not(.custom-color) .task-drag-handle{color:var(--design-tasks-ink)}html:where(:not([data-studio]))[data-design-tasks] .task:not(.custom-color) .task-extra{border-color:color-mix(in srgb,var(--design-tasks-ink) 24%,transparent)}
-html:where(:not([data-studio]))[data-design-form] .form,html:where(:not([data-studio]))[data-design-form] .form-panel[open] .form,html:where(:not([data-studio]))[data-design-form] .form-panel[open] .task-modal-head{background:var(--design-form);color:var(--design-form-ink)}html:where(:not([data-studio]))[data-design-form] .form label,html:where(:not([data-studio]))[data-design-form] .task-modal-head h3{color:var(--design-form-ink)}
-html:where(:not([data-studio]))[data-design-form] .form label .muted,html:where(:not([data-studio]))[data-design-form] .form-panel summary{color:var(--design-form-ink)}
-html:where(:not([data-studio]))[data-design-notes] .notes-panel,html:where(:not([data-studio]))[data-design-notes] .note-item{background:var(--design-notes);color:var(--design-notes-ink)}html:where(:not([data-studio]))[data-design-notes] .notes-panel h4,html:where(:not([data-studio]))[data-design-notes] .notes-panel p,html:where(:not([data-studio]))[data-design-notes] .note-item button{color:var(--design-notes-ink)}
-html:where(:not([data-studio]))[data-design-namedays] .namedays{background:var(--design-namedays);border-color:color-mix(in srgb,var(--design-namedays-ink) 22%,transparent)}html:where(:not([data-studio]))[data-design-namedays] .namedays h4,html:where(:not([data-studio]))[data-design-namedays] .namedays p,html:where(:not([data-studio]))[data-design-namedays] .namedays time,html:where(:not([data-studio]))[data-design-namedays] .namedays a{color:var(--design-namedays-ink)}
-html:where(:not([data-studio]))[data-design-buttons] button:not(.active):not(.primary),html:where(:not([data-studio]))[data-design-buttons] .filelabel{background:var(--design-buttons);color:var(--design-buttons-ink);border-color:color-mix(in srgb,var(--design-buttons-ink) 25%,transparent)}
-html:where(:not([data-studio]))[data-design-accent] .primary,html:where(:not([data-studio]))[data-design-accent] .filter.active,html:where(:not([data-studio]))[data-design-accent] .workspace-switch button.active,html:where(:not([data-studio]))[data-design-accent] .check:checked,html:where(:not([data-studio]))[data-design-accent] .progress div{background:var(--design-accent);border-color:var(--design-accent);color:var(--design-accent-ink)}
-html:where(:not([data-studio]))[data-design-weight-body] body,html:where(:not([data-studio]))[data-design-weight-body] .desc,html:where(:not([data-studio]))[data-design-weight-body] .comment,html:where(:not([data-studio]))[data-design-weight-body] .note-item,html:where(:not([data-studio]))[data-design-weight-body] .motivation-explanation{font-weight:var(--design-weight-body)!important}
-html:where(:not([data-studio]))[data-design-weight-headings] .brand,html:where(:not([data-studio]))[data-design-weight-headings] .sectionhead h2,html:where(:not([data-studio]))[data-design-weight-headings] .side h3,html:where(:not([data-studio]))[data-design-weight-headings] .notes-panel h4,html:where(:not([data-studio]))[data-design-weight-headings] .namedays h4,html:where(:not([data-studio]))[data-design-weight-headings] .daily-motivation-label,html:where(:not([data-studio]))[data-design-weight-headings] .priority-section-label,html:where(:not([data-studio]))[data-design-weight-headings] .task-modal-head h3{font-weight:var(--design-weight-headings)!important}
-html:where(:not([data-studio]))[data-design-weight-tasks] .task-toggle,html:where(:not([data-studio]))[data-design-weight-tasks] .tasktitle,html:where(:not([data-studio]))[data-design-weight-tasks] .task-name{font-weight:var(--design-weight-tasks)!important}
-html:where(:not([data-studio]))[data-design-weight-categories] .group-title,html:where(:not([data-studio]))[data-design-weight-categories] .category-card h3,html:where(:not([data-studio]))[data-design-weight-categories] .category-chip,html:where(:not([data-studio]))[data-design-weight-categories] .category-order-row>span:first-child{font-weight:var(--design-weight-categories)!important}
-html:where(:not([data-studio]))[data-design-weight-controls] button:not(.task-toggle),html:where(:not([data-studio]))[data-design-weight-controls] .form label,html:where(:not([data-studio]))[data-design-weight-controls] .settings-panel summary,html:where(:not([data-studio]))[data-design-weight-controls] .design-control{font-weight:var(--design-weight-controls)!important}
+html[data-design-font] body,html[data-design-font] button,html[data-design-font] input,html[data-design-font] select,html[data-design-font] textarea{font-family:var(--design-font)!important}
+html[data-design-size] body{font-size:var(--design-size)}html[data-design-size] .task-toggle,html[data-design-size] .tasktitle,html[data-design-size] .desc,html[data-design-size] .comment,html[data-design-size] .group-title,html[data-design-size] .note-item,html[data-design-size] .daily-motivation-text,html[data-design-size] .namedays p{font-size:var(--design-size)!important}html[data-design-size] button,html[data-design-size] input:not([type=color]):not([type=range]):not([type=checkbox]),html[data-design-size] select,html[data-design-size] textarea,html[data-design-size] .form label,html[data-design-size] .side p,html[data-design-size] .settings-panel summary{font-size:max(14px,calc(var(--design-size) * .88))!important}html[data-design-size] .sectionhead h2{font-size:calc(var(--design-size) * 1.4)!important}html[data-design-size] .brand{font-size:calc(var(--design-size) * 1.2)!important}
+html[data-design-density=compact] .main,html[data-design-density=compact] .side,html[data-design-density=compact] .category-card{padding:16px}html[data-design-density=compact] .task{padding:8px}html[data-design-density=compact] .task-section{padding:9px}html[data-design-density=roomy] .main,html[data-design-density=roomy] .side,html[data-design-density=roomy] .category-card{padding:32px}html[data-design-density=roomy] .task{padding:20px}html[data-design-density=roomy] .task-section{padding:20px}@media(max-width:700px){html[data-design-density=roomy] .main,html[data-design-density=roomy] .side,html[data-design-density=roomy] .category-card{padding:20px}html[data-design-density=roomy] .task{padding:14px}}
+html[data-design-corners] .card{border-radius:var(--design-corners)}html[data-design-corners] .task,html[data-design-corners] .task-section,html[data-design-corners] .group-head,html[data-design-corners] .namedays,html[data-design-corners] .note-item,html[data-design-corners] button,html[data-design-corners] input,html[data-design-corners] select,html[data-design-corners] textarea{border-radius:calc(var(--design-corners) * .65)}
+html[data-design-text] body,html[data-design-text] .task:not(.custom-color) .tasktitle,html[data-design-text] .task:not(.custom-color) .desc,html[data-design-text] .group-title,html[data-design-text] .sectionhead h2,html[data-design-text] .side h3{color:var(--design-text)}
+html[data-design-page] body{background:var(--design-page);color:var(--design-page-ink)}
+html[data-design-header] header{background:var(--design-header);border-color:color-mix(in srgb,var(--design-header-ink) 25%,transparent)}html[data-design-header] header .brand,html[data-design-header] header .topright{color:var(--design-header-ink)}
+html[data-design-motivation] .motivation-strip{background:var(--design-motivation);border-color:color-mix(in srgb,var(--design-motivation-ink) 22%,transparent)}html[data-design-motivation] .daily-motivation-text,html[data-design-motivation] .daily-motivation-label,html[data-design-motivation] .motivation-expand-label,html[data-design-motivation] .motivation-explanation,html[data-design-motivation] .motivation-explanation strong{color:var(--design-motivation-ink)}
+html[data-design-main] .card.main{background:var(--design-main);color:var(--design-main-ink)}html[data-design-main] .main .sectionhead h2,html[data-design-main] .main .muted,html[data-design-main] .main .empty{color:var(--design-main-ink)}
+html[data-design-categories] .category-card{background:var(--design-categories);color:var(--design-categories-ink)}html[data-design-categories] .category-card h3,html[data-design-categories] .category-card summary,html[data-design-categories] .empty-categories-label{color:var(--design-categories-ink)}
+html[data-design-sidebar] .card.side{background:var(--design-sidebar);color:var(--design-sidebar-ink)}html[data-design-sidebar] .side>h3,html[data-design-sidebar] .side>.eyebrow,html[data-design-sidebar] .side>p,html[data-design-sidebar] .side>.big,html[data-design-sidebar] .side>.settings-panel>summary{color:var(--design-sidebar-ink)}
+html[data-design-sidebar] .side-calendar-head,html[data-design-sidebar] .side-calendar-head button,html[data-design-sidebar] .side-calendar-grid span,html[data-design-sidebar] .side-calendar-grid button,html[data-design-sidebar] .settings-panel summary,html[data-design-sidebar] .settings-panel h4,html[data-design-sidebar] .settings-panel p,html[data-design-sidebar] .settings-panel .notice,html[data-design-sidebar] .settings-panel .settings-checkbox,html[data-design-sidebar] .settings-panel .sync-label{color:var(--design-sidebar-ink)}html[data-design-sidebar]:not([data-design-notes]) .notes-panel h4,html[data-design-sidebar]:not([data-design-notes]) .notes-panel p{color:var(--design-sidebar-ink)}html[data-design-sidebar] .side-calendar,html[data-design-sidebar] .notes-panel,html[data-design-sidebar] .settings-panel,html[data-design-sidebar] .sideblock{border-color:color-mix(in srgb,var(--design-sidebar-ink) 25%,transparent)}
+html[data-design-priority] .task-section.priority-section{background:var(--design-priority);border-color:color-mix(in srgb,var(--design-priority-ink) 25%,transparent)}html[data-design-priority] .task-section.priority-section>.priority-section-label{color:var(--design-priority-ink);border-color:color-mix(in srgb,var(--design-priority-ink) 25%,transparent)}
+html[data-design-regular] .task-section:not(.priority-section){background:var(--design-regular);border-color:color-mix(in srgb,var(--design-regular-ink) 25%,transparent)}html[data-design-regular] .task-section:not(.priority-section)>.priority-section-label{color:var(--design-regular-ink);border-color:color-mix(in srgb,var(--design-regular-ink) 25%,transparent)}
+html[data-design-tasks] .task:not(.custom-color){background:var(--design-tasks);border-color:color-mix(in srgb,var(--design-tasks-ink) 22%,transparent)}html[data-design-tasks] .task:not(.custom-color) .task-toggle,html[data-design-tasks] .task:not(.custom-color) .tasktitle,html[data-design-tasks] .task:not(.custom-color) .desc,html[data-design-tasks] .task:not(.custom-color) .description-preview,html[data-design-tasks] .task:not(.custom-color) .comment-shortcut{color:var(--design-tasks-ink)}
+html[data-design-tasks] .task:not(.custom-color) .description-toggle,html[data-design-tasks] .task:not(.custom-color) .comments,html[data-design-tasks] .task:not(.custom-color) .task-priority-mark,html[data-design-tasks] .task:not(.custom-color) .task-drag-handle{color:var(--design-tasks-ink)}html[data-design-tasks] .task:not(.custom-color) .task-extra{border-color:color-mix(in srgb,var(--design-tasks-ink) 24%,transparent)}
+html[data-design-form] .form,html[data-design-form] .form-panel[open] .form,html[data-design-form] .form-panel[open] .task-modal-head{background:var(--design-form);color:var(--design-form-ink)}html[data-design-form] .form label,html[data-design-form] .task-modal-head h3{color:var(--design-form-ink)}
+html[data-design-form] .form label .muted,html[data-design-form] .form-panel summary{color:var(--design-form-ink)}
+html[data-design-notes] .notes-panel,html[data-design-notes] .note-item{background:var(--design-notes);color:var(--design-notes-ink)}html[data-design-notes] .notes-panel h4,html[data-design-notes] .notes-panel p,html[data-design-notes] .note-item button{color:var(--design-notes-ink)}
+html[data-design-namedays] .namedays{background:var(--design-namedays);border-color:color-mix(in srgb,var(--design-namedays-ink) 22%,transparent)}html[data-design-namedays] .namedays h4,html[data-design-namedays] .namedays p,html[data-design-namedays] .namedays time,html[data-design-namedays] .namedays a{color:var(--design-namedays-ink)}
+html[data-design-buttons] button:not(.active):not(.primary),html[data-design-buttons] .filelabel{background:var(--design-buttons);color:var(--design-buttons-ink);border-color:color-mix(in srgb,var(--design-buttons-ink) 25%,transparent)}
+html[data-design-accent] .primary,html[data-design-accent] .filter.active,html[data-design-accent] .workspace-switch button.active,html[data-design-accent] .check:checked,html[data-design-accent] .progress div{background:var(--design-accent);border-color:var(--design-accent);color:var(--design-accent-ink)}
+html[data-design-weight-body] body,html[data-design-weight-body] .desc,html[data-design-weight-body] .comment,html[data-design-weight-body] .note-item,html[data-design-weight-body] .motivation-explanation{font-weight:var(--design-weight-body)!important}
+html[data-design-weight-headings] .brand,html[data-design-weight-headings] .sectionhead h2,html[data-design-weight-headings] .side h3,html[data-design-weight-headings] .notes-panel h4,html[data-design-weight-headings] .namedays h4,html[data-design-weight-headings] .daily-motivation-label,html[data-design-weight-headings] .priority-section-label,html[data-design-weight-headings] .task-modal-head h3{font-weight:var(--design-weight-headings)!important}
+html[data-design-weight-tasks] .task-toggle,html[data-design-weight-tasks] .tasktitle,html[data-design-weight-tasks] .task-name{font-weight:var(--design-weight-tasks)!important}
+html[data-design-weight-categories] .group-title,html[data-design-weight-categories] .category-card h3,html[data-design-weight-categories] .category-chip,html[data-design-weight-categories] .category-order-row>span:first-child{font-weight:var(--design-weight-categories)!important}
+html[data-design-weight-controls] button:not(.task-toggle),html[data-design-weight-controls] .form label,html[data-design-weight-controls] .settings-panel summary,html[data-design-weight-controls] .design-control{font-weight:var(--design-weight-controls)!important}
 html[data-workspace=work] .side-calendar-grid span:nth-child(6),html[data-workspace=work] .side-calendar-grid span:nth-child(7),html[data-workspace=work] .calendar-grid span:nth-child(6),html[data-workspace=work] .calendar-grid span:nth-child(7){opacity:.65}
 .side-calendar-grid button.work-weekend,.calendar-grid button.work-weekend,.side-calendar-grid button.work-weekend.today,.calendar-grid button.work-weekend.today{background:transparent;color:#9daab0;font-weight:400;box-shadow:none;border-color:transparent;opacity:.8}
 .side-calendar-grid button.work-weekend:hover,.calendar-grid button.work-weekend:hover{background:#f0f3f4;color:#788b94;opacity:1}
@@ -119,428 +119,33 @@ html[data-theme=dark] .side-calendar-grid button.work-weekend.selected,html[data
 .design-subgroup{min-width:0;padding:8px 10px;border:1px solid var(--line);border-radius:10px;background:color-mix(in srgb,var(--surface) 88%,#edf3f5)}
 .design-subgroup>summary{padding:4px 0;color:inherit;font-size:13px;font-weight:650;list-style:none}.design-subgroup>summary::-webkit-details-marker{display:none}.design-subgroup>summary::before{content:'▸';display:inline-block;margin-right:7px;color:#66818e}.design-subgroup[open]>summary::before{transform:rotate(90deg)}
 .design-subgroup .design-color-grid,.design-frame-grid{display:grid;gap:7px;margin-top:10px}.design-frame-grid{padding-bottom:5px}html[data-theme=dark] .design-subgroup{border-color:#495d66;background:#293b44}
-html:where(:not([data-studio]))[data-fine-tasksurface] .task:not(.custom-color){background:var(--fine-taskSurface)}
-html:where(:not([data-studio]))[data-fine-task-readable] .task:not(.custom-color),html:where(:not([data-studio]))[data-fine-task-readable] .task:not(.custom-color) .task-toggle,html:where(:not([data-studio]))[data-fine-task-readable] .task:not(.custom-color) .tasktitle,html:where(:not([data-studio]))[data-fine-task-readable] .task:not(.custom-color) .desc,html:where(:not([data-studio]))[data-fine-task-readable] .task:not(.custom-color) .description-preview,html:where(:not([data-studio]))[data-fine-task-readable] .task:not(.custom-color) .description-toggle,html:where(:not([data-studio]))[data-fine-task-readable] .task:not(.custom-color) .comment-shortcut{color:var(--fine-task-readable)}
-html:where(:not([data-studio]))[data-fine-taskoutline] .task{border-color:var(--fine-taskOutline)}html:where(:not([data-studio]))[data-fine-tasktimesurface] .task:not(.custom-color) .task-schedule-time{background:var(--fine-taskTimeSurface)}html:where(:not([data-studio]))[data-fine-tasktimeink] .task:not(.custom-color) .task-schedule-time{color:var(--fine-taskTimeInk)}html:where(:not([data-studio]))[data-fine-taskdone] .task.done:not(.custom-color) .task-toggle,html:where(:not([data-studio]))[data-fine-taskdone] .task.done:not(.custom-color) .tasktitle{color:var(--fine-taskDone)}html:where(:not([data-studio]))[data-fine-taskcheck] .task .check:checked{background:var(--fine-taskCheck);border-color:var(--fine-taskCheck)}
-html:where(:not([data-studio]))[data-fine-categorysurface] .group-head:not(.custom-category-color){background:var(--fine-categorySurface)}html:where(:not([data-studio]))[data-fine-category-readable] .group-head:not(.custom-category-color) .group-title,html:where(:not([data-studio]))[data-fine-category-readable] .group-head:not(.custom-category-color) .group-add{color:var(--fine-category-readable)}html:where(:not([data-studio]))[data-fine-categoryoutline] .group-head{border-color:var(--fine-categoryOutline)}html:where(:not([data-studio]))[data-fine-categorydot] .group-head:not(.custom-category-color) .group-title::before{background:var(--fine-categoryDot)}
-html:where(:not([data-studio]))[data-fine-holidaysurface] .side-calendar-grid button.work-holiday,html:where(:not([data-studio]))[data-fine-holidaysurface] .calendar-grid button.work-holiday{background:var(--fine-holidaySurface)}html:where(:not([data-studio]))[data-fine-holiday-readable] .side-calendar-grid button.work-holiday,html:where(:not([data-studio]))[data-fine-holiday-readable] .calendar-grid button.work-holiday{color:var(--fine-holiday-readable)}html:where(:not([data-studio]))[data-fine-holidayoutline] .side-calendar-grid button.work-holiday.selected,html:where(:not([data-studio]))[data-fine-holidayoutline] .calendar-grid button.work-holiday.selected{box-shadow:inset 0 0 0 2px var(--fine-holidayOutline)}
-html:where(:not([data-studio]))[data-fine-weekendink] .side-calendar-grid button.work-weekend:not(.work-holiday),html:where(:not([data-studio]))[data-fine-weekendink] .calendar-grid button.work-weekend:not(.work-holiday){color:var(--fine-weekendInk)}html:where(:not([data-studio]))[data-fine-todayoutline] .side-calendar-grid button.today:not(.work-holiday),html:where(:not([data-studio]))[data-fine-todayoutline] .calendar-grid button.today:not(.work-holiday){box-shadow:inset 0 0 0 1px var(--fine-todayOutline)}
-html:where(:not([data-studio]))[data-fine-selectedsurface] .side-calendar-grid button.selected:not(.work-holiday),html:where(:not([data-studio]))[data-fine-selectedsurface] .calendar-grid button.selected:not(.work-holiday){background:var(--fine-selectedSurface)}html:where(:not([data-studio]))[data-fine-selectedink] .side-calendar-grid button.selected:not(.work-holiday),html:where(:not([data-studio]))[data-fine-selectedink] .calendar-grid button.selected:not(.work-holiday){color:var(--fine-selectedInk)}html:where(:not([data-studio]))[data-fine-cardoutline] .card{border-color:var(--fine-cardOutline)}html:where(:not([data-studio]))[data-fine-sectionoutline] .task-section{border-color:var(--fine-sectionOutline)}
-html:where(:not([data-studio]))[data-frame-taskborder] .task{border-width:var(--frame-taskBorder)}html:where(:not([data-studio]))[data-frame-taskborder] .priority-group .task:not(.custom-color){border-left-width:max(3px,var(--frame-taskBorder))}html:where(:not([data-studio]))[data-frame-taskborderstyle] .task{border-style:var(--frame-taskBorderStyle)}html:where(:not([data-studio]))[data-frame-taskradius] .task{border-radius:var(--frame-taskRadius)}
-html:where(:not([data-studio]))[data-frame-categoryborder] .group-head{border:var(--frame-categoryBorder) solid var(--fine-categoryOutline,var(--cat,#8d99a2));border-left-width:max(3px,var(--frame-categoryBorder))}html:where(:not([data-studio]))[data-frame-categoryborderstyle] .group-head{border-style:var(--frame-categoryBorderStyle)}html:where(:not([data-studio]))[data-frame-categoryradius] .group-head{border-radius:var(--frame-categoryRadius)}
-html:where(:not([data-studio]))[data-frame-holidayborder] .side-calendar-grid button.work-holiday,html:where(:not([data-studio]))[data-frame-holidayborder] .calendar-grid button.work-holiday{border:var(--frame-holidayBorder) solid var(--fine-holidayOutline,#c85b65)}html:where(:not([data-studio]))[data-frame-holidayradius] .side-calendar-grid button,html:where(:not([data-studio]))[data-frame-holidayradius] .calendar-grid button{border-radius:var(--frame-holidayRadius)}html:where(:not([data-studio]))[data-frame-cardborder] .card{border-width:var(--frame-cardBorder)}html:where(:not([data-studio]))[data-frame-sectionborder] .task-section{border-width:var(--frame-sectionBorder);border-left-width:max(4px,var(--frame-sectionBorder))}
-html:where(:not([data-studio]))[data-frame-taskshadow=none] .task,html:where(:not([data-studio]))[data-frame-taskshadow=none] .task:hover{box-shadow:none}html:where(:not([data-studio]))[data-frame-taskshadow=soft] .task{box-shadow:0 3px 14px #23374416}html:where(:not([data-studio]))[data-frame-taskshadow=strong] .task{box-shadow:0 8px 24px #23374436}html:where(:not([data-studio]))[data-theme=dark][data-frame-taskshadow=soft] .task{box-shadow:0 3px 14px #0004}html:where(:not([data-studio]))[data-theme=dark][data-frame-taskshadow=strong] .task{box-shadow:0 8px 24px #0008}
-html:where(:not([data-studio]))[data-fine-holidaysurface] .side-calendar-grid button.work-holiday.work-weekend,html:where(:not([data-studio]))[data-fine-holidaysurface] .calendar-grid button.work-holiday.work-weekend{background:var(--fine-holidaySurface)}html:where(:not([data-studio]))[data-fine-holiday-readable] .side-calendar-grid button.work-holiday.work-weekend,html:where(:not([data-studio]))[data-fine-holiday-readable] .calendar-grid button.work-holiday.work-weekend{color:var(--fine-holiday-readable)}
-html:where(:not([data-studio]))[data-fine-task-readable] .task.done:not(.custom-color) .task-toggle,html:where(:not([data-studio]))[data-fine-task-readable] .task.done:not(.custom-color) .tasktitle{color:color-mix(in srgb,var(--fine-task-readable) 65%,transparent)}html:where(:not([data-studio]))[data-fine-taskdone] .task.done:not(.custom-color) .task-toggle,html:where(:not([data-studio]))[data-fine-taskdone] .task.done:not(.custom-color) .tasktitle{color:var(--fine-taskDone)}
-html:where(:not([data-studio]))[data-fine-categoryoutline] .task-group[data-category-name],html:where(:not([data-studio]))[data-frame-categoryborder] .task-group[data-category-name]{padding:10px;border:1px solid var(--fine-categoryOutline,color-mix(in srgb,var(--category-frame-color,#8d99a2) 55%,#d9e3e7));border-radius:14px}
-html:where(:not([data-studio]))[data-frame-categoryborder] .task-group[data-category-name]{border-width:var(--frame-categoryBorder)}html:where(:not([data-studio]))[data-frame-categoryborderstyle] .task-group[data-category-name]{border-style:var(--frame-categoryBorderStyle)}html:where(:not([data-studio]))[data-frame-categoryradius] .task-group[data-category-name]{border-radius:var(--frame-categoryRadius)}
-@media(max-width:700px){html:where(:not([data-studio]))[data-fine-categoryoutline] .task-group[data-category-name],html:where(:not([data-studio]))[data-frame-categoryborder] .task-group[data-category-name]{padding:7px}}
+html[data-fine-tasksurface] .task:not(.custom-color){background:var(--fine-taskSurface)}
+html[data-fine-task-readable] .task:not(.custom-color),html[data-fine-task-readable] .task:not(.custom-color) .task-toggle,html[data-fine-task-readable] .task:not(.custom-color) .tasktitle,html[data-fine-task-readable] .task:not(.custom-color) .desc,html[data-fine-task-readable] .task:not(.custom-color) .description-preview,html[data-fine-task-readable] .task:not(.custom-color) .description-toggle,html[data-fine-task-readable] .task:not(.custom-color) .comment-shortcut{color:var(--fine-task-readable)}
+html[data-fine-taskoutline] .task{border-color:var(--fine-taskOutline)}html[data-fine-tasktimesurface] .task:not(.custom-color) .task-schedule-time{background:var(--fine-taskTimeSurface)}html[data-fine-tasktimeink] .task:not(.custom-color) .task-schedule-time{color:var(--fine-taskTimeInk)}html[data-fine-taskdone] .task.done:not(.custom-color) .task-toggle,html[data-fine-taskdone] .task.done:not(.custom-color) .tasktitle{color:var(--fine-taskDone)}html[data-fine-taskcheck] .task .check:checked{background:var(--fine-taskCheck);border-color:var(--fine-taskCheck)}
+html[data-fine-categorysurface] .group-head:not(.custom-category-color){background:var(--fine-categorySurface)}html[data-fine-category-readable] .group-head:not(.custom-category-color) .group-title,html[data-fine-category-readable] .group-head:not(.custom-category-color) .group-add{color:var(--fine-category-readable)}html[data-fine-categoryoutline] .group-head{border-color:var(--fine-categoryOutline)}html[data-fine-categorydot] .group-head:not(.custom-category-color) .group-title::before{background:var(--fine-categoryDot)}
+html[data-fine-holidaysurface] .side-calendar-grid button.work-holiday,html[data-fine-holidaysurface] .calendar-grid button.work-holiday{background:var(--fine-holidaySurface)}html[data-fine-holiday-readable] .side-calendar-grid button.work-holiday,html[data-fine-holiday-readable] .calendar-grid button.work-holiday{color:var(--fine-holiday-readable)}html[data-fine-holidayoutline] .side-calendar-grid button.work-holiday.selected,html[data-fine-holidayoutline] .calendar-grid button.work-holiday.selected{box-shadow:inset 0 0 0 2px var(--fine-holidayOutline)}
+html[data-fine-weekendink] .side-calendar-grid button.work-weekend:not(.work-holiday),html[data-fine-weekendink] .calendar-grid button.work-weekend:not(.work-holiday){color:var(--fine-weekendInk)}html[data-fine-todayoutline] .side-calendar-grid button.today:not(.work-holiday),html[data-fine-todayoutline] .calendar-grid button.today:not(.work-holiday){box-shadow:inset 0 0 0 1px var(--fine-todayOutline)}
+html[data-fine-selectedsurface] .side-calendar-grid button.selected:not(.work-holiday),html[data-fine-selectedsurface] .calendar-grid button.selected:not(.work-holiday){background:var(--fine-selectedSurface)}html[data-fine-selectedink] .side-calendar-grid button.selected:not(.work-holiday),html[data-fine-selectedink] .calendar-grid button.selected:not(.work-holiday){color:var(--fine-selectedInk)}html[data-fine-cardoutline] .card{border-color:var(--fine-cardOutline)}html[data-fine-sectionoutline] .task-section{border-color:var(--fine-sectionOutline)}
+html[data-frame-taskborder] .task{border-width:var(--frame-taskBorder)}html[data-frame-taskborder] .priority-group .task:not(.custom-color){border-left-width:max(3px,var(--frame-taskBorder))}html[data-frame-taskborderstyle] .task{border-style:var(--frame-taskBorderStyle)}html[data-frame-taskradius] .task{border-radius:var(--frame-taskRadius)}
+html[data-frame-categoryborder] .group-head{border:var(--frame-categoryBorder) solid var(--fine-categoryOutline,var(--cat,#8d99a2));border-left-width:max(3px,var(--frame-categoryBorder))}html[data-frame-categoryborderstyle] .group-head{border-style:var(--frame-categoryBorderStyle)}html[data-frame-categoryradius] .group-head{border-radius:var(--frame-categoryRadius)}
+html[data-frame-holidayborder] .side-calendar-grid button.work-holiday,html[data-frame-holidayborder] .calendar-grid button.work-holiday{border:var(--frame-holidayBorder) solid var(--fine-holidayOutline,#c85b65)}html[data-frame-holidayradius] .side-calendar-grid button,html[data-frame-holidayradius] .calendar-grid button{border-radius:var(--frame-holidayRadius)}html[data-frame-cardborder] .card{border-width:var(--frame-cardBorder)}html[data-frame-sectionborder] .task-section{border-width:var(--frame-sectionBorder);border-left-width:max(4px,var(--frame-sectionBorder))}
+html[data-frame-taskshadow=none] .task,html[data-frame-taskshadow=none] .task:hover{box-shadow:none}html[data-frame-taskshadow=soft] .task{box-shadow:0 3px 14px #23374416}html[data-frame-taskshadow=strong] .task{box-shadow:0 8px 24px #23374436}html[data-theme=dark][data-frame-taskshadow=soft] .task{box-shadow:0 3px 14px #0004}html[data-theme=dark][data-frame-taskshadow=strong] .task{box-shadow:0 8px 24px #0008}
+html[data-fine-holidaysurface] .side-calendar-grid button.work-holiday.work-weekend,html[data-fine-holidaysurface] .calendar-grid button.work-holiday.work-weekend{background:var(--fine-holidaySurface)}html[data-fine-holiday-readable] .side-calendar-grid button.work-holiday.work-weekend,html[data-fine-holiday-readable] .calendar-grid button.work-holiday.work-weekend{color:var(--fine-holiday-readable)}
+html[data-fine-task-readable] .task.done:not(.custom-color) .task-toggle,html[data-fine-task-readable] .task.done:not(.custom-color) .tasktitle{color:color-mix(in srgb,var(--fine-task-readable) 65%,transparent)}html[data-fine-taskdone] .task.done:not(.custom-color) .task-toggle,html[data-fine-taskdone] .task.done:not(.custom-color) .tasktitle{color:var(--fine-taskDone)}
+html[data-fine-categoryoutline] .task-group[data-category-name],html[data-frame-categoryborder] .task-group[data-category-name]{padding:10px;border:1px solid var(--fine-categoryOutline,color-mix(in srgb,var(--category-frame-color,#8d99a2) 55%,#d9e3e7));border-radius:14px}
+html[data-frame-categoryborder] .task-group[data-category-name]{border-width:var(--frame-categoryBorder)}html[data-frame-categoryborderstyle] .task-group[data-category-name]{border-style:var(--frame-categoryBorderStyle)}html[data-frame-categoryradius] .task-group[data-category-name]{border-radius:var(--frame-categoryRadius)}
+@media(max-width:700px){html[data-fine-categoryoutline] .task-group[data-category-name],html[data-frame-categoryborder] .task-group[data-category-name]{padding:7px}}
 
 .quick-notes{max-width:1104px;margin:12px auto 0;padding:0 16px;display:grid;gap:6px}.quick-notes:empty{display:none}.quick-notes .note-item{margin:0}.quick-notes .note-item>div{overflow-wrap:anywhere}#noteDialog{width:min(420px,calc(100% - 32px));border:1px solid var(--line);border-radius:14px;background:var(--surface);color:var(--ink);padding:20px}#noteDialog::backdrop{background:#14212999}#noteDialog h2{margin-top:0}#noteForm textarea{display:block;width:100%;margin-bottom:10px}#noteClose{margin-top:8px}.top-controls{flex-wrap:wrap}
-html:where(:not([data-studio]))[data-design-line-height=relaxed] :is(.task-toggle,.desc,.comment,.note-item){line-height:1.65}html:where(:not([data-studio]))[data-design-line-height=wide] :is(.task-toggle,.desc,.comment,.note-item){line-height:1.85}
-html:where(:not([data-studio]))[data-design-notes] .quick-notes .note-item{color:var(--design-notes-ink)}
+html[data-design-line-height=relaxed] :is(.task-toggle,.desc,.comment,.note-item){line-height:1.65}html[data-design-line-height=wide] :is(.task-toggle,.desc,.comment,.note-item){line-height:1.85}
+html[data-design-notes] .quick-notes .note-item{color:var(--design-notes-ink)}
 
-html:where(:not([data-studio]))[data-design-tracking=roomy] :is(.task-toggle,.desc,.note-item,.font-sample){letter-spacing:.025em}html:where(:not([data-studio]))[data-design-tracking=wide] :is(.task-toggle,.desc,.note-item,.font-sample){letter-spacing:.05em}.font-sample{padding:10px;border:1px solid var(--line);border-radius:8px}
+html[data-design-tracking=roomy] :is(.task-toggle,.desc,.note-item,.font-sample){letter-spacing:.025em}html[data-design-tracking=wide] :is(.task-toggle,.desc,.note-item,.font-sample){letter-spacing:.05em}.font-sample{padding:10px;border:1px solid var(--line);border-radius:8px}
 
 #sickNotice,#sickToggle{display:none}
 html[data-workspace=work] #sickToggle,html[data-workspace=work][data-sick] #sickNotice{display:block}
 html[data-workspace=work][data-sick] :is(#list,#count,#taskFormPanel,.filters){display:none}
-
-html[data-studio] {
-  --studio-bg:#eef2f8;
-  --studio-panel:#fff;
-  --studio-ink:#15213b;
-  --studio-muted:#485873;
-  --studio-line:#dae2ef;
-  --studio-accent:#3443b4;
-  --studio-soft:#e8ebff;
-  --studio-hero:#233374;
-  font-family:system-ui,sans-serif;
-}
-html[data-studio][data-theme=dark] {
-  --studio-bg:#101522;
-  --studio-panel:#192235;
-  --studio-ink:#edf2ff;
-  --studio-muted:#b9c6df;
-  --studio-line:#34415b;
-  --studio-accent:#c5ceff;
-  --studio-soft:#293766;
-  --studio-hero:#283773;
-}
-html[data-studio] body {background:var(--studio-bg);color:var(--studio-ink)}
-html[data-studio] header {background:var(--studio-panel);border-color:var(--studio-line)}
-html[data-studio] :is(.top,.wrap,.motivation-strip,.quick-notes) {max-width:1320px}
-html[data-studio] .top {gap:12px}
-html[data-studio] .brand {font-weight:650;letter-spacing:-.035em}
-html[data-studio] .motivation-strip {
-  margin:16px auto 0;
-  background:linear-gradient(120deg,var(--studio-hero),#453d86);
-  color:#fff;
-  border:0;
-  border-radius:18px;
-}
-html[data-studio] .motivation-strip :is(summary,span,p,strong) {color:#fff}
-html[data-studio] .wrap {padding-top:18px}
-html[data-studio] .card {background:var(--studio-panel);border:1px solid var(--studio-line);border-radius:18px;box-shadow:none}
-html[data-studio] .sectionhead {flex-wrap:wrap}
-html[data-studio] .sectionhead h2 {font-size:clamp(24px,3vw,34px);letter-spacing:-.04em;font-weight:650}
-html[data-studio] .task-section {background:var(--studio-bg);border:1px solid var(--studio-line);border-radius:14px}
-html[data-studio] .task-group .group-head {background:var(--studio-soft);border:0;box-shadow:none}
-html[data-studio] .task-group .group-title::before {background:var(--studio-accent)}
-html[data-studio] .task-group .group-title {font-weight:600}
-html[data-studio] .task-group .task {background:var(--studio-panel);border:1px solid var(--studio-line);border-radius:10px}
-html[data-studio] .task-group .task :is(.task-toggle,.desc,.description-preview,.description-toggle,.comment-shortcut,.task-drag-handle),
-html[data-studio] .group-head :is(.group-title,.group-add,.category-drag-handle,.category-settings summary),
-html[data-studio] .task-section .priority-section-label {color:var(--studio-ink)}
-html[data-studio] .task-toggle {font-weight:550}
-html[data-studio] :is(.filter.active,.workspace-switch button.active,#lookToggle) {background:var(--studio-soft);color:var(--studio-accent);border-color:var(--studio-line)}
-@media(max-width:700px) {
-  html[data-studio] .top {padding-inline:12px}
-  html[data-studio] .wrap {padding-inline:10px}
-  html[data-studio] .motivation-strip {margin-inline:10px}
-}
-
-/* Studio dashboard */
-html[data-studio] {
-  --studio-bg:#f3f5f9;
-  --studio-panel:#fff;
-  --studio-ink:#121b2e;
-  --studio-muted:#536078;
-  --studio-line:#dfe5ef;
-  --studio-soft:#edf0ff;
-  --studio-accent:#3837a0;
-}
-html[data-studio][data-theme=dark] {
-  --studio-bg:#101420;
-  --studio-panel:#181f30;
-  --studio-ink:#f1f4ff;
-  --studio-muted:#bdc7dd;
-  --studio-line:#364057;
-  --studio-soft:#282d55;
-  --studio-accent:#cfceff;
-}
-html[data-studio] header {background:#121a2e;border:0}
-html[data-studio] .top {min-height:74px}
-html[data-studio] .brand {color:#fff;font-size:20px}
-html[data-studio] .top-controls button {background:#202b45;color:#f5f6ff;border-color:#3c4863;border-radius:9px}
-html[data-studio] .top-controls button:hover {background:#303f61}
-html[data-studio] .top-controls .workspace-switch {background:#202b45;border-color:#3c4863}
-html[data-studio] .top-controls .workspace-switch button.active {background:#dcdcff;color:#20204d}
-html[data-studio] .motivation-strip {
-  background:var(--studio-panel);
-  border:1px solid var(--studio-line);
-  border-left:4px solid #7775e9;
-  border-radius:12px;
-}
-html[data-studio] .motivation-strip :is(summary,span,p,strong) {color:var(--studio-ink)}
-html[data-studio] .layout {align-items:start}
-
-html[data-studio] .datebar {
-  padding:12px;
-  background:var(--studio-soft);
-  border-radius:12px;
-}
-html[data-studio] .sectionhead {margin:24px 0 14px;gap:10px}
-html[data-studio] .sectionhead h2 {color:var(--studio-ink);font-size:clamp(27px,4vw,42px);line-height:1.08}
-html[data-studio] .sectionhead #count {color:var(--studio-muted);font-variant-numeric:tabular-nums}
-html[data-studio] .filters {gap:8px;border-color:var(--studio-line);padding-bottom:16px}
-html[data-studio] #openTaskModal {background:#4946b5;color:#fff;border-color:#4946b5}
-html[data-studio] .task-section {padding:12px;border-radius:12px}
-html[data-studio] .task-group .group-head {padding:7px 12px;border-radius:8px}
-html[data-studio] .task-group .task {padding:12px;min-height:52px}
-html[data-studio] .card.side {padding:16px}
-html[data-studio] .side-calendar {background:var(--studio-bg);border:1px solid var(--studio-line);padding:10px;border-radius:12px}
-html[data-studio] .side .progress {background:var(--studio-soft)}
-html[data-studio] .side .progress div {background:#7775e9}
-@media(max-width:700px) {
-  html[data-studio] .top {min-height:auto}
-  html[data-studio] .datebar {padding:8px}
-  html[data-studio] .task-section {padding:7px}
-}
-
-html[data-studio] {
-  --studio-bg:#f4f5f8;
-  --studio-ink:#171a2e;
-  --studio-accent:#4a37ae;
-}
-html[data-studio][data-theme=dark] {
-  --studio-bg:#10121e;
-  --studio-ink:#f1f4ff;
-  --studio-accent:#cfceff;
-}
-html[data-studio] header {background:var(--studio-panel);border-bottom:1px solid var(--studio-line)}
-html[data-studio] .brand {color:var(--studio-ink)}
-html[data-studio] .top-controls button,html[data-studio] .top-controls .workspace-switch {
-  background:var(--studio-bg);color:var(--studio-ink);border-color:var(--studio-line);
-}
-html[data-studio] .top-controls button:hover {background:var(--studio-soft)}
-.studio-overview {display:grid;grid-template-columns:minmax(0,2fr) minmax(220px,1fr);gap:16px;margin-bottom:20px}
-.studio-overview[hidden] {display:none}
-.studio-hero {
-  min-width:0;padding:clamp(18px,4vw,42px);border-radius:24px;color:white;
-  background:radial-gradient(ellipse at 100% 0,#6352bd 0,transparent 65%),linear-gradient(135deg,#23234e,#343077);
-}
-.studio-kicker {font-size:.8rem;font-weight:600;letter-spacing:.08em;color:#e0d9ff}
-.studio-hero h1 {font-size:clamp(36px,6vw,72px);line-height:1.04;letter-spacing:-.065em;margin:8px 0 24px;font-weight:650}
-html[data-studio] #studioDate .datebar {background:#fff;padding:8px;color:#171a2e;color-scheme:light}
-html[data-studio] #studioDate :is(input,button) {background:#f2effb;color:#221b49;border-color:#e1daef}
-html[data-studio] #studioImpulse .motivation-strip {background:#ffffff13;border:1px solid #ffffff40;border-radius:12px;margin:14px 0 0}
-html[data-studio] #studioImpulse .motivation-strip :is(summary,span,p,strong) {color:#fff}
-#studioProgress {
-  min-width:0;display:flex;align-items:center;padding:clamp(16px,3vw,34px);border:1px solid var(--studio-line);
-  border-radius:24px;background:var(--studio-panel);color:var(--studio-ink);
-}
-#studioProgress #dayProgress {width:100%}
-#studioProgress #percent {font-size:clamp(40px,7vw,76px);line-height:1.05;color:var(--studio-accent);letter-spacing:-.055em}
-#studioProgress .progress {height:10px;background:var(--studio-soft)}
-#studioProgress .progress div {background:#7775e9}
-@media(min-width:851px) {
-  html[data-studio] .layout {direction:rtl}
-  html[data-studio] .layout > * {direction:ltr}
-  html[data-studio] .layout {grid-template-columns:minmax(0,1fr) 320px}
-  html[data-studio] #columnResizer {display:none}
-}
-@media(max-width:700px) {
-  .studio-overview {grid-template-columns:minmax(0,1fr);gap:10px}
-  #studioProgress {border-radius:16px}
-}
-
-/* Studio work lanes */
-html[data-studio] {
-  --focus-surface:#171b39;
-  --focus-card:#262c51;
-  --focus-line:#555f91;
-  --focus-ink:#f7f7ff;
-  --focus-accent:#d4ff8d;
-}
-html[data-studio] #list {display:grid;gap:22px}
-html[data-studio][data-workspace=work][data-sick] #list {display:none}
-html[data-studio] #list > .task-section {margin:0;padding:clamp(12px,2vw,24px);border-radius:20px}
-html[data-studio] #list > .priority-section {
-  background:radial-gradient(ellipse at top right,#424080,var(--focus-surface) 65%);
-  border:1px solid var(--focus-line);color:var(--focus-ink);
-}
-html[data-studio] #list > .regular-section {background:var(--studio-bg);border:1px solid var(--studio-line)}
-html[data-studio] #list > .task-section > .priority-section-label {
-  font-size:clamp(18px,2vw,24px);letter-spacing:-.025em;text-transform:none;
-  border:0;background:none;padding:0;margin:0 0 14px;
-}
-html[data-studio] #list > .priority-section > .priority-section-label {color:var(--focus-ink)}
-html[data-studio] #list > .priority-section > .priority-section-label::before {color:var(--focus-accent)}
-html[data-studio] #list > .priority-section .section-count {background:var(--focus-accent);color:#182215}
-html[data-studio] #list > .priority-section > .task-group > .group-head {background:transparent;border-bottom:1px solid var(--focus-line);border-radius:0;padding-inline:0}
-html[data-studio] #list > .priority-section > .task-group > .group-head :is(.group-title,.group-add,.category-drag-handle,.category-settings summary) {color:var(--focus-ink)}
-html[data-studio] #list > .priority-section > .task-group > .task {
-  background:var(--focus-card);border:1px solid var(--focus-line);border-inline-start:3px solid var(--focus-accent);
-}
-html[data-studio] #list > .priority-section .task :is(.task-toggle,.desc,.description-preview,.description-toggle,.comment-shortcut,.task-drag-handle,.comment,.comments,.tasktitle) {color:var(--focus-ink)}
-html[data-studio] #list > .priority-section .task :is(.desc,.comment) a {color:#dddeff}
-html[data-studio] #list > .timed-group {margin:0;padding:12px;border:1px solid var(--studio-line);border-radius:16px;background:var(--studio-soft)}
-html[data-studio] #list > .timed-group .task-schedule-time {background:var(--studio-accent);color:var(--studio-panel);border-color:transparent}
-html[data-studio] #list > .regular-section > .task-group > .group-head {background:var(--studio-panel);border:1px solid var(--studio-line)}
-html[data-studio] #list .section-settings {display:none}
-
-/* Studio workspace */
-html[data-studio] .wrap {max-width:1480px}
-html[data-studio] .studio-hero {
-  position:relative;isolation:isolate;min-height:250px;
-  background:
-    radial-gradient(ellipse at 92% 0%,#6144c4,transparent 52%),
-    radial-gradient(ellipse at 70% 110%,#164c78,transparent 57%),
-    #10142b;
-}
-html[data-studio] .studio-hero::before {
-  content:'';position:absolute;inset:0;z-index:-1;border-radius:inherit;
-  background-image:linear-gradient(#ffffff12 1px,transparent 1px),linear-gradient(90deg,#ffffff12 1px,transparent 1px);
-  background-size:36px 36px;mask-image:linear-gradient(115deg,transparent 30%,#000);
-}
-html[data-studio] .studio-kicker {display:none}
-html[data-studio] #studioProgress {background:#d9ff9e;color:#152311;border:0}
-html[data-studio] #studioProgress #percent {color:#152311;font-size:clamp(52px,8vw,104px);font-weight:650}
-html[data-studio] #studioProgress .progress {background:#1c361628}
-html[data-studio] #studioProgress .progress div {background:#244717}
-html[data-studio] .card.main {background:transparent;border:0;padding:0}
-html[data-studio] .sectionhead {margin:0 0 16px}
-html[data-studio] .filters {background:var(--studio-panel);padding:9px;border:1px solid var(--studio-line);border-radius:14px;margin-bottom:18px}
-html[data-studio] #list > .regular-section {background:var(--studio-panel)}
-html[data-studio] #list > .timed-group {border-inline-start:4px solid var(--studio-accent)}
-html[data-studio] #list > .priority-section .task {box-shadow:0 6px 20px #080a2240}
-@media(min-width:1100px) {
-  html[data-studio] #list > .task-section {display:grid;grid-template-columns:repeat(2,minmax(0,1fr));align-items:start;gap:14px}
-  html[data-studio] #list > .task-section > .priority-section-label {grid-column:1/-1;margin-bottom:0}
-  html[data-studio] #list > .task-section > .task-group {min-width:0;margin:0}
-  html[data-studio] #list > .task-section > .task-group:only-of-type {grid-column:1/-1}
-}
-
-/* Studio: slate workspace with an independent navigation rail */
-.studio-dock[hidden] {display:none}
-html[data-studio] {
-  --studio-bg:#11131b;
-  --studio-panel:#1b1e29;
-  --studio-ink:#f4f5fa;
-  --studio-muted:#b5bed0;
-  --studio-line:#373e50;
-  --studio-soft:#282e42;
-  --studio-accent:#c9d5ff;
-  --focus-accent:#ffd38c;
-  --focus-line:#66503c;
-  --focus-card:#2d2528;
-  color-scheme:dark;
-}
-html[data-studio][data-theme=dark] {--studio-bg:#090b11;--studio-panel:#121722;--studio-soft:#20283a}
-html[data-studio] header {background:#151822}
-html[data-studio] :is(.top-controls button,.top-controls .workspace-switch,.datebar button,.datebar input,.filters select) {
-  background:#242939;color:#f4f5fa;border-color:#434d65;
-}
-html[data-studio] .wrap {padding-top:14px}
-html[data-studio] .studio-overview {grid-template-columns:minmax(0,3fr) minmax(0,1fr);gap:12px}
-html[data-studio] .studio-hero {
-  min-height:0;padding:clamp(16px,3vw,34px);border:1px solid #48527d;
-  background:radial-gradient(ellipse at 95% 0%,#47489d,transparent 72%),#151b37;
-}
-html[data-studio] .studio-hero h1 {font-size:clamp(34px,5vw,68px);margin:0 0 14px}
-html[data-studio] #studioDate .datebar {display:inline-flex;background:#101425a0;border:1px solid #6670a2;color-scheme:dark}
-html[data-studio] #studioDate :is(input,button) {background:#262d49;color:#fff;border-color:#546087}
-html[data-studio] #studioImpulse .motivation-strip {border:0;background:transparent;margin-top:6px}
-html[data-studio] #studioProgress {
-  background:#222b49;color:#f3f6ff;border:1px solid #525f87;
-  background-image:linear-gradient(135deg,transparent 40%,#5055a240);
-}
-html[data-studio] #studioProgress #percent {color:#d7e3ff}
-html[data-studio] #studioProgress .progress {background:#10162b}
-html[data-studio] #studioProgress .progress div {background:#b6baff}
-html[data-studio] :is(.card.side,.category-card) {color:var(--studio-ink)}
-html[data-studio] :is(.side h3,.category-card h3,.side p,.side summary,.filter,.empty) {color:var(--studio-muted)}
-html[data-studio] .side-calendar-grid button {color:var(--studio-ink)}
-html[data-studio] .side-calendar-grid button.selected {background:#cbd6ff;color:#141b34}
-html[data-studio] .side-calendar-grid button.work-holiday {color:#ffb7b7;background:#3d2839}
-html[data-studio] #list > .priority-section {background:linear-gradient(135deg,#35263a,#231f29);border-color:#735a48}
-html[data-studio] #list > .regular-section {border-radius:14px}
-html[data-studio] #list > .timed-group {background:#202d48;border-inline-start-color:#9bcfff}
-html[data-studio] .studio-dock {
-  min-width:0;display:flex;flex-wrap:wrap;gap:6px;padding:8px;
-  border:1px solid var(--studio-line);border-radius:14px;background:var(--studio-panel);
-}
-html[data-studio] .studio-dock[hidden] {display:none}
-html[data-studio] .studio-dock a {display:block;color:var(--studio-ink);text-decoration:none;padding:9px 10px;border-radius:8px}
-html[data-studio] .studio-dock a:is(:hover,:focus-visible) {background:var(--studio-soft)}
-@media(min-width:1000px) {
-  html[data-studio] .layout {direction:ltr;grid-template-columns:170px minmax(0,1fr) minmax(235px,290px);gap:16px}
-  html[data-studio] .studio-dock {flex-direction:column;position:sticky;top:12px}
-}
-@media(max-width:999px) {
-  html[data-studio] .layout {direction:ltr;grid-template-columns:minmax(0,1fr)}
-}
-@media(max-width:700px) {
-  html[data-studio] .studio-overview {grid-template-columns:minmax(0,1fr)}
-  html[data-studio] #studioProgress #percent {font-size:46px}
-}
-
-/* Studio workspace layout */
-html[data-studio] {
-  --studio-bg:#101411;--studio-panel:#191e19;--studio-ink:#f2f6ef;
-  --studio-muted:#a9b7a7;--studio-line:#333e34;--studio-soft:#242e25;
-  --studio-accent:#d6fa87;--focus-ink:#f8f4ee;--focus-accent:#ffd29b;
-  color-scheme:dark;
-}
-html[data-studio][data-theme=dark] {--studio-bg:#0a0d0b;--studio-panel:#141915;--studio-soft:#202a22}
-html[data-studio] header {background:var(--studio-bg);border-bottom:1px solid var(--studio-line)}
-html[data-studio] .top {max-width:1480px;min-height:64px}
-html[data-studio] .top-controls button,html[data-studio] .top-controls .workspace-switch {background:var(--studio-panel);border-color:var(--studio-line)}
-html[data-studio] .top-controls .workspace-switch button.active {background:var(--studio-accent);color:#172016}
-html[data-studio] .wrap {padding-top:22px}
-html[data-studio] .studio-overview {display:contents}
-html[data-studio] .studio-hero {
-  grid-area:day;min-height:0;padding:0 0 14px;border:0;border-radius:0;background:none;
-  color:var(--studio-ink);border-bottom:1px solid var(--studio-line);
-}
-html[data-studio] .studio-hero::before {display:none}
-html[data-studio] .studio-hero h1 {font-size:clamp(28px,4vw,48px);margin:0 0 12px;letter-spacing:-.055em}
-html[data-studio] #studioDate .datebar {padding:0;background:none;border:0}
-html[data-studio] #studioImpulse .motivation-strip {padding:0;background:none}
-html[data-studio] #studioImpulse .motivation-strip :is(summary,span,p,strong) {color:var(--studio-muted)}
-html[data-studio] #studioProgress {
-  grid-area:progress;display:block;padding:16px 18px;border-radius:15px;
-  background:var(--studio-accent);color:#202a16;border:0;
-}
-html[data-studio] #studioProgress :is(.eyebrow,h3,p) {color:#202a16;margin:0 0 5px}
-html[data-studio] #studioProgress .eyebrow,html[data-studio] #studioProgress h3+p {display:none}
-html[data-studio] #studioProgress #percent {font-size:48px;color:#202a16}
-html[data-studio] #studioProgress .progress {background:#273e2333;height:6px}
-html[data-studio] #studioProgress .progress div {background:#314521}
-html[data-studio] .layout {display:contents}
-html[data-studio] .wrap {
-  display:grid;align-items:start;gap:16px;
-  grid-template-columns:minmax(0,1fr) minmax(245px,300px);
-  grid-template-areas:"nav nav" "day progress" "work tools";
-}
-html[data-studio] .studio-dock {grid-area:nav;position:static;flex-direction:row}
-html[data-studio] .main-column {grid-area:work;min-width:0}
-html[data-studio] #studioTools {grid-area:tools;min-width:0}
-html[data-studio] :is(.filters select,#sickToggle,.side-calendar-head button,#studioDate input,#studioDate button) {
-  background:#252f26;color:#f2f6ef;border-color:#455746;
-}
-html[data-studio] :is(.side-calendar-head strong,.side-calendar-grid .day-name) {color:var(--studio-muted)}
-html[data-studio] .namedays {background:var(--studio-soft);border-color:var(--studio-line)}
-html[data-studio] .namedays :is(h4,time,p,a) {color:var(--studio-ink)}
-html[data-studio] .filter.active,html[data-studio] #openTaskModal {background:var(--studio-accent);color:#172016;border-color:transparent}
-html[data-studio] .task-section .section-count {background:var(--studio-soft);color:var(--studio-ink)}
-html[data-studio] #list > .priority-section .section-count {background:var(--focus-accent);color:#20170e}
-html[data-studio] #list > .priority-section {background:#332820;border-color:#896749}
-html[data-studio] #list > .timed-group {background:#1a3035;border-inline-start-color:#85d9ed}
-@media(max-width:850px) {
-  html[data-studio] .wrap {grid-template-columns:minmax(0,1fr);grid-template-areas:"nav" "day" "progress" "work" "tools"}
-}
-
-/* Studio board */
-html[data-studio] {
-  --studio-bg:#e8e9e3;--studio-panel:#f8f8f3;--studio-ink:#222522;
-  --studio-muted:#4d584f;--studio-line:#c8cec3;--studio-soft:#dbe5d9;--studio-accent:#253f33;
-  color-scheme:light;
-}
-html[data-studio][data-theme=dark] {
-  --studio-bg:#121712;--studio-panel:#202820;--studio-ink:#f2f6ef;--studio-muted:#bdc7bb;
-  --studio-line:#485548;--studio-soft:#2e3d32;--studio-accent:#c8e3c4;color-scheme:dark;
-}
-html[data-studio] .wrap {
-  grid-template-columns:minmax(0,1fr) minmax(200px,270px);
-  grid-template-areas:"day progress" "work work" "tools tools";
-}
-html[data-studio] .studio-dock {display:none}
-html[data-studio] .studio-hero h1 {font-size:clamp(35px,5vw,67px);font-weight:550}
-html[data-studio] #studioProgress {background:#d6fb83}
-html[data-studio] #studioTools {width:100%;max-width:100%;display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,260px),1fr));gap:14px;align-items:start}
-html[data-studio] .sectionhead h2 {font-size:24px;font-weight:650}
-html[data-studio] #list:has(> .studio-lane),
-html[data-studio] #list:has(> :is(.priority-section,.timed-group,.regular-section)) {
-  grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;align-items:start;
-}
-html[data-studio] #list:has(> .studio-lane) > .empty {display:none}
-html[data-studio] #list > :is(.priority-section,.studio-priority) {grid-column:1;background:#352647;border-color:#67567c;color:#fff5ff}
-html[data-studio] #list > :is(.timed-group,.studio-timed) {grid-column:2;background:#d5e7fb;border-color:#a7c4e6;color:#172b43}
-html[data-studio] #list > :is(.regular-section,.studio-regular) {grid-column:3;background:var(--studio-panel);color:var(--studio-ink)}
-html[data-studio] #list > :is(.task-section,.timed-group,.studio-lane) {
-  grid-row:1;display:block;min-width:0;min-height:190px;margin:0;padding:16px;border-radius:15px;
-}
-html[data-studio] #list > .studio-lane {border:1px solid var(--studio-line)}
-html[data-studio] .studio-lane h3 {font-size:20px;margin:0 0 18px;font-weight:650}
-html[data-studio] .studio-lane p {font-size:14px;margin:0;line-height:1.5}
-html[data-studio] #list > .task-section > .task-group {margin-top:12px}
-html[data-studio] #list > .timed-group > .group-head {background:#edf5ff;color:#172b43}
-html[data-studio] #list > .timed-group > .group-head .group-title {color:#172b43}
-html[data-studio] #list > .priority-section .task {background:#443557}
-html[data-studio] .filter.active,html[data-studio] #openTaskModal {background:#d6fb83;color:#172016}
-@media(max-width:880px) {
-  html[data-studio] #list:has(> :is(.studio-lane,.task-section,.timed-group)) {grid-template-columns:minmax(0,1fr)}
-  html[data-studio] #list > :is(.task-section,.timed-group,.studio-lane) {grid-area:auto;min-height:0}
-  html[data-studio] #list > :is(.priority-section,.studio-priority) {order:0}
-  html[data-studio] #list > :is(.timed-group,.studio-timed) {order:1}
-  html[data-studio] #list > :is(.regular-section,.studio-regular) {order:2}
-}
-@media(max-width:650px) {
-  html[data-studio] .wrap {grid-template-columns:minmax(0,1fr);grid-template-areas:"day" "work" "progress" "tools"}
-}
-</style><script src="./namedays.js"></script><script src="./holidays.js"></script><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script></head><body><header><div class="top"><div class="brand"><img src="./mv-logo.png" alt="" width="38" height="38">Mana ikdiena</div><div class="top-controls"><nav class="workspace-switch" aria-label="Plānotāja skats"><button type="button" data-workspace="work" aria-pressed="true">Darbs</button><button type="button" data-workspace="personal" aria-pressed="false">Ikdiena</button></nav><button id="themeToggle" class="theme-toggle" type="button" aria-pressed="false">☾ Tumšais skats</button><button type="button" id="lookToggle" aria-pressed="false">✦ Studija</button><button type="button" id="fontOpen" aria-label="Fontu iestatījumi" title="Fontu iestatījumi">Aa</button><button type="button" id="noteOpen" aria-label="Pievienot piezīmi" title="Pievienot piezīmi">✎</button></div></div></header><div class="motivation-strip"><details class="daily-motivation" id="dailyMotivation"><summary><span class="daily-motivation-label">Dienas impulss</span><span class="daily-motivation-text" id="dailyMotivationText"></span><span class="motivation-expand-label">Skaidrojums <span aria-hidden="true">⌄</span></span></summary><div class="motivation-explanation"><strong>Ko tas nozīmē?</strong><p id="dailyMotivationExplanation"></p></div></details></div><div id="notesList" class="quick-notes" aria-label="Ātrās piezīmes"></div><dialog id="noteDialog" aria-labelledby="noteHeading"><h2 id="noteHeading">Ātrā piezīme</h2><form id="noteForm"><textarea aria-label="Piezīmes teksts" required id="noteText" maxlength="1500" placeholder="Kas jāatceras?"></textarea><button type="submit">Saglabāt piezīmi</button></form><button type="button" id="noteClose">Aizvērt</button></dialog><div class="wrap"><section class="studio-overview" hidden aria-labelledby="studioTitle"><div class="studio-hero"><div class="studio-kicker">Mana ikdiena</div><h1 id="studioTitle">Dienas plāns</h1><div id="studioDate"></div><div id="studioImpulse"></div></div><div id="studioProgress"></div></section><div class="layout"><nav class="studio-dock" aria-label="Studijas navigācija" hidden><a href="#studioTitle">Dienas pārskats</a><a href="#workspaceHeading">Uzdevumi</a><a href="#studioTools">Kalendārs un iestatījumi</a></nav><div class="main-column"><main class="card main"><div class="datebar"><div class="date-input-wrap main-date"><input type="date" id="date" aria-label="Izvēlies datumu"><button type="button" class="calendar-toggle" data-for="date" aria-label="Atvērt dienas kalendāru">▦</button></div><button id="today" type="button">Šodien</button><button class="refresh" id="refresh" type="button">↻ &nbsp;Atjaunot</button></div><div class="sectionhead"><h2 id="workspaceHeading">Darba uzdevumi</h2><button type="button" id="sickToggle" aria-pressed="false">Slimoju</button><span class="muted" id="count"></span></div><div class="filters" role="group" aria-label="Filtrēt uzdevumus"><button type="button" class="filter" data-filter="all">Visi</button><button type="button" class="filter active" data-filter="open">Jāizdara</button><button type="button" class="filter" data-filter="done">Paveikts</button><div class="category-filter-actions"><select id="categoryFilter" aria-label="Filtrēt pēc kategorijas"><option value="">Visas kategorijas</option></select><button id="openTaskModal" class="desktop-add-task" type="button">＋ Pievienot uzdevumu</button></div></div><p id="sickNotice" role="status">Darba uzdevumi ir pauzēti. Kad atgriezies, spied “Atsākt darbu”.</p><div id="list" aria-live="polite"></div><details id="taskFormPanel" class="form-panel"><summary>＋ Pievienot uzdevumu</summary><div class="task-modal-head"><h3>Uzdevums</h3><button id="closeTaskModal" type="button" aria-label="Aizvērt uzdevuma formu">✕</button></div><form class="form" id="form"><label class="wide">Uzdevums<input id="text" placeholder="Kas jāizdara?" maxlength="200" required></label><label class="wide">Apraksts <span class="muted">Nav obligāts</span><textarea id="description" placeholder="Pievieno detaļas. Kontrolsarakstam katru rindu sāc ar - vai [ ]." maxlength="3000"></textarea><span class="muted">Kontrolsarakstam katru punktu sāc ar “- ” vai “[ ] ”.</span></label><label><span id="taskDateLabel">Uzdevuma datums</span><div class="date-input-wrap"><input id="taskDate" type="date" required><button type="button" class="calendar-toggle" data-for="taskDate" aria-label="Atvērt uzdevuma datuma kalendāru">▦</button></div></label><label>Kategorija<select id="category"><option value="">Bez kategorijas</option><option>e-meistars.lv</option><option>carelika.com</option><option>lika-j.com</option><option>chibaltic.lv</option><option>gigilaboratories.lv</option><option>Reklāmas</option><option>E-pasta mārketings</option><option>Amazon</option><option>Mācības</option></select></label><label>Laiks <span class="muted">Nav obligāts · 24 h formāts, piemēram, 14:30</span><input id="time" type="text" inputmode="numeric" pattern="(?:[01][0-9]|2[0-3]):[0-5][0-9]" placeholder="HH:MM" maxlength="5" autocomplete="off"></label><label class="wide project-option reminder-option" id="nagReminderField"><input type="checkbox" id="nagReminder"> Atkārtot paziņojumu ik pēc 15 minūtēm līdz paveikšanai <span class="muted">Vispirms norādi uzdevuma laiku. Atkārtojas arī nākamajās dienās, tostarp naktī, ja ir ieslēgti fona paziņojumi.</span></label><label class="wide project-option reminder-option"><input type="checkbox" id="dayReminder"> Atgādināt uzdevuma dienā <span class="muted">Ar fona paziņojumiem atgādinājums pienāks arī pēc aplikācijas aizvēršanas.</span></label><label class="wide reminder-time-field" id="reminderTimeField" hidden>Atgādinājuma laiks <span class="muted">24 h formāts</span><input id="reminderTime" type="time" value="09:00" step="60" required></label><label class="wide">Atkārtošanās<select id="repeat"><option value="none">Neatkārtojas</option><option value="daily">Katru darbadienu</option><option value="weekly">Katru nedēļu</option><option value="monthly">Katru mēnesi</option><option value="yearly">Katru gadu</option></select></label><label class="wide" id="repeatIntervalField" hidden>Atkārtot ik pēc <span class="repeat-interval-control"><input type="number" id="repeatInterval" min="1" max="12" step="1" value="1" required aria-label="Atkārtošanās intervāls"><span id="repeatIntervalUnit">nedēļām</span></span><span class="muted">Piemēram, 2 nedēļas nozīmē katru otro nedēļu.</span></label><label class="wide project-option"><input type="checkbox" id="project"> Šis uzdevums ir projekts</label><div class="wide project-due-field" id="projectDueField" hidden><label for="projectDue">Projekta termiņš <span class="muted" id="projectDueHelp">Nav obligāts. Projekts būs redzams katru darbadienu līdz pabeigšanai arī pēc termiņa.</span></label><div class="date-input-wrap"><input id="projectDue" type="date"><button type="button" class="calendar-toggle" data-for="projectDue" aria-label="Atvērt projekta termiņa kalendāru">▦</button></div></div><label class="wide project-option"><input type="checkbox" id="priority"> Prioritātes darbs</label><div class="wide actions"><button class="primary" id="submit">Pievienot uzdevumu</button><button type="button" id="cancel" hidden>Atcelt rediģēšanu</button></div></form></details></main><section class="card category-card" aria-label="Kategorijas"><h3>Kategorijas</h3><div id="emptyCategories" class="empty-categories"></div><details id="categoryOrganizer" class="category-organizer"><summary>↕ Pārvaldīt kategorijas</summary><div id="categoryOrganizerList" class="category-organizer-list"></div></details><details id="categoryQuick" class="category-quick"><summary>＋ Jauna kategorija</summary><div class="category-tools"><input id="categoryName" maxlength="60" placeholder="Kategorijas nosaukums" aria-label="Jaunas kategorijas nosaukums"><button type="button" id="addCategory">Pievienot kategoriju</button></div></details></section></div><div id="columnResizer" class="column-resizer" role="separator" tabindex="0" aria-label="Mainīt paneļu platumu" aria-orientation="vertical" aria-valuemin="245" aria-valuenow="320" aria-valuemax="480" title="Velc, lai mainītu paneļu platumu. Var izmantot arī bulttaustiņus."></div><aside class="card side" id="studioTools"><section id="sideCalendar" class="side-calendar" aria-label="Mēneša kalendārs"></section><section class="namedays" aria-label="Šodienas vārdadienas"><div class="namedays-head"><h4>Šodienas vārdadienas</h4><time id="namedayDate"></time></div><p id="namedayNames">Ielādē vārdadienas…</p><a href="https://www.vvc.gov.lv/lv/kalendarvardu-ekspertu-komisija" target="_blank" rel="noopener noreferrer">Avots: Valsts valodas centrs</a></section><div id="dayProgress"><div class="eyebrow">Tavs progress</div><h3>Dienas progress</h3><p>Cik no ieplānotā jau paveikts.</p><div class="big" id="percent">0%</div><p id="progressText">Vēl nav uzdevumu</p><div class="progress"><div id="bar"></div></div></div><details class="settings-panel"><summary>Iestatījumi un datu kopija</summary><div class="sideblock"><h4>Uzdevumu pārcelšana</h4><label class="settings-checkbox"><input id="autoCarry" type="checkbox" checked> Nepaveiktos vienreizējos darba uzdevumus bez norādīta laika pārcelt uz nākamo darbadienu</label></div><div class="sideblock"><h4>Atgādinājumi</h4><p>Atgādinājumu vari saņemt uzdevuma dienā un pirms norādītā laika. Telefonā ieslēdz fona paziņojumus, lai tos saņemtu arī pēc aplikācijas aizvēršanas.</p><button id="notifications" type="button">Ieslēgt paziņojumus</button><div class="notice" id="notificationStatus" role="status"></div><button id="pushEnable" type="button">Ieslēgt fona paziņojumus</button><button id="pushTest" type="button">Nosūtīt testa paziņojumu</button><button id="pushTestClosed" type="button">Tests pēc 30 sekundēm</button><div class="notice" id="pushStatus" role="status">Pieraksties, lai saņemtu atgādinājumus arī tad, kad aplikācija ir aizvērta. iPhone telefonā vispirms pievieno aplikāciju sākuma ekrānam.</div></div><div class="sideblock" id="syncPanel"><h4>Sinhronizācija</h4><p id="syncStatus">Lai lietotu vienus uzdevumus abās ierīcēs, pieraksties ar vienu kontu.</p><div id="authForm"><label class="sync-label">E-pasts<input id="authEmail" type="email" autocomplete="email" placeholder="E-pasts"></label><label class="sync-label">Parole<input id="authPassword" type="password" autocomplete="current-password" placeholder="Parole (vismaz 6 rakstzīmes)"></label><button type="button" id="login">Pierakstīties</button><button type="button" id="signup">Izveidot kontu</button></div><button type="button" id="logout" hidden>Izrakstīties</button></div><div class="sideblock"><h4>Datu kopija</h4><p>Bez pierakstīšanās dati glabājas tikai šajā pārlūkā.</p><button id="export" type="button">Lejupielādēt</button><label class="filelabel">Importēt<input type="file" id="import" accept="application/json,.json"></label></div></details></aside></div></div><div class="refresh-toast" id="refreshToast" role="status" hidden>Atjauno lapu…</div><script>
+</style><script src="./namedays.js"></script><script src="./holidays.js"></script><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script></head><body><header><div class="top"><div class="brand"><img src="./mv-logo.png" alt="" width="38" height="38">Mana ikdiena</div><div class="top-controls"><nav class="workspace-switch" aria-label="Plānotāja skats"><button type="button" data-workspace="work" aria-pressed="true">Darbs</button><button type="button" data-workspace="personal" aria-pressed="false">Ikdiena</button></nav><button id="themeToggle" class="theme-toggle" type="button" aria-pressed="false">☾ Tumšais skats</button><button type="button" id="fontOpen" aria-label="Fontu iestatījumi" title="Fontu iestatījumi">Aa</button><button type="button" id="noteOpen" aria-label="Pievienot piezīmi" title="Pievienot piezīmi">✎</button></div></div></header><div class="motivation-strip"><details class="daily-motivation" id="dailyMotivation"><summary><span class="daily-motivation-label">Dienas impulss</span><span class="daily-motivation-text" id="dailyMotivationText"></span><span class="motivation-expand-label">Skaidrojums <span aria-hidden="true">⌄</span></span></summary><div class="motivation-explanation"><strong>Ko tas nozīmē?</strong><p id="dailyMotivationExplanation"></p></div></details></div><div id="notesList" class="quick-notes" aria-label="Ātrās piezīmes"></div><dialog id="noteDialog" aria-labelledby="noteHeading"><h2 id="noteHeading">Ātrā piezīme</h2><form id="noteForm"><textarea aria-label="Piezīmes teksts" required id="noteText" maxlength="1500" placeholder="Kas jāatceras?"></textarea><button type="submit">Saglabāt piezīmi</button></form><button type="button" id="noteClose">Aizvērt</button></dialog><div class="wrap"><div class="layout"><div class="main-column"><main class="card main"><div class="datebar"><div class="date-input-wrap main-date"><input type="date" id="date" aria-label="Izvēlies datumu"><button type="button" class="calendar-toggle" data-for="date" aria-label="Atvērt dienas kalendāru">▦</button></div><button id="today" type="button">Šodien</button><button class="refresh" id="refresh" type="button">↻ &nbsp;Atjaunot</button></div><div class="sectionhead"><h2 id="workspaceHeading">Darba uzdevumi</h2><button type="button" id="sickToggle" aria-pressed="false">Slimoju</button><span class="muted" id="count"></span></div><div class="filters" role="group" aria-label="Filtrēt uzdevumus"><button type="button" class="filter" data-filter="all">Visi</button><button type="button" class="filter active" data-filter="open">Jāizdara</button><button type="button" class="filter" data-filter="done">Paveikts</button><div class="category-filter-actions"><select id="categoryFilter" aria-label="Filtrēt pēc kategorijas"><option value="">Visas kategorijas</option></select><button id="openTaskModal" class="desktop-add-task" type="button">＋ Pievienot uzdevumu</button></div></div><p id="sickNotice" role="status">Darba uzdevumi ir pauzēti. Kad atgriezies, spied “Atsākt darbu”.</p><div id="list" aria-live="polite"></div><details id="taskFormPanel" class="form-panel"><summary>＋ Pievienot uzdevumu</summary><div class="task-modal-head"><h3>Uzdevums</h3><button id="closeTaskModal" type="button" aria-label="Aizvērt uzdevuma formu">✕</button></div><form class="form" id="form"><label class="wide">Uzdevums<input id="text" placeholder="Kas jāizdara?" maxlength="200" required></label><label class="wide">Apraksts <span class="muted">Nav obligāts</span><textarea id="description" placeholder="Pievieno detaļas. Kontrolsarakstam katru rindu sāc ar - vai [ ]." maxlength="3000"></textarea><span class="muted">Kontrolsarakstam katru punktu sāc ar “- ” vai “[ ] ”.</span></label><label><span id="taskDateLabel">Uzdevuma datums</span><div class="date-input-wrap"><input id="taskDate" type="date" required><button type="button" class="calendar-toggle" data-for="taskDate" aria-label="Atvērt uzdevuma datuma kalendāru">▦</button></div></label><label>Kategorija<select id="category"><option value="">Bez kategorijas</option><option>e-meistars.lv</option><option>carelika.com</option><option>lika-j.com</option><option>chibaltic.lv</option><option>gigilaboratories.lv</option><option>Reklāmas</option><option>E-pasta mārketings</option><option>Amazon</option><option>Mācības</option></select></label><label>Laiks <span class="muted">Nav obligāts · 24 h formāts, piemēram, 14:30</span><input id="time" type="text" inputmode="numeric" pattern="(?:[01][0-9]|2[0-3]):[0-5][0-9]" placeholder="HH:MM" maxlength="5" autocomplete="off"></label><label class="wide project-option reminder-option" id="nagReminderField"><input type="checkbox" id="nagReminder"> Atkārtot paziņojumu ik pēc 15 minūtēm līdz paveikšanai <span class="muted">Vispirms norādi uzdevuma laiku. Atkārtojas arī nākamajās dienās, tostarp naktī, ja ir ieslēgti fona paziņojumi.</span></label><label class="wide project-option reminder-option"><input type="checkbox" id="dayReminder"> Atgādināt uzdevuma dienā <span class="muted">Ar fona paziņojumiem atgādinājums pienāks arī pēc aplikācijas aizvēršanas.</span></label><label class="wide reminder-time-field" id="reminderTimeField" hidden>Atgādinājuma laiks <span class="muted">24 h formāts</span><input id="reminderTime" type="time" value="09:00" step="60" required></label><label class="wide">Atkārtošanās<select id="repeat"><option value="none">Neatkārtojas</option><option value="daily">Katru darbadienu</option><option value="weekly">Katru nedēļu</option><option value="monthly">Katru mēnesi</option><option value="yearly">Katru gadu</option></select></label><label class="wide" id="repeatIntervalField" hidden>Atkārtot ik pēc <span class="repeat-interval-control"><input type="number" id="repeatInterval" min="1" max="12" step="1" value="1" required aria-label="Atkārtošanās intervāls"><span id="repeatIntervalUnit">nedēļām</span></span><span class="muted">Piemēram, 2 nedēļas nozīmē katru otro nedēļu.</span></label><label class="wide project-option"><input type="checkbox" id="project"> Šis uzdevums ir projekts</label><div class="wide project-due-field" id="projectDueField" hidden><label for="projectDue">Projekta termiņš <span class="muted" id="projectDueHelp">Nav obligāts. Projekts būs redzams katru darbadienu līdz pabeigšanai arī pēc termiņa.</span></label><div class="date-input-wrap"><input id="projectDue" type="date"><button type="button" class="calendar-toggle" data-for="projectDue" aria-label="Atvērt projekta termiņa kalendāru">▦</button></div></div><label class="wide project-option"><input type="checkbox" id="priority"> Prioritātes darbs</label><div class="wide actions"><button class="primary" id="submit">Pievienot uzdevumu</button><button type="button" id="cancel" hidden>Atcelt rediģēšanu</button></div></form></details></main><section class="card category-card" aria-label="Kategorijas"><h3>Kategorijas</h3><div id="emptyCategories" class="empty-categories"></div><details id="categoryOrganizer" class="category-organizer"><summary>↕ Pārvaldīt kategorijas</summary><div id="categoryOrganizerList" class="category-organizer-list"></div></details><details id="categoryQuick" class="category-quick"><summary>＋ Jauna kategorija</summary><div class="category-tools"><input id="categoryName" maxlength="60" placeholder="Kategorijas nosaukums" aria-label="Jaunas kategorijas nosaukums"><button type="button" id="addCategory">Pievienot kategoriju</button></div></details></section></div><div id="columnResizer" class="column-resizer" role="separator" tabindex="0" aria-label="Mainīt paneļu platumu" aria-orientation="vertical" aria-valuemin="245" aria-valuenow="320" aria-valuemax="480" title="Velc, lai mainītu paneļu platumu. Var izmantot arī bulttaustiņus."></div><aside class="card side"><section id="sideCalendar" class="side-calendar" aria-label="Mēneša kalendārs"></section><section class="namedays" aria-label="Šodienas vārdadienas"><div class="namedays-head"><h4>Šodienas vārdadienas</h4><time id="namedayDate"></time></div><p id="namedayNames">Ielādē vārdadienas…</p><a href="https://www.vvc.gov.lv/lv/kalendarvardu-ekspertu-komisija" target="_blank" rel="noopener noreferrer">Avots: Valsts valodas centrs</a></section><div class="eyebrow">Tavs progress</div><h3>Dienas progress</h3><p>Cik no ieplānotā jau paveikts.</p><div class="big" id="percent">0%</div><p id="progressText">Vēl nav uzdevumu</p><div class="progress"><div id="bar"></div></div><details class="settings-panel"><summary>Iestatījumi un datu kopija</summary><div class="sideblock"><h4>Uzdevumu pārcelšana</h4><label class="settings-checkbox"><input id="autoCarry" type="checkbox" checked> Nepaveiktos vienreizējos darba uzdevumus bez norādīta laika pārcelt uz nākamo darbadienu</label></div><div class="sideblock"><h4>Atgādinājumi</h4><p>Atgādinājumu vari saņemt uzdevuma dienā un pirms norādītā laika. Telefonā ieslēdz fona paziņojumus, lai tos saņemtu arī pēc aplikācijas aizvēršanas.</p><button id="notifications" type="button">Ieslēgt paziņojumus</button><div class="notice" id="notificationStatus" role="status"></div><button id="pushEnable" type="button">Ieslēgt fona paziņojumus</button><button id="pushTest" type="button">Nosūtīt testa paziņojumu</button><button id="pushTestClosed" type="button">Tests pēc 30 sekundēm</button><div class="notice" id="pushStatus" role="status">Pieraksties, lai saņemtu atgādinājumus arī tad, kad aplikācija ir aizvērta. iPhone telefonā vispirms pievieno aplikāciju sākuma ekrānam.</div></div><div class="sideblock" id="syncPanel"><h4>Sinhronizācija</h4><p id="syncStatus">Lai lietotu vienus uzdevumus abās ierīcēs, pieraksties ar vienu kontu.</p><div id="authForm"><label class="sync-label">E-pasts<input id="authEmail" type="email" autocomplete="email" placeholder="E-pasts"></label><label class="sync-label">Parole<input id="authPassword" type="password" autocomplete="current-password" placeholder="Parole (vismaz 6 rakstzīmes)"></label><button type="button" id="login">Pierakstīties</button><button type="button" id="signup">Izveidot kontu</button></div><button type="button" id="logout" hidden>Izrakstīties</button></div><div class="sideblock"><h4>Datu kopija</h4><p>Bez pierakstīšanās dati glabājas tikai šajā pārlūkā.</p><button id="export" type="button">Lejupielādēt</button><label class="filelabel">Importēt<input type="file" id="import" accept="application/json,.json"></label></div></details></aside></div></div><div class="refresh-toast" id="refreshToast" role="status" hidden>Atjauno lapu…</div><script>
 let key='mana-diena-v1';const reminderKey='mana-diena-reminders-v1',carryKey='mana-diena-auto-carry-v1';let autoCarry=true;try{autoCarry=localStorage.getItem(carryKey)!=='false'}catch{}const $=s=>document.querySelector(s);let tasks=[],filter='open',editing=null,reminded={};const workspaceKey='mana-diena-workspace';let activeWorkspace='work';try{if(localStorage.getItem(workspaceKey)==='personal')activeWorkspace='personal'}catch{}function taskWorkspace(t){return t.workspace==='personal'?'personal':'work'}function workspaceTasks(){return tasks.filter(t=>taskWorkspace(t)===activeWorkspace)}const date=$('#date'),list=$('#list');function today(){let d=new Date();return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`}function renderNamedays(now=new Date()){let parts=new Intl.DateTimeFormat('en-GB',{timeZone:'Europe/Riga',month:'2-digit',day:'2-digit'}).formatToParts(now),month=parts.find(x=>x.type==='month').value,day=parts.find(x=>x.type==='day').value,source=window.LATVIAN_NAMEDAYS,names=(source?.[month+'-'+day]||[]).filter(name=>name!=='-');$('#namedayDate').textContent=new Intl.DateTimeFormat('lv-LV',{timeZone:'Europe/Riga',day:'numeric',month:'long'}).format(now);$('#namedayNames').textContent=names.length?names.join(', '):source?'Šajā dienā vārdadienu nav.':'Vārdadienu dati nav pieejami.'}setInterval(renderNamedays,60000);document.addEventListener('visibilitychange',()=>{if(!document.hidden)renderNamedays()});function read(){tasks=[];try{let x=JSON.parse(localStorage.getItem(key)||'[]');if(Array.isArray(x))tasks=x}catch{}}function save(){try{localStorage.setItem(key,JSON.stringify(tasks))}catch{alert('Neizdevās saglabāt datus pārlūkā.')}render();if(window.queueSync)window.queueSync()}function setCompletion(t,day,done){if(t.repeat&&t.repeat!=='none'){t.completedDates=t.completedDates||{};if(done)t.completedDates[day]=true;else delete t.completedDates[day]}else{t.done=done;t.completedAt=done?new Date().toISOString():null;if(t.project)t.completedOn=done?day:null}if(!done&&filter==='done'){filter='open';let target=t.repeat&&t.repeat!=='none'||t.project?day:t.date;if(autoCarry&&taskWorkspace(t)==='work'&&!t.project&&!t.time&&(!t.repeat||t.repeat==='none')&&t.date<workdayTarget()){t.date=workdayTarget();target=t.date}date.value=target;alignSideMonth();document.querySelectorAll('.filter').forEach(button=>button.classList.toggle('active',button.dataset.filter==='open'))}save()}function occurs(t,d){
   if(t.kind==='note'||t.kind==='category'||t.kind==='category-order')return false;
   if(t.postponedDates&&t.postponedDates[d])return false;
@@ -772,24 +377,6 @@ function render(){
   shown.forEach(t=>{let name=filter==='open'?(t.category||'Bez kategorijas'):viewDate(t);if(!groups.has(name))groups.set(name,[]);groups.get(name).push(t)});
   if(!groups.size){let empty=document.createElement('div');empty.className='empty';empty.textContent=filter==='open'?'Šajā dienā nav veicamu uzdevumu.':filter==='done'?'Vēl nav paveiktu uzdevumu.':'Nav nepaveiktu uzdevumu.';list.append(empty)}
   let ordered=filter==='open'?priorityFirstGroups(groups,date.value):{groups:[...groups.entries()].sort((a,b)=>filter==='done'?b[0].localeCompare(a[0]):a[0].localeCompare(b[0])).map(([name,items])=>[name,items,'timeline']),timedCount:0,priorityCount:0};
-  const studioBoard = filter === 'open' && document.documentElement.hasAttribute('data-studio');
-  if (studioBoard) {
-    for (const [type, title, message] of [
-      ['priority', 'Prioritātes', 'Šai dienai nav prioritāru darbu.'],
-      ['timed', 'Dienas grafiks', 'Šai dienai nav darbu ar noteiktu laiku.'],
-      ['regular', 'Pārējie darbi', 'Šai dienai nav pārējo darbu.']
-    ]) {
-      if (ordered.groups.some(group => group[2] === type)) continue;
-      const lane = document.createElement('section');
-      lane.className = 'studio-lane studio-' + type;
-      const heading = document.createElement('h3');
-      heading.textContent = title;
-      const body = document.createElement('p');
-      body.textContent = message;
-      lane.append(heading, body);
-      list.append(lane);
-    }
-  }
   let activeSection=null;
   ordered.groups.forEach(([name,items,type],groupIndex)=>{
     if(filter==='open'&&((type==='priority'&&groupIndex===ordered.timedCount)||(type==='regular'&&groupIndex===ordered.timedCount+ordered.priorityCount))){
@@ -1093,41 +680,4 @@ async function activate(u){generation++;user=u;key=guestKey+'-user-'+u.id;try{pe
 async function signIn(signup){let email=document.querySelector('#authEmail').value.trim(),password=document.querySelector('#authPassword').value;if(!email||password.length<6){show('Ievadi e-pastu un paroli ar vismaz 6 rakstzīmēm.');return}show('Lūdzu, uzgaidi...');let result=signup?await client.auth.signUp({email,password,options:{emailRedirectTo:'https://mvsialikaj-beep.github.io/mana-diena/'}}):await client.auth.signInWithPassword({email,password});document.querySelector('#authPassword').value='';if(result.error){show('Pierakstīšanās neizdevās: '+result.error.message);return}if(signup&&!result.data.session)show('Pārbaudi e-pastu un apstiprini kontu. Tad pieraksties abās ierīcēs.');}
 document.querySelector('#login').onclick=()=>signIn(false);document.querySelector('#signup').onclick=()=>signIn(true);out.onclick=async()=>{try{if(user&&'serviceWorker' in navigator){let registration=await navigator.serviceWorker.getRegistration('./'),subscription=await registration?.pushManager?.getSubscription();if(subscription){await client.from('push_subscriptions').delete().eq('user_id',user.id).eq('endpoint',subscription.endpoint);await subscription.unsubscribe()}}}catch{}finally{window.backgroundPushActive=false;try{localStorage.removeItem('mana-diena-push-active')}catch{}await client.auth.signOut()}};client.auth.onAuthStateChange((event,session)=>{if(session?.user){if(user?.id!==session.user.id)setTimeout(()=>activate(session.user),0)}else if(user){generation++;user=null;window.backgroundPushActive=false;try{localStorage.removeItem('mana-diena-push-active')}catch{}key=guestKey;pending={};snapshot=new Map();read();render();form.hidden=false;out.hidden=true;show('Pieraksties, lai sinhronizētu uzdevumus.');document.querySelector('#pushEnable').textContent='Ieslēgt fona paziņojumus';pushMessage('Pieraksties, lai ieslēgtu fona paziņojumus.')}});setInterval(()=>{if(user){if(Object.keys(pending).length)flush();else pull()}},10000);
 })();
-</script><script src="./design-settings.js?v=3"></script><script>
-(() => {
-  const button = document.getElementById('lookToggle');
-  const key = 'mana-ikdiena-studio-look';
-  let studio = false;
-  try { studio = localStorage.getItem(key) === 'true'; } catch {}
-  const overview = document.querySelector('.studio-overview');
-  const placements = [
-    ['.datebar', '#studioDate'],
-    ['.motivation-strip', '#studioImpulse'],
-    ['#dayProgress', '#studioProgress']
-  ].map(([source, destination]) => {
-    const element = document.querySelector(source);
-    const original = document.createComment(source);
-    element.before(original);
-    return { element, original, destination: document.querySelector(destination) };
-  });
-  const dock = document.querySelector('.studio-dock');
-  function renderLook() {
-    dock.hidden = !studio;
-    overview.hidden = !studio;
-    for (const {element, original, destination} of placements) {
-      if (studio) destination.append(element);
-      else original.after(element);
-    }
-    document.documentElement.toggleAttribute('data-studio', studio);
-    button.setAttribute('aria-pressed', String(studio));
-    button.textContent = studio ? 'Klasiskais skats' : '✦ Studija';
-    render();
-  }
-  button.addEventListener('click', () => {
-    studio = !studio;
-    try { localStorage.setItem(key, String(studio)); } catch {}
-    renderLook();
-  });
-  renderLook();
-})();
-</script></body></html>
+</script><script src="./design-settings.js?v=3"></script></body></html>
