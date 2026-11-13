@@ -344,7 +344,11 @@
     for(const {control} of [angle,start,finish]) control.addEventListener('input',change);
     clear.addEventListener('click',remove);
     reset.addEventListener('click',remove);
-    details.append(summary,input,reset,preview,end,angle.field,start.field,finish.field,clear);
+    const gradientLabel=document.createElement('strong');
+    gradientLabel.className='rgb-gradient-label';
+    gradientLabel.textContent='Gradients';
+    details.append(summary,input,gradientLabel,preview,end,angle.field,start.field,finish.field,clear,reset);
+    if(typeof attachRgbPicker==='function') attachRgbPicker(input,details,summary);
     addEyedropper(input,details);
     addEyedropper(end,details);
     row.append(details);
