@@ -207,8 +207,30 @@
   const colorInputs = new Map();
 
   const gradientControls = new Map();
-  const directions = ['90','135','180','45'];
+  const refreshGradientPreviews = [];
   const gradients = Object.create(null);
+  function gradientBackground(first, gradient) {
+    const clamp=(value,max)=>Math.min(max,Math.max(0,Number(value)||0));
+    const start=clamp(gradient.start ?? 0,100);
+    const finish=Math.max(start,clamp(gradient.finish ?? 100,100));
+    return 'linear-gradient('+clamp(gradient.angle,360)+'deg,'+first+' '+start+'%,'+gradient.end+' '+finish+'%)';
+  }
+  function addEyedropper(input,container) {
+    if(typeof window==='undefined'||typeof window.EyeDropper!=='function')return;
+    const button=document.createElement('button');
+    button.type='button';
+    button.textContent='Pipete';
+    button.style.gridColumn='1 / -1';
+    button.style.width='auto';
+    button.addEventListener('click',async()=>{
+      try {
+        const {sRGBHex}=await new window.EyeDropper().open();
+        input.value=sRGBHex;
+        input.dispatchEvent(new Event('input',{bubbles:true}));
+      } catch {}
+    });
+    container.append(button);
+  }
   function addGradient(key, input, reset, row) {
     const details = document.createElement('details');
     const summary = document.createElement('summary');
@@ -216,29 +238,44 @@
     const end = document.createElement('input');
     end.type = 'color';
     end.setAttribute('aria-label','Gradienta otrā krāsa');
-    const direction = document.createElement('select');
-    direction.setAttribute('aria-label','Gradienta virziens');
-    for (const [value,label] of [['90','Pa labi'],['135','Diagonāli lejup'],['180','Uz leju'],['45','Diagonāli augšup']]) {
-      const option = document.createElement('option');
-      option.value=value; option.textContent=label; direction.append(option);
+    function number(label,min,max,value) {
+      const field=document.createElement('label');
+      field.textContent=label;
+      const control=document.createElement('input');
+      control.type='number'; control.min=min; control.max=max; control.value=value;
+      field.append(control);
+      return {field,control};
     }
+    const angle=number('Leņķis °',0,360,135);
+    const start=number('Pirmā krāsa %',0,100,0);
+    const finish=number('Otrā krāsa %',0,100,100);
+    const preview=document.createElement('div');
+    preview.style.minHeight='28px';
+    preview.style.borderRadius='6px';
+    preview.style.flexBasis='100%';
     const clear = document.createElement('button');
     clear.type='button'; clear.textContent='Vienkrāsains';
     const savedGradient = saved.gradients?.[key];
-    if (/^#[0-9a-f]{6}$/i.test(savedGradient?.end || '') && directions.includes(savedGradient?.angle)) gradients[key]=savedGradient;
+    if (/^#[0-9a-f]{6}$/i.test(savedGradient?.end || '') && /^\d{1,3}$/.test(savedGradient?.angle) && Number(savedGradient.angle)<=360) gradients[key]=savedGradient;
     end.value=gradients[key]?.end || input.value;
-    direction.value=gradients[key]?.angle || '135';
+    angle.control.value=gradients[key]?.angle ?? 135;
+    start.control.value=gradients[key]?.start ?? 0;
+    finish.control.value=gradients[key]?.finish ?? 100;
+    refreshGradientPreviews.push(() => {
+      preview.style.background=gradientBackground(input.value, gradients[key] || {end:end.value,angle:angle.control.value,start:start.control.value,finish:finish.control.value});
+    });
     details.open=!!gradients[key];
     function change() {
-      gradients[key]={end:end.value,angle:direction.value};
+      gradients[key]={end:end.value,angle:angle.control.value,start:start.control.value,finish:finish.control.value};
       apply(); persist();
     }
     function remove() { delete gradients[key]; apply(); persist(); }
     end.addEventListener('input',change);
-    direction.addEventListener('change',change);
+    for(const {control} of [angle,start,finish]) control.addEventListener('input',change);
     clear.addEventListener('click',remove);
     reset.addEventListener('click',remove);
-    details.append(summary,end,direction,clear);
+    details.append(summary,preview,end,angle.field,start.field,finish.field,clear);
+    addEyedropper(end,details);
     row.append(details);
     gradientControls.set(key,input);
   }
@@ -272,6 +309,7 @@
     row.append(name, input, reset);
     grid.append(row);
     colorInputs.set(key, { input, light, dark });
+    addEyedropper(input,row);
     if(key!=='text') addGradient(key,input,reset,row);
   }
   const fineInputs = new Map();
@@ -291,6 +329,7 @@
       input.addEventListener('input',()=>{settings.fineColors[key]=input.value;reset.disabled=false;apply();persist()});
       reset.addEventListener('click',()=>{delete settings.fineColors[key];input.value=root.dataset.theme==='dark'?dark:light;reset.disabled=true;apply();persist()});
       row.append(name,input,reset);rows.append(row);fineInputs.set(key,{input,light,dark});
+      addEyedropper(input,row);
       if(key.endsWith('Surface')) addGradient(key,input,reset,row);
     }
   }
@@ -409,9 +448,10 @@
     for(const [key,input] of gradientControls){
       const gradient=gradients[key];
       root.toggleAttribute('data-gradient-'+key.toLowerCase(),!!gradient);
-      if(gradient) root.style.setProperty('--gradient-'+key,'linear-gradient('+gradient.angle+'deg,'+input.value+','+gradient.end+')');
+      if(gradient) root.style.setProperty('--gradient-'+key,gradientBackground(input.value,gradient));
       else root.style.removeProperty('--gradient-'+key);
     }
+    refreshGradientPreviews.forEach(refresh=>refresh());
   }
   function persist() {
     try { localStorage.setItem(storageKey, JSON.stringify({...settings, gradients})); } catch {}
