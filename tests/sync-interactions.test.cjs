@@ -5,7 +5,7 @@ const path = require('node:path');
 const html = fs.readFileSync(process.argv[2] || path.join(__dirname, '..', 'index.html'), 'utf8');
 const scripts = [...html.matchAll(/<script(?:\s[^>]*)?>([\s\S]*?)<\/script>/g)]
   .map(match => match[1]).filter(Boolean);
-assert.equal(scripts.length, 2, 'Expected the planner and sync scripts');
+assert.equal(scripts.length, 3, 'Expected the planner, sync and appearance scripts');
 scripts.forEach(script => new Function(script));
 const [planner, sync] = scripts;
 function section(source, start, end) {
