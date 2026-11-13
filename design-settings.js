@@ -228,7 +228,7 @@
       bar.id='screenColorPicker';
       bar.setAttribute('role','group');
       bar.setAttribute('aria-label','Ekrāna krāsas izvēle');
-      bar.style.cssText='position:fixed;inset:auto 12px 12px auto;max-width:calc(100vw - 24px);z-index:10000;display:flex;flex-wrap:wrap;align-items:center;gap:8px;padding:12px;border-radius:12px;background:#18283a;color:white;box-shadow:0 4px 20px #0005';
+      bar.style.cssText='position:fixed;inset:12px auto auto 12px;max-width:calc(100vw - 24px);z-index:10000;display:flex;flex-wrap:wrap;align-items:center;gap:8px;padding:12px;border-radius:12px;background:#18283a;color:white;box-shadow:0 4px 20px #0005';
       const hint=document.createElement('span');
       hint.textContent='Aizritini līdz vajadzīgajai krāsai.';
       const pick=document.createElement('button');
@@ -240,15 +240,24 @@
       cancel.onclick=()=>bar.remove();
       pick.onclick=async()=>{
         try {
+          bar.style.visibility='hidden';
           const {sRGBHex}=await new window.EyeDropper().open();
           input.value=sRGBHex;
           input.dispatchEvent(new Event('input',{bubbles:true}));
           bar.remove();
         } catch(error) {
+          bar.style.visibility='';
           if(error.name!=='AbortError') hint.textContent='Pipeti neizdevās atvērt. Mēģini vēlreiz.';
         }
       };
-      bar.append(hint,pick,cancel);
+      const calendar=document.createElement('button');
+      calendar.type='button';
+      calendar.textContent='Uz kalendāru';
+      calendar.onclick=()=>{
+        document.getElementById('calendarGlance')?.scrollIntoView({block:'center'});
+        pick.focus({preventScroll:true});
+      };
+      bar.append(hint,calendar,pick,cancel);
       document.body.append(bar);
       pick.focus({preventScroll:true});
     });
