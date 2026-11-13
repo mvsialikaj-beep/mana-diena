@@ -24,6 +24,7 @@
   ];
   const sectionKeys = new Set(sections.map(([key]) => key));
   const fineGroups = [
+    ["Kalendārs un progress",[["calendarWidgetSurface","Kalendāra kartīte","#233849","#142330"],["clockSurface","Pulksteņa un laikapstākļu josla","#315a64","#182c43"],["calendarDaySurface","Kalendāra dienas","#233849","#142330"],["progressTrackSurface","Progresa joslas fons","#dce8ed","#314a55"],["progressFillSurface","Progresa joslas aizpildījums","#2f6675","#5d93a2"]]],["Lauki, kategoriju bloki un paneļi",[["fieldsSurface","Ievades lauki un izvēlnes","#ffffff","#23323a"],["filtersSurface","Uzdevumu filtru josla","#f5f8f9","#253840"],["categoryBlockSurface","Kategoriju bloki ar uzdevumiem","#f5f8f9","#253840"],["categoryBadgeSurface","Kategoriju atzīmes uzdevumos","#eef4f6","#2e424b"],["settingsSurface","Iestatījumu paneļi","#ffffff","#202b38"],["dialogSurface","Piezīmes logs","#ffffff","#23323a"],["calendarPopupSurface","Datuma izvēles logs","#ffffff","#23323a"]]],
     ['Uzdevumu kartītes', [
       ['taskSurface','Kartītes fons','#fcfdfd','#23323a'],
       ['taskInk','Nosaukums un apraksts','#263740','#e8f0f3'],
@@ -502,6 +503,8 @@
       root.toggleAttribute(attr,!!color);
       if(color)root.style.setProperty('--fine-'+key,color);
       else root.style.removeProperty('--fine-'+key);
+      if(color && key.endsWith('Surface')) root.style.setProperty('--fine-'+key+'-ink',inkFor(color));
+      else root.style.removeProperty('--fine-'+key+'-ink');
     }
     for(const [kind,surface,ink] of [['task','taskSurface','taskInk'],['category','categorySurface','categoryInk'],['holiday','holidaySurface','holidayInk']]){
       const value=settings.fineColors[ink]||(settings.fineColors[surface]?inkFor(settings.fineColors[surface]):'');
