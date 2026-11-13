@@ -304,7 +304,7 @@
   function addGradient(key, input, reset, row) {
     const details = document.createElement('details');
     const summary = document.createElement('summary');
-    summary.textContent = 'Gradients';
+    summary.textContent = 'Krāsa un gradients';
     const end = document.createElement('input');
     end.type = 'color';
     end.setAttribute('aria-label','Gradienta otrā krāsa');
@@ -344,7 +344,8 @@
     for(const {control} of [angle,start,finish]) control.addEventListener('input',change);
     clear.addEventListener('click',remove);
     reset.addEventListener('click',remove);
-    details.append(summary,preview,end,angle.field,start.field,finish.field,clear);
+    details.append(summary,input,reset,preview,end,angle.field,start.field,finish.field,clear);
+    addEyedropper(input,details);
     addEyedropper(end,details);
     row.append(details);
     gradientControls.set(key,input);
@@ -379,8 +380,8 @@
     row.append(name, input, reset);
     grid.append(row);
     colorInputs.set(key, { input, light, dark });
-    addEyedropper(input,row);
     if(key!=='text') addGradient(key,input,reset,row);
+    else addEyedropper(input,row);
   }
   const fineInputs = new Map();
   addHeading('Detalizētas krāsas un rāmji');
@@ -399,8 +400,8 @@
       input.addEventListener('input',()=>{settings.fineColors[key]=input.value;reset.disabled=false;apply();persist()});
       reset.addEventListener('click',()=>{delete settings.fineColors[key];input.value=root.dataset.theme==='dark'?dark:light;reset.disabled=true;apply();persist()});
       row.append(name,input,reset);rows.append(row);fineInputs.set(key,{input,light,dark});
-      addEyedropper(input,row);
       if(key.endsWith('Surface')) addGradient(key,input,reset,row);
+      else addEyedropper(input,row);
     }
   }
   const frameGroup=document.createElement('details');frameGroup.className='design-subgroup';
