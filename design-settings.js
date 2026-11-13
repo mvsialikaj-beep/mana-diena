@@ -222,12 +222,35 @@
     button.textContent='Pipete';
     button.style.gridColumn='1 / -1';
     button.style.width='auto';
-    button.addEventListener('click',async()=>{
-      try {
-        const {sRGBHex}=await new window.EyeDropper().open();
-        input.value=sRGBHex;
-        input.dispatchEvent(new Event('input',{bubbles:true}));
-      } catch {}
+    button.addEventListener('click',()=>{
+      document.getElementById('screenColorPicker')?.remove();
+      const bar=document.createElement('div');
+      bar.id='screenColorPicker';
+      bar.setAttribute('role','group');
+      bar.setAttribute('aria-label','Ekrāna krāsas izvēle');
+      bar.style.cssText='position:fixed;inset:auto 12px 12px auto;max-width:calc(100vw - 24px);z-index:10000;display:flex;flex-wrap:wrap;align-items:center;gap:8px;padding:12px;border-radius:12px;background:#18283a;color:white;box-shadow:0 4px 20px #0005';
+      const hint=document.createElement('span');
+      hint.textContent='Aizritini līdz vajadzīgajai krāsai.';
+      const pick=document.createElement('button');
+      pick.type='button';
+      pick.textContent='Paņemt krāsu';
+      const cancel=document.createElement('button');
+      cancel.type='button';
+      cancel.textContent='Atcelt';
+      cancel.onclick=()=>bar.remove();
+      pick.onclick=async()=>{
+        try {
+          const {sRGBHex}=await new window.EyeDropper().open();
+          input.value=sRGBHex;
+          input.dispatchEvent(new Event('input',{bubbles:true}));
+          bar.remove();
+        } catch(error) {
+          if(error.name!=='AbortError') hint.textContent='Pipeti neizdevās atvērt. Mēģini vēlreiz.';
+        }
+      };
+      bar.append(hint,pick,cancel);
+      document.body.append(bar);
+      pick.focus({preventScroll:true});
     });
     container.append(button);
   }
