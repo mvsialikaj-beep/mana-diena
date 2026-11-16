@@ -1,4 +1,4 @@
-(() => {
+(function initPlannerDesign() {
   'use strict';
   const storageKey = 'mana-ikdiena-design-v1';
   const root = document.documentElement;
@@ -534,13 +534,20 @@
   }
   function persist() {
     try { localStorage.setItem(storageKey, JSON.stringify({...settings, gradients})); } catch {}
+    if(typeof window!=='undefined') window.dispatchEvent(new Event('planner-appearance-change'));
   }
-  new MutationObserver(() => {
+  const themeObserver = new MutationObserver(() => {
     for (const [key, {input, light, dark, reset}] of colorInputs) {
       if (!settings.colors[key]) input.value = root.dataset.theme === 'dark' ? dark : light;
     }
     for(const [key,{input,light,dark}] of fineInputs){if(!settings.fineColors[key])input.value=root.dataset.theme==='dark'?dark:light}
     apply();
-  }).observe(root, {attributes:true, attributeFilter:['data-theme']});
+  });
+  themeObserver.observe(root, {attributes:true, attributeFilter:['data-theme']});
+  if(typeof window!=='undefined') window.reloadPlannerDesign=()=>{
+    themeObserver.disconnect();
+    details.remove();
+    initPlannerDesign();
+  };
   apply();
 })();
