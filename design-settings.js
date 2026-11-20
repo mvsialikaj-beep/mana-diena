@@ -14,6 +14,7 @@
     ['sidebar', 'Kalendāra un progresa panelis', '#ffffff', '#1d2a31'],
     ['priority', 'Prioritāšu sadaļa', '#fff9f5', '#352f2c'],
     ['regular', 'Pārējo darbu sadaļa', '#f7fafb', '#253840'],
+    ['scheduled', 'Ieplānotie darbi', '#f5f8f9', '#253840'],
     ['tasks', 'Uzdevumu kartītes', '#fcfdfd', '#23323a'],
     ['form', 'Uzdevuma pievienošanas logs', '#f7faf9', '#1d2a31'],
     ['notes', 'Piezīmes', '#fffdf5', '#283940'],
@@ -24,6 +25,10 @@
   ];
   const sectionKeys = new Set(sections.map(([key]) => key));
   const fineGroups = [
+    ['Ieplānotie darbi', [
+      ['scheduledInk','Bloka virsraksts','#34424d','#edf3f5'],
+      ['scheduledOutline','Bloka rāmis','#cbd9de','#526570']
+    ]],
     ["Kalendārs un progress",[["calendarWidgetSurface","Kalendāra kartīte","#233849","#142330"],["clockSurface","Pulksteņa un laikapstākļu josla","#315a64","#182c43"],["calendarDaySurface","Kalendāra dienas","#233849","#142330"],["progressTrackSurface","Progresa joslas fons","#dce8ed","#314a55"],["progressFillSurface","Progresa joslas aizpildījums","#2f6675","#5d93a2"]]],["Lauki, kategoriju bloki un paneļi",[["fieldsSurface","Ievades lauki un izvēlnes","#ffffff","#23323a"],["filtersSurface","Uzdevumu filtru josla","#f5f8f9","#253840"],["categoryBlockSurface","Kategoriju bloki ar uzdevumiem","#f5f8f9","#253840"],["categoryBadgeSurface","Kategoriju atzīmes uzdevumos","#eef4f6","#2e424b"],["settingsSurface","Iestatījumu paneļi","#ffffff","#202b38"],["dialogSurface","Piezīmes logs","#ffffff","#23323a"],["calendarPopupSurface","Datuma izvēles logs","#ffffff","#23323a"]]],
     ['Uzdevumu kartītes', [
       ['taskSurface','Kartītes fons','#fcfdfd','#23323a'],
@@ -55,7 +60,7 @@
     ]]
   ];
   const fineColors = fineGroups.flatMap(([,items])=>items);
-  const frameDefaults = {taskBorder:1,categoryBorder:0,holidayBorder:0,cardBorder:1,sectionBorder:1,
+  const frameDefaults = {scheduledBorder:1,scheduledRadius:12,taskBorder:1,categoryBorder:0,holidayBorder:0,cardBorder:1,sectionBorder:1,
     taskRadius:12,categoryRadius:9,holidayRadius:10,taskShadow:'default',taskBorderStyle:'solid',categoryBorderStyle:'solid'};
   const fonts = {
     default: '',
@@ -417,6 +422,7 @@
   const frameFields=[
     ['taskBorder','Uzdevuma rāmja biezums',0,5],['categoryBorder','Kategorijas bloka rāmja biezums',0,5],
     ['holidayBorder','Svētku dienas rāmja biezums',0,4],['cardBorder','Paneļa rāmja biezums',0,5],
+    ['scheduledBorder','Ieplānoto darbu rāmja biezums',0,5],['scheduledRadius','Ieplānoto darbu stūri',0,24],
     ['sectionBorder','Sadaļas rāmja biezums',0,5],['taskRadius','Uzdevuma stūri',0,24],
     ['categoryRadius','Kategorijas stūri',0,24],['holidayRadius','Kalendāra dienas stūri',0,18]
   ];
