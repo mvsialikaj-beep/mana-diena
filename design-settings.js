@@ -14,7 +14,6 @@
     ['sidebar', 'Kalendāra un progresa panelis', '#ffffff', '#1d2a31'],
     ['priority', 'Prioritāšu sadaļa', '#fff9f5', '#352f2c'],
     ['regular', 'Pārējo darbu sadaļa', '#f7fafb', '#253840'],
-    ['scheduled', 'Ieplānotie darbi', '#f5f8f9', '#253840'],
     ['tasks', 'Uzdevumu kartītes', '#fcfdfd', '#23323a'],
     ['form', 'Uzdevuma pievienošanas logs', '#f7faf9', '#1d2a31'],
     ['notes', 'Piezīmes', '#fffdf5', '#283940'],
@@ -26,6 +25,7 @@
   const sectionKeys = new Set(sections.map(([key]) => key));
   const fineGroups = [
     ['Ieplānotie darbi', [
+      ['scheduledSurface','Fona krāsa un gradients','#f5f8f9','#253840'],
       ['scheduledInk','Bloka virsraksts','#34424d','#edf3f5'],
       ['scheduledOutline','Bloka rāmis','#cbd9de','#526570']
     ]],
@@ -91,6 +91,12 @@
   ];
   let saved = {};
   try { saved = JSON.parse(localStorage.getItem(storageKey) || '{}') || {}; } catch {}
+  if(saved.colors?.scheduled && !saved.fineColors?.scheduledSurface) {
+    saved.fineColors={...saved.fineColors,scheduledSurface:saved.colors.scheduled};
+  }
+  if(saved.gradients?.scheduled && !saved.gradients?.scheduledSurface) {
+    saved.gradients={...saved.gradients,scheduledSurface:saved.gradients.scheduled};
+  }
   const settings = {
     font: Object.hasOwn(fonts, saved.font) ? saved.font : 'default',
     size: Number.isInteger(saved.size) && saved.size >= 14 && saved.size <= 22 ? saved.size : 16,
