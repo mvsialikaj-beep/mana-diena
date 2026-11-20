@@ -60,7 +60,7 @@
     ]]
   ];
   const fineColors = fineGroups.flatMap(([,items])=>items);
-  const frameDefaults = {scheduledBorder:1,scheduledRadius:12,taskBorder:1,categoryBorder:0,holidayBorder:0,cardBorder:1,sectionBorder:1,
+  const frameDefaults = {scheduledBorderStyle:'solid',scheduledBorder:1,scheduledRadius:12,taskBorder:1,categoryBorder:0,holidayBorder:0,cardBorder:1,sectionBorder:1,
     taskRadius:12,categoryRadius:9,holidayRadius:10,taskShadow:'default',taskBorderStyle:'solid',categoryBorderStyle:'solid'};
   const fonts = {
     default: '',
@@ -401,10 +401,12 @@
     else addEyedropper(input,row);
   }
   const fineInputs = new Map();
+  let scheduledDesignGroup;
   addHeading('Detalizētas krāsas un rāmji');
   for (const [title, items] of fineGroups) {
     const group=document.createElement('details');group.className='design-subgroup';
     const heading=document.createElement('summary');heading.textContent=title;group.append(heading);
+    if(title==='Ieplānotie darbi') scheduledDesignGroup=group;
     const rows=document.createElement('div');rows.className='design-color-grid';group.append(rows);content.append(group);
     for (const [key,label,light,dark] of items) {
       const row=document.createElement('div');row.className='design-color-row';
@@ -439,9 +441,10 @@
     const input=document.createElement('input');input.id='design-frame-'+key;input.type='range';
     input.min=min;input.max=max;input.step='1';input.value=settings.frames[key];
     input.addEventListener('input',()=>{settings.frames[key]=Number(input.value);output.textContent=input.value+' px';apply();persist()});
-    wrap.append(title,input);frameBody.append(wrap);frameControls.set(key,{input,output});
+    wrap.append(title,input);(key.startsWith('scheduled')?scheduledDesignGroup:frameBody).append(wrap);frameControls.set(key,{input,output});
   }
   for(const [key,label,options] of [
+    ['scheduledBorderStyle','Ieplānoto darbu rāmja līnija',[['solid','Vienlaidu'],['dashed','Pārtraukta'],['dotted','Punktota']]],
     ['taskBorderStyle','Uzdevuma rāmja līnija',[['solid','Vienlaidu'],['dashed','Pārtraukta'],['dotted','Punktota']]],
     ['categoryBorderStyle','Kategorijas rāmja līnija',[['solid','Vienlaidu'],['dashed','Pārtraukta'],['dotted','Punktota']]],
     ['taskShadow','Uzdevuma ēna',[['default','Noklusētā'],['none','Bez ēnas'],['soft','Viegla'],['strong','Izteikta']]]
@@ -450,7 +453,7 @@
     const select=document.createElement('select');select.id='design-frame-'+key;
     for(const [value,text] of options){const option=document.createElement('option');option.value=value;option.textContent=text;select.append(option)}
     select.value=settings.frames[key];select.addEventListener('change',()=>{settings.frames[key]=select.value;apply();persist()});
-    wrap.append(select);frameBody.append(wrap);frameControls.set(key,{input:select});
+    wrap.append(select);(key.startsWith('scheduled')?scheduledDesignGroup:frameBody).append(wrap);frameControls.set(key,{input:select});
   }
   const resetAll = document.createElement('button');
   resetAll.type = 'button';
