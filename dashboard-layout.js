@@ -1,6 +1,6 @@
 (function () {
   'use strict';
-  const defaults = [['tasks','Uzdevumi'],['calendar','Kalendārs un laiks'],['namedays','Vārdadienas'],['progress','Tavs progress'],['impulse','Dienas impulss'],['notes','Ātrās piezīmes']];
+  const defaults = [['tasks','Uzdevumi'],['calendar','Kalendārs un laiks'],['namedays','Vārdadienas'],['progress','Tavs progress']];
   const clamp = (value, low, high, fallback) => Number.isFinite(Number(value)) ? Math.max(low, Math.min(high, Math.round(Number(value)))) : fallback;
   function normalize(value = {}) {
     if (!value || typeof value !== 'object') value = {};
@@ -37,8 +37,7 @@
   const origins = new Map(), widgets = new Map();
   let editing = false, gesture = null;
   const sources = {tasks:document.querySelector('main.main'),calendar:document.querySelector('.calendar-widget'),
-    namedays:document.querySelector('.namedays'),progress:document.getElementById('dayProgress'),
-    impulse:document.querySelector('.daily-motivation'),notes:document.getElementById('notesList')};
+    namedays:document.querySelector('.namedays'),progress:document.getElementById('dayProgress')};
   for (const [id,element] of Object.entries(sources)) {
     if (!element) continue;
     const marker = document.createComment('dashboard-' + id); element.before(marker); origins.set(id,{element,marker});

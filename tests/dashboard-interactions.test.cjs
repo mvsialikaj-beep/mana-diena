@@ -37,7 +37,9 @@ vm.runInNewContext(fs.readFileSync(path.join(__dirname,'../dashboard-layout.js')
 const board=doc.querySelector('.dashboard-grid'),button=doc.getElementById('layoutOpen');
 assert.equal(layout.hidden,false);assert.equal(main.parentElement,mainColumn);
 button.onclick();
-assert.equal(layout.hidden,true);assert.equal(board.children.length,6);assert(root.classList.contains('dashboard-editing'));
+assert.equal(layout.hidden,true);assert.equal(board.children.length,4);assert(root.classList.contains('dashboard-editing'));
+assert.equal(doc.querySelector('.daily-motivation').parentElement,body,'Daily impulse stays in its original location');
+assert.equal(doc.getElementById('notesList').parentElement,body,'Quick notes stay in their original location');
 assert.equal(main.parentElement.className,'dashboard-content','Move live elements without recreating task handlers');
 const controls=doc.querySelector('.dashboard-settings-body');
 const add=controls.children.find(x=>x.textContent==='+ Piezīmju bloks');add.onclick();
