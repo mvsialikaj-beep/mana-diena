@@ -113,10 +113,10 @@ assert.equal(saved,1);
 assert.deepEqual(carryTasks.map(t=>t.date),['2026-11-02','2026-10-29','2026-10-29','2026-10-29','2026-10-29','2026-10-29']);
 
 const sidebarSource=section('function setupSidebarWidth(){','const motivationMessages=[');
-const listeners={},attrs={},stored={};let width='',desktop=true;
+const listeners={},attrs={},stored={};let width='',desktop=true,wide=false;
 const layout={clientWidth:1100,style:{setProperty(_,value){width=value}},getBoundingClientRect(){return {right:1100}}};
 const handle={classList:{add(){},remove(){}},setAttribute(name,value){attrs[name]=value},getAttribute(name){return attrs[name]},setPointerCapture(){},addEventListener(name,fn){listeners[name]=fn}};
-const windowFake={matchMedia(){return {get matches(){return desktop}}},addEventListener(){}};
+const windowFake={matchMedia(query){return {get matches(){return query==='(min-width:1448px)'?wide:desktop}}},addEventListener(){}};
 const setupSidebar=new Function('window','document','$','localStorage',sidebarSource+'return setupSidebarWidth')(
   windowFake,{querySelector(){return layout}},()=>handle,{getItem:key=>stored[key],setItem(key,value){stored[key]=value}});
 setupSidebar();
@@ -126,8 +126,12 @@ listeners.pointermove({clientX:650});listeners.pointerup();
 assert.equal(width,'444px');assert.equal(stored['mana-diena-side-width'],'444');
 listeners.keydown({key:'ArrowRight',preventDefault(){}});
 assert.equal(width,'424px');
+wide=true;layout.clientWidth=1388;
+listeners.pointerdown({pointerId:3,clientX:700,preventDefault(){}});
+listeners.pointermove({clientX:650});listeners.pointerup();
+assert.equal(width,'444px','Third column must not change calendar resizing');
 desktop=false;listeners.pointerdown({pointerId:2,clientX:800,preventDefault(){}});
-assert.equal(width,'424px','Mobile cannot resize panels');
+assert.equal(width,'444px','Mobile cannot resize panels');
 assert(/@media\(max-width:850px\)\{\.layout\{grid-template-columns:minmax\(0,1fr\)\}\.column-resizer\{display:none\}/.test(html));
 
 class Element{constructor(){this.children=[];this.dataset={};this.value=''}append(...nodes){this.children.push(...nodes)}setAttribute(){}addEventListener(){}}
