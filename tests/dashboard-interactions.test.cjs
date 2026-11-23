@@ -19,7 +19,7 @@ class Element {
   contains(n){return this===n||this.walk().includes(n)}
   closest(selector){let n=this;while(n){if(n.classList.contains(selector.slice(1)))return n;n=n.parentElement}return null}
   setPointerCapture(){this.captured=true}hasPointerCapture(){return !!this.captured}releasePointerCapture(){this.captured=false}
-  getBoundingClientRect(){return {top:0,left:0,height:300,width:300}}
+  getBoundingClientRect(){return {top:parseFloat(this.style.top)||0,left:parseFloat(this.style.left)||0,height:parseFloat(this.style.height)||this.offsetHeight,width:parseFloat(this.style.width)||300}}
   focus(){}scrollIntoView(){}click(){this.onclick?.()}
 }
 const body=new Element('body'),root=new Element('html');root.append(body);
@@ -57,6 +57,18 @@ const reset=controls.children.find(x=>x.textContent==='Atjaunot sākotnējo izk�
 assert.equal(layout.hidden,false);assert.equal(main.parentElement,mainColumn);assert.equal(text.value,'Saglabāta doma');
 button.onclick();text.value='Doma pēc atiestatīšanas';text.oninput();
 saved=JSON.parse(store.get('mana-ikdiena-dashboard-v1'));assert.equal(saved.items.find(x=>x.id===note.dataset.block).text,'Doma pēc atiestatīšanas');
+// Drop into empty space below the calendar, even while the task list is tall.
+const taskTile=board.children.find(x=>x.dataset.block==='tasks');taskTile.offsetHeight=1200;
+const calendarTile=board.children.find(x=>x.dataset.block==='calendar');
+const namesTile=board.children.find(x=>x.dataset.block==='namedays');
+const namesHandle=namesTile.querySelector('.dashboard-drag');
+const rect=calendarTile.getBoundingClientRect();underPointer=null;
+namesHandle.onpointerdown({button:0,currentTarget:namesHandle,clientX:rect.left+20,clientY:0,pointerId:4,preventDefault(){}});
+events.pointermove({clientX:rect.left+20,clientY:rect.top+rect.height+24});events.pointerup({type:'pointerup',pointerId:4});
+assert.equal(namesTile.style.left,calendarTile.style.left);
+assert.equal(parseFloat(namesTile.style.top),parseFloat(calendarTile.style.top)+calendarTile.offsetHeight+12);
+saved=JSON.parse(store.get('mana-ikdiena-dashboard-v1'));
+assert.equal(saved.items.find(x=>x.id==='namedays').column,Number(calendarTile.dataset.layoutColumn));
 media.matches=false;media.change();assert.equal(layout.hidden,false);assert.equal(main.parentElement,mainColumn);assert.equal(board.children.length,1);
 assert.equal(board.children[0].querySelector('.dashboard-note-text').value,'Doma pēc atiestatīšanas');
 console.log('Dashboard controls, live task preservation, drag, resize, notes, reset and mobile fallback verified.');

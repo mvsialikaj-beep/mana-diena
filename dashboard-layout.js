@@ -14,9 +14,10 @@
       seen.add(item.id);
       items.push({id:item.id, title:builtin ? builtin[1] : String(item.title || 'Piezīmes').slice(0,80),
         text:builtin ? '' : String(item.text || '').slice(0,20000), hidden:!!item.hidden,
-        span:clamp(item.span,1,4,item.id === 'tasks' ? 2 : 1), height:clamp(item.height,0,1800,0)});
+        span:clamp(item.span,1,4,item.id === 'tasks' ? 2 : 1), height:clamp(item.height,0,1800,0),
+        column:Number.isInteger(item.column) ? clamp(item.column,0,3,0) : null});
     }
-    for (const [id,title] of defaults) if (!seen.has(id)) items.push({id,title,text:'',hidden:false,span:id === 'tasks' ? 2 : 1,height:0});
+    for (const [id,title] of defaults) if (!seen.has(id)) items.push({id,title,text:'',hidden:false,span:id === 'tasks' ? 2 : 1,height:0,column:null});
     return {enabled:!!value.enabled,columns,items};
   }
   function move(items, id, target, after) {
@@ -26,7 +27,22 @@
     result.splice(index + (after ? 1 : 0), 0, items[from]);
     return result;
   }
-  if (typeof module !== 'undefined' && module.exports) module.exports = {normalize,move};
+  // Each column stacks independently, including when a neighbouring tile is tall.
+  function arrange(items, columns, width, heights, gap = 12) {
+    const count=clamp(columns,1,4,4), unit=Math.max(1,(width-gap*(count-1))/count), bottoms=Array(count).fill(0);
+    return items.map(item=>{
+      const span=clamp(item.span,1,count,1);
+      let column=Number.isInteger(item.column)?clamp(item.column,0,count-span,0):0;
+      if(!Number.isInteger(item.column)){
+        let lowest=Infinity;
+        for(let i=0;i<=count-span;i++){const top=Math.max(...bottoms.slice(i,i+span));if(top<lowest){column=i;lowest=top}}
+      }
+      const y=Math.max(...bottoms.slice(column,column+span)), height=Math.max(0,heights[item.id]||0);
+      for(let i=column;i<column+span;i++)bottoms[i]=y+height+gap;
+      return {id:item.id,column,span,x:column*(unit+gap),y,width:unit*span+gap*(span-1),height};
+    });
+  }
+  if (typeof module !== 'undefined' && module.exports) module.exports = {normalize,move,arrange};
   if (typeof document === 'undefined') return;
   const key = 'mana-ikdiena-dashboard-v1';
   let state;
@@ -36,6 +52,25 @@
   const board = document.createElement('div'); board.className = 'dashboard-grid'; layout.after(board);
   const origins = new Map(), widgets = new Map();
   let editing = false, gesture = null;
+  let layoutFrame=null;
+  const observer=typeof ResizeObserver==='function'?new ResizeObserver(()=>scheduleLayout()):null;
+  function scheduleLayout(){
+    if(layoutFrame!==null)return;
+    if(typeof requestAnimationFrame!=='function'){layoutTiles();return}
+    layoutFrame=requestAnimationFrame(()=>{layoutFrame=null;layoutTiles()});
+  }
+  function layoutTiles(){
+    const active=state.enabled&&desktop.matches;
+    if(!active){board.style.height='';for(const tile of board.children){tile.style.width='';tile.style.left='';tile.style.top=''}return}
+    const visible=state.items.filter(item=>!item.hidden&&widgets.has(item.id)), heights={};
+    const unit=Math.max(1,(board.clientWidth-12*(state.columns-1))/state.columns);
+    for(const item of visible){const tile=widgets.get(item.id);tile.style.width=(unit*Math.min(item.span,state.columns)+12*(Math.min(item.span,state.columns)-1))+'px';heights[item.id]=tile.offsetHeight}
+    const positions=arrange(visible,state.columns,board.clientWidth,heights);
+    for(const position of positions){const tile=widgets.get(position.id);tile.style.left=position.x+'px';tile.style.top=position.y+'px';tile.dataset.layoutColumn=String(position.column)}
+    board.style.height=Math.max(0,...positions.map(position=>position.y+position.height))+'px';
+  }
+  observer?.observe(board);
+  window.addEventListener?.('resize',scheduleLayout);
   const sources = {tasks:document.querySelector('main.main'),calendar:document.querySelector('.calendar-widget'),
     namedays:document.querySelector('.namedays'),progress:document.getElementById('dayProgress')};
   for (const [id,element] of Object.entries(sources)) {
@@ -90,23 +125,24 @@
     }
     if (item.id==='notes') { const newNote=document.createElement('button');newNote.type='button';newNote.textContent='+ Piezīme';newNote.onclick=()=>document.getElementById('noteOpen').click();body.append(newNote); }
     handle.onpointerdown=e=>start(e,tile,'move');resize.onpointerdown=e=>start(e,tile,'resize');
-    handle.onkeydown=e=>{if(!editing||!['ArrowUp','ArrowDown','ArrowLeft','ArrowRight'].includes(e.key))return;e.preventDefault();const visible=state.items.filter(x=>!x.hidden);const index=visible.indexOf(item),next=visible[index+(['ArrowUp','ArrowLeft'].includes(e.key)?-1:1)];if(next){state.items=move(state.items,item.id,next.id,['ArrowDown','ArrowRight'].includes(e.key));save();render();handle.focus()}};
+    handle.onkeydown=e=>{if(!editing||!['ArrowUp','ArrowDown','ArrowLeft','ArrowRight'].includes(e.key))return;e.preventDefault();const visible=state.items.filter(x=>!x.hidden);const index=visible.indexOf(item),next=visible[index+(['ArrowUp','ArrowLeft'].includes(e.key)?-1:1)];if(next){item.column=Number(widgets.get(next.id)?.dataset.layoutColumn)||0;state.items=move(state.items,item.id,next.id,['ArrowDown','ArrowRight'].includes(e.key));save();render();handle.focus()}};
     resize.onkeydown=e=>{if(!editing)return;const steps={ArrowLeft:[-1,0],ArrowRight:[1,0],ArrowUp:[0,-40],ArrowDown:[0,40]};if(!steps[e.key])return;e.preventDefault();const [x,y]=steps[e.key];item.span=clamp(item.span+x,1,state.columns,1);if(y)item.height=clamp((item.height||tile.offsetHeight)+y,140,1800,0);save();sizeTile(tile,item)};
     resize.ondblclick=()=>{item.height=0;save();sizeTile(tile,item)};
-    widgets.set(item.id,tile);return tile;
+    widgets.set(item.id,tile);observer?.observe(tile);return tile;
   }
   function sizeTile(tile,item) {
     const active=desktop.matches;
     tile.style.gridColumn=active?'span '+Math.min(item.span,state.columns):'auto';
     tile.style.height=active&&item.height?item.height+'px':'';
     tile.querySelector('.dashboard-size').textContent=Math.min(item.span,state.columns)+' / '+state.columns+' kol. · '+(item.height?item.height+' px':'auto');
+    scheduleLayout();
   }
   function renderList() {
     list.replaceChildren();
     for(const item of state.items){
       const row=document.createElement('div');row.className='dashboard-block-row';const label=document.createElement('label'),check=document.createElement('input');check.type='checkbox';check.checked=!item.hidden;label.append(check,document.createTextNode(' '+item.title));
       check.onchange=()=>{item.hidden=!check.checked;save();render()};row.append(label);
-      if(item.id.startsWith('note-')){const remove=document.createElement('button');remove.type='button';remove.textContent='Dzēst';remove.onclick=()=>{if(!confirm('Dzēst bloku “'+item.title+'” un tā piezīmes?'))return;state.items=state.items.filter(x=>x.id!==item.id);widgets.get(item.id)?.remove();widgets.delete(item.id);save();render()};row.append(remove)}
+      if(item.id.startsWith('note-')){const remove=document.createElement('button');remove.type='button';remove.textContent='Dzēst';remove.onclick=()=>{if(!confirm('Dzēst bloku “'+item.title+'” un tā piezīmes?'))return;state.items=state.items.filter(x=>x.id!==item.id);if(widgets.has(item.id))observer?.unobserve(widgets.get(item.id));widgets.get(item.id)?.remove();widgets.delete(item.id);save();render()};row.append(remove)}
       list.append(row);
     }
   }
@@ -125,7 +161,7 @@
       if(origins.has(item.id))tile.querySelector('.dashboard-content').prepend(origins.get(item.id).element);
       sizeTile(tile,item);board.append(tile);
     }
-    enabled.checked=state.enabled;columns.value=state.columns;renderList();
+    enabled.checked=state.enabled;columns.value=state.columns;renderList();layoutTiles();
   }
   function start(event,tile,mode) {
     if(!editing||!desktop.matches||event.button!==0)return;
@@ -143,11 +179,22 @@
       item.height=clamp(gesture.height+event.clientY-gesture.y,140,1800,0);sizeTile(tile,item);return;
     }
     for(const card of board.children){card.classList.remove('dashboard-drop-before','dashboard-drop-after')}
-    const target=document.elementFromPoint(event.clientX,event.clientY)?.closest('.dashboard-widget');
+    let target=document.elementFromPoint(event.clientX,event.clientY)?.closest('.dashboard-widget');
+    if(!target||target===tile||!board.contains(target)){
+      // Blank space below a short tile is a valid drop destination too.
+      let nearest=Infinity;target=null;
+      for(const candidate of board.children){
+        if(candidate===tile)continue;
+        const rect=candidate.getBoundingClientRect(),bottom=rect.top+rect.height;
+        if(event.clientX>=rect.left&&event.clientX<=rect.left+rect.width&&event.clientY>=rect.top){
+          const distance=Math.abs(event.clientY-bottom);if(distance<nearest){nearest=distance;target=candidate}
+        }
+      }
+    }
     gesture.drop=null;
     if(target&&target!==tile&&board.contains(target)){
       const rect=target.getBoundingClientRect(),after=event.clientY>rect.top+rect.height/2;
-      gesture.drop={id:target.dataset.block,after};target.classList.add(after?'dashboard-drop-after':'dashboard-drop-before');
+      gesture.drop={id:target.dataset.block,after,column:Number(target.dataset.layoutColumn)||0};target.classList.add(after?'dashboard-drop-after':'dashboard-drop-before');
     }
     if(event.clientY<70)window.scrollBy(0,-14);else if(event.clientY>innerHeight-70)window.scrollBy(0,14);
   });
@@ -156,7 +203,7 @@
     const current=gesture;gesture=null;
     if(current.target.hasPointerCapture(event.pointerId))current.target.releasePointerCapture(event.pointerId);
     widgets.get(current.id).classList.remove('dashboard-dragging');
-    if(event.type!=='pointercancel'&&current.drop)state.items=move(state.items,current.id,current.drop.id,current.drop.after);
+    if(event.type!=='pointercancel'&&current.drop){itemById(current.id).column=current.drop.column;state.items=move(state.items,current.id,current.drop.id,current.drop.after)}
     save();render();
   }
   document.addEventListener('pointerup',stop);document.addEventListener('pointercancel',stop);
@@ -166,7 +213,7 @@
   columns.onchange=()=>{state.columns=Number(columns.value);save();render()};
   editButton.onclick=()=>{document.getElementById('settingsDialog').close();state.enabled=true;editing=true;save();render()};
   add.onclick=()=>{if(state.items.filter(x=>x.id.startsWith('note-')).length>=54){notice.textContent='Vienā izkārtojumā var pievienot līdz 54 piezīmju blokiem.';return}state.enabled=true;state.items.push({id:'note-'+Date.now().toString(36)+'-'+Math.random().toString(36).slice(2,8),title:'Piezīmes',text:'',hidden:false,span:1,height:0});save();render()};
-  reset.onclick=()=>{state.enabled=false;state.columns=4;for(const item of state.items){item.hidden=false;item.span=item.id==='tasks'?2:1;item.height=0}state.items=[...defaults.map(([id])=>itemById(id)),...state.items.filter(item=>item.id.startsWith('note-'))];editing=false;save();render()};
+  reset.onclick=()=>{state.enabled=false;state.columns=4;for(const item of state.items){item.hidden=false;item.column=null;item.span=item.id==='tasks'?2:1;item.height=0}state.items=[...defaults.map(([id])=>itemById(id)),...state.items.filter(item=>item.id.startsWith('note-'))];editing=false;save();render()};
   desktop.addEventListener('change',()=>{editing=false;render()});
   render();
 })();

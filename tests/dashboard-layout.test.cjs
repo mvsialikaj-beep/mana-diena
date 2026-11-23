@@ -1,5 +1,5 @@
 const assert = require('node:assert/strict');
-const {normalize,move} = require('../dashboard-layout.js');
+const {normalize,move,arrange} = require('../dashboard-layout.js');
 const initial = normalize();
 assert.equal(initial.enabled,false);
 assert.equal(initial.items.length,4);
@@ -20,4 +20,18 @@ assert.equal(normalize({columns:0,items:[{id:'note-a',height:9999,span:-2}]}).it
 assert.equal(normalize({columns:0,items:[{id:'note-a',height:9999,span:-2}]}).items[0].span,1);
 assert.equal(move(custom.items,'missing','tasks',true),custom.items);
 assert.equal(normalize(null).items.length,4);
+const stacked=normalize({items:[{id:'tasks',span:2},{id:'calendar'},{id:'namedays',column:2},{id:'progress'}]});
+const positions=arrange(stacked.items,4,1200,{tasks:1200,calendar:300,namedays:120,progress:200});
+const calendar=positions.find(x=>x.id==='calendar'),namedays=positions.find(x=>x.id==='namedays');
+assert.equal(namedays.x,calendar.x);
+assert.equal(namedays.y,calendar.y+calendar.height+12,'A tall task list cannot force names below the full grid row');
+assert(namedays.y<1200);
+assert.equal(normalize(JSON.parse(JSON.stringify(stacked))).items.find(x=>x.id==='namedays').column,2);
+for(const columns of [1,2,3,4]){
+  const packed=arrange(stacked.items,columns,1000,{tasks:1200,calendar:300,namedays:120,progress:200});
+  for(let i=0;i<packed.length;i++)for(let j=i+1;j<packed.length;j++){
+    const a=packed[i],b=packed[j];
+    assert(a.x+a.width<=b.x||b.x+b.width<=a.x||a.y+a.height<=b.y||b.y+b.height<=a.y,'Blocks must not overlap after changing column count');
+  }
+}
 console.log('Dashboard layout validation, note preservation, ordering and persistence verified.');
