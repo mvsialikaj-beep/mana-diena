@@ -19,8 +19,9 @@
         column:Number.isInteger(item.column) ? clamp(item.column,0,3,0) : null});
     }
     for (const [id,title] of defaults) if (!seen.has(id)) items.push({id,title,text:'',hidden:false,span:id === 'tasks' ? 2 : 1,height:0,column:null});
+    if(value.calendarFitVersion!==1){const calendar=items.find(item=>item.id==='calendar');if(calendar)calendar.height=0}
     const columnWidths=Array.from({length:columns},(_,i)=>Number.isFinite(value.columnWidths?.[i])&&value.columnWidths[i]>0?Math.max(1,Math.min(10000,value.columnWidths[i])):1);
-    return {enabled:!!value.enabled,columns,items,columnWidths,heightVersion:2};
+    return {enabled:!!value.enabled,columns,items,columnWidths,heightVersion:2,calendarFitVersion:1};
   }
   function move(items, id, target, after) {
     const from = items.findIndex(x => x.id === id), to = items.findIndex(x => x.id === target);
