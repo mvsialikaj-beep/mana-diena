@@ -2,12 +2,15 @@
   'use strict';
   const catalog=[
     {type:'note',icon:'✎',title:'Piezīmes',description:'Atsevišķa vieta idejām un ātrām domām.'},
-    {type:'wheel',icon:'✺',title:'Izvēles rats',fresh:true,description:'Ieraksti variantus un ļauj ratam izvēlēties vienu.'},
-    {type:'mood',icon:'☺',title:'Dienas noskaņa',fresh:true,description:'Kā šodien jūties? Emocija, īsa piezīme un 7 dienu vēsture.'},
-    {type:'goal',icon:'◎',title:'Mērķa progress',fresh:true,description:'Grāmatas, kampaņas vai cits tavs mērķis ar progresa joslu.'},
-    {type:'stopwatch',icon:'◴',title:'Hronometrs',fresh:true,description:'Izmēri patērēto laiku un saglabā apļu laikus.'},
-    {type:'ideas',icon:'✦',title:'Mārketinga ideju mikseris',fresh:true,description:'Nejaušs satura virziens tavam produktam vai tēmai.'},
-    {type:'timeprogress',icon:'◔',title:'Laika progress',fresh:true,description:'Nedēļas, mēneša vai gada progress un atlikušās dienas.'},
+    {type:'utm',icon:'↗',title:'UTM saišu veidotājs',fresh:true,description:'Veido marķētas saites e-pastiem, reklāmām un kampaņām.'},
+    {type:'textstats',icon:'Aa',title:'Teksta darbnīca',fresh:true,description:'Rakstzīmes, vārdi, rindas un aptuvens lasīšanas ilgums.'},
+    {type:'memory',icon:'▦',title:'Atmiņas spēle',fresh:true,description:'Atrodi 6 simbolu pārus un pārspēj savu gājienu rekordu.'},
+    {type:'wheel',icon:'✺',title:'Izvēles rats',description:'Ieraksti variantus un ļauj ratam izvēlēties vienu.'},
+    {type:'mood',icon:'☺',title:'Dienas noskaņa',description:'Kā šodien jūties? Emocija, īsa piezīme un 7 dienu vēsture.'},
+    {type:'goal',icon:'◎',title:'Mērķa progress',description:'Grāmatas, kampaņas vai cits tavs mērķis ar progresa joslu.'},
+    {type:'stopwatch',icon:'◴',title:'Hronometrs',description:'Izmēri patērēto laiku un saglabā apļu laikus.'},
+    {type:'ideas',icon:'✦',title:'Mārketinga ideju mikseris',description:'Nejaušs satura virziens tavam produktam vai tēmai.'},
+    {type:'timeprogress',icon:'◔',title:'Laika progress',description:'Nedēļas, mēneša vai gada progress un atlikušās dienas.'},
     {type:'focus',icon:'◷',title:'Fokusa taimeris',description:'25 vai 50 minūtes darbam, īsa pauze un tavs ilgums.'},
     {type:'countdown',icon:'◴',title:'Atpakaļskaitīšana',description:'Cik dienu atlicis līdz kampaņai, ceļojumam vai citam datumam.'},
     {type:'links',icon:'↗',title:'Ātrās saites',description:'Tavi darba rīki un biežāk lietotās lapas vienuviet.'},
@@ -34,6 +37,12 @@
   }
   function normalize(type,value={}){
     const data=value&&typeof value==='object'&&!Array.isArray(value)?value:{};
+    if(type==='utm')return {url:text(data.url,2048),source:text(data.source),medium:text(data.medium),campaign:text(data.campaign,240),content:text(data.content,240),term:text(data.term,240)};
+    if(type==='textstats')return {text:text(data.text,20000)};
+    if(type==='memory'){
+      const counts=Array(6).fill(0),valid=Array.isArray(data.deck)&&data.deck.length===12&&data.deck.every(x=>Number.isInteger(x)&&x>=0&&x<6&&(counts[x]++,true))&&counts.every(x=>x===2);
+      return {deck:valid?[...data.deck]:[],matched:valid?[...new Set((Array.isArray(data.matched)?data.matched:[]).filter(x=>Number.isInteger(x)&&x>=0&&x<6))]:[],moves:Math.round(number(data.moves,0,1e6,0)),best:Number.isInteger(data.best)&&data.best>0?data.best:null};
+    }
     if(type==='wheel')return {options:(Array.isArray(data.options)?data.options:['Sākt ar svarīgāko','Pabeigt kādu mazu darbu','Paņemt īsu pauzi']).map(x=>text(x,120).trim()).filter(Boolean).slice(0,30),result:text(data.result),rotation:number(data.rotation,0,1e9,0)};
     if(type==='mood'){const days={};for(const day of Object.keys(data.days||{}).filter(validDate).sort().slice(-180)){const entry=data.days[day];if(entry&&typeof entry==='object')days[day]={mood:Math.round(number(entry.mood,0,5,0)),note:text(entry.note,500)}}return {days}}
     if(type==='goal')return {target:number(data.target,1,1e9,10),current:number(data.current,0,1e9,0),step:number(data.step,.01,1e9,1),unit:text(data.unit,30)||'vienības'};
@@ -80,7 +89,10 @@
     if(period==='week'){elapsed=(d.getUTCDay()+6)%7+1;total=7}else if(period==='year'){elapsed=Math.round((d-new Date(Date.UTC(year,0,1,12)))/86400000)+1;total=Math.round((Date.UTC(year+1,0,1)-Date.UTC(year,0,1))/86400000)}else{elapsed=d.getUTCDate();total=new Date(Date.UTC(year,month+1,0)).getUTCDate()}
     return {elapsed,total,remaining:total-elapsed,percent:Math.round(elapsed/total*100)};
   }
-  const api={catalog,zones,normalize,calculate,safeUrl,validDate,dayInRiga,remaining,pickIndex,stopwatchElapsed,periodProgress};
+  function buildCampaignUrl(data){const safe=safeUrl(data.url);if(!safe)return null;const url=new URL(safe);for(const key of ['source','medium','campaign','content','term']){const value=text(data[key],240).trim();if(value)url.searchParams.set('utm_'+key,value);else url.searchParams.delete('utm_'+key)}return url.href}
+  function textStats(value){const content=String(value||''),words=(content.match(/[\p{L}\p{N}]+(?:['’-][\p{L}\p{N}]+)*/gu)||[]).length;return {characters:Array.from(content).length,withoutSpaces:Array.from(content.replace(/\s/g,'')).length,words,lines:content?content.split(/\r\n|\r|\n/).length:0,minutes:Math.ceil(words/200)}}
+  function shuffledDeck(random=Math.random){const deck=Array.from({length:12},(_,i)=>Math.floor(i/2));for(let i=deck.length-1;i>0;i--){const j=pickIndex(i+1,random());[deck[i],deck[j]]=[deck[j],deck[i]]}return deck}
+  const api={catalog,zones,normalize,calculate,safeUrl,validDate,dayInRiga,remaining,pickIndex,stopwatchElapsed,periodProgress,buildCampaignUrl,textStats,shuffledDeck};
   if(typeof module!=='undefined'&&module.exports)module.exports=api;
   root.PLANNER_WIDGETS=api;
   if(typeof document==='undefined')return;
@@ -93,8 +105,26 @@
   function mount(body,item,persist){
     unmount(item.id);const container=element('div','planner-widget widget-'+item.widgetType);body.append(container);
     item.widgetData=normalize(item.widgetType,item.widgetData);const data=item.widgetData;
-    const save=()=>persist();let tick=null;
-    if(item.widgetType==='wheel'){
+    const save=()=>persist();let tick=null,cleanup=null;
+    if(item.widgetType==='utm'){
+      const definitions=[['url','Galamērķa saite','https://...'],['source','Avots (utm_source)','newsletter, facebook…'],['medium','Kanāls (utm_medium)','email, social, cpc…'],['campaign','Kampaņa (utm_campaign)','black_friday_2026'],['content','Saturs (nav obligāts)','banner_a'],['term','Atslēgvārds (nav obligāts)','']];
+      const fields=definitions.map(([key,label,placeholder])=>{const control=field(label,data[key],placeholder);control.input.maxLength=key==='url'?2048:240;control.input.oninput=()=>{data[key]=control.input.value;save();paint()};return control});
+      const output=element('textarea','widget-utm-result');output.readOnly=true;output.rows=3;output.setAttribute('aria-label','Marķētā kampaņas saite');const hint=element('p','widget-hint');
+      const copy=button('Nokopēt saiti',async()=>{if(!output.value)return;try{if(typeof navigator==='undefined'||!navigator.clipboard?.writeText)throw Error();await navigator.clipboard.writeText(output.value);hint.textContent='Saite nokopēta.'}catch{output.focus?.();output.select?.();hint.textContent='Saite atlasīta. Nokopē to ar savas ierīces kopēšanas komandu.'}});
+      function paint(){const url=buildCampaignUrl(data);output.value=url||'';copy.disabled=!url;hint.textContent=!url?'Ievadi derīgu http vai https galamērķa saiti.':!data.source.trim()||!data.medium.trim()||!data.campaign.trim()?'Norādi arī avotu, kanālu un kampaņu.':'Saite gatava. Galamērķa lapā jābūt iestatītai analītikai.'}
+      container.append(...fields.map(x=>x.wrap),output,copy,hint);paint();
+    }else if(item.widgetType==='textstats'){
+      const input=element('textarea','widget-text-workbench');input.value=data.text;input.rows=6;input.maxLength=20000;input.placeholder='Ielīmē tekstu…';input.setAttribute('aria-label','Teksts skaitīšanai');const stats=element('div','widget-text-stats'),hint=element('p','widget-hint');
+      function paint(){const value=textStats(data.text);stats.replaceChildren();for(const [label,count] of [['Rakstzīmes',value.characters],['Bez atstarpēm',value.withoutSpaces],['Vārdi',value.words],['Rindas',value.lines]]){const cell=element('div');cell.append(element('strong','',String(count)),element('span','',label));stats.append(cell)}hint.textContent='Aptuvens lasīšanas ilgums: '+(value.words?Math.max(1,value.minutes):0)+' min.'}
+      input.oninput=()=>{data.text=input.value;save();paint()};container.append(input,stats,hint);paint();
+    }else if(item.widgetType==='memory'){
+      const symbols=['☀','☾','★','♥','◆','♣'],status=element('p','widget-hint'),grid=element('div','widget-memory-grid'),best=element('p','widget-hint');let revealed=[],flipTimer=null;
+      function paint(){grid.replaceChildren();status.textContent=data.matched.length===6?'Visi pāri atrasti! 🎉':'Gājieni: '+data.moves+' · Pāri: '+data.matched.length+'/6';best.textContent=data.best?'Labākais rezultāts: '+data.best+' gājieni':'Atver divas kartītes un atrodi vienādos simbolus.';
+        data.deck.forEach((symbol,index)=>{const shown=data.matched.includes(symbol)||revealed.includes(index),card=button(shown?symbols[symbol]:'?',()=>turn(index));card.className='widget-memory-card'+(data.matched.includes(symbol)?' matched':'');card.disabled=data.matched.includes(symbol);card.setAttribute('aria-label',shown?'Simbols '+symbols[symbol]:'Atvērt kartīti '+(index+1));card.setAttribute('aria-pressed',String(shown));grid.append(card)})}
+      function turn(index){if(revealed.includes(index)||data.matched.includes(data.deck[index])||revealed.length===2)return;revealed.push(index);if(revealed.length===2){data.moves++;if(data.deck[revealed[0]]===data.deck[revealed[1]]){data.matched.push(data.deck[index]);revealed=[];if(data.matched.length===6&&(!data.best||data.moves<data.best))data.best=data.moves;save()}else{save();flipTimer=setTimeout(()=>{revealed=[];flipTimer=null;paint()},850)}}paint()}
+      function restart(){if(flipTimer)clearTimeout(flipTimer);flipTimer=null;revealed=[];data.deck=shuffledDeck();data.matched=[];data.moves=0;save();paint()}
+      container.append(status,grid,button('Jauna spēle',restart),best);if(!data.deck.length)restart();else paint();cleanup=()=>{if(flipTimer)clearTimeout(flipTimer)};
+    }else if(item.widgetType==='wheel'){
       const wheel=element('div','widget-wheel'),disc=element('div','widget-wheel-disc'),pointer=element('span','widget-wheel-pointer','▼'),center=element('span','widget-wheel-center','?');disc.setAttribute('aria-hidden','true');wheel.append(disc,center,pointer);
       const output=element('p','widget-choice-result',data.result||'Ko šodien izvēlamies?');output.setAttribute('role','status');
       const options=element('textarea','widget-options');options.value=data.options.join('\n');options.rows=4;options.maxLength=3600;options.setAttribute('aria-label','Izvēles varianti, katrs savā rindā');
@@ -177,9 +207,9 @@
       function paint(){list.replaceChildren();for(const zone of data.zones){const row=element('div','widget-row'),labels=element('div'),time=element('strong','widget-clock',new Intl.DateTimeFormat('lv-LV',{timeZone:zone,hour:'2-digit',minute:'2-digit',hourCycle:'h23'}).format(new Date()));labels.append(element('span','',zones[zone]),element('small','widget-hint',new Intl.DateTimeFormat('lv-LV',{timeZone:zone,day:'numeric',month:'short'}).format(new Date())));const remove=button('×',()=>{data.zones=data.zones.filter(x=>x!==zone);save();paint()});remove.setAttribute('aria-label','Noņemt '+zones[zone]);row.append(labels,time,remove);list.append(row)}}
       container.append(list,form);tick=()=>{const minute=Math.floor(Date.now()/60000);if(minute!==lastMinute){lastMinute=minute;paint()}};tick();
     }
-    live.set(item.id,{container,tick});return container;
+    live.set(item.id,{container,tick,cleanup});return container;
   }
-  function unmount(id){live.delete(id)}
+  function unmount(id){live.get(id)?.cleanup?.();live.delete(id)}
   api.mount=mount;api.unmount=unmount;
   setInterval(()=>{if(document.hidden)return;for(const view of live.values())if(view.container.isConnected&&view.tick)view.tick()},1000);
   document.addEventListener('visibilitychange',()=>{if(!document.hidden)for(const view of live.values())if(view.container.isConnected&&view.tick)view.tick()});

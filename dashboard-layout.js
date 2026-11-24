@@ -3,7 +3,7 @@
   const defaults = [['tasks','Uzdevumi'],['calendar','Kalendārs un laiks'],['namedays','Vārdadienas'],['progress','Tavs progress']];
   const editorHeight=72; // 48px toolbar and 24px resize footer, never saved as content.
   const widgetTools=typeof window!=='undefined'?window.PLANNER_WIDGETS:typeof require==='function'?require('./widgets.js'):null;
-  const widgetTypes=widgetTools?.catalog?.map(item=>item.type)||['note','focus','countdown','links','checklist','habits','calculator','percent','worldclock','wheel','mood','goal','stopwatch','ideas','timeprogress'];
+  const widgetTypes=widgetTools?.catalog?.map(item=>item.type)||['note','focus','countdown','links','checklist','habits','calculator','percent','worldclock','wheel','mood','goal','stopwatch','ideas','timeprogress','utm','textstats','memory'];
   const clamp = (value, low, high, fallback) => Number.isFinite(Number(value)) ? Math.max(low, Math.min(high, Math.round(Number(value)))) : fallback;
   function normalize(value = {}) {
     if (!value || typeof value !== 'object') value = {};
