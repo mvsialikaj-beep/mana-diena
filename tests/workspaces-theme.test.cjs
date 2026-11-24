@@ -60,7 +60,7 @@ const filterButtons=['open','done'].map(value=>({dataset:{filter:value},classLis
 const panels={taskFormPanel:{open:true},categoryQuick:{open:true},categoryOrganizer:{open:true},themeToggle:{textContent:'',setAttribute(name,value){this[name]=value}}};
 const saved={};let resets=0,renders=0;
 const fakeDocument={documentElement:{dataset:{}},querySelectorAll(selector){return selector==='.workspace-switch button'?navButtons:filterButtons}};
-const ui=new Function('document','$','localStorage','cf','resetForm','render','filter','activeWorkspace','workspaceKey',section('function updateWorkspaceButtons(){','function setupSidebarWidth(){')+'return {switchWorkspace,getState:()=>({filter,activeWorkspace,activeTheme})}')(
+const ui=new Function('document','$','localStorage','cf','resetForm','render','filter','activeWorkspace','workspaceKey',section('function updateWorkspaceButtons(){','function setupSidebarWidth(){')+'return {switchWorkspace,applyTheme,getState:()=>({filter,activeWorkspace,activeTheme})}')(
   fakeDocument,selector=>panels[selector.slice(1)],{getItem:key=>saved[key],setItem(key,value){saved[key]=value}},
   {get value(){return this.current},set value(value){this.current=value},current:'Amazon'},()=>resets++,()=>renders++,'done','work','mana-diena-workspace');
 ui.switchWorkspace('personal');
@@ -68,17 +68,11 @@ assert.deepEqual(ui.getState(),{filter:'open',activeWorkspace:'personal',activeT
 assert.equal(saved['mana-diena-workspace'],'personal');
 assert.equal(resets,1);assert.equal(renders,1);
 assert.equal(panels.taskFormPanel.open,false);
-panels.themeToggle.onclick();
-assert.equal(fakeDocument.documentElement.dataset.theme,'dark');
-assert.equal(saved['mana-diena-theme'],'dark');
-assert.equal(panels.themeToggle['aria-pressed'],'true');
-panels.themeToggle.onclick();
+ui.applyTheme('dark');
 assert.equal(fakeDocument.documentElement.dataset.theme,'light');
 assert.equal(saved['mana-diena-theme'],'light');
-assert(html.includes('data-workspace="work"')&&html.includes('data-workspace="personal"'));
-assert(html.includes('id="themeToggle"'));
-assert(html.includes('html[data-theme=dark] .card'));
-assert(html.includes('color-scheme:dark'));
+assert(html.includes('data-workspace=\"work\"')&&html.includes('data-workspace=\"personal\"'));
+assert(!html.includes('id=\"themeToggle\"'));
 const repeatSource=section('const everydayOption=',"let cf=$('#categoryFilter')");
 const repeatOption={isConnected:false,remove(){this.isConnected=false}};
 const repeatSelect={value:'none',options:[{},{},{}],add(option){option.isConnected=true}};
@@ -88,4 +82,4 @@ assert.equal(repeatOption.isConnected,true,'Personal view offers every-day recur
 repeatSelect.value='everyday';repeatOptions.setWorkspace('work');repeatOptions.syncRepeatOptions();
 assert.equal(repeatOption.isConnected,false,'Work view keeps its weekday recurrence choices');
 assert.equal(repeatSelect.value,'none');
-console.log('Work and personal views, legacy data, categories, and theme toggle verified.');
+console.log('Work and personal views, legacy data, categories, and light-only theme verified.');
