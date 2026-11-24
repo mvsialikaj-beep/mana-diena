@@ -1,0 +1,15 @@
+const assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path'),{bindBackdrop}=require('../popup-gestures.js');
+const events={},backdrop={addEventListener:(name,fn)=>events[name]=fn},field={value:'Nesaglabāts apraksts'},header={};let closed=0;bindBackdrop(backdrop,()=>{closed++;field.value=''});
+const down=(target,x=10,y=10,extra={})=>events.pointerdown({target,clientX:x,clientY:y,pointerId:1,button:0,...extra}),up=(target,x=10,y=10,extra={})=>events.pointerup({target,clientX:x,clientY:y,pointerId:1,...extra}),click=(target=backdrop)=>events.click({target});
+down(field);up(backdrop,100,100);click();assert.equal(closed,0,'Selecting text and releasing on backdrop must not close the popup');assert.equal(field.value,'Nesaglabāts apraksts');
+down(field);up(field);click(field);assert.equal(closed,0);
+down(header);up(backdrop);click();assert.equal(closed,0);
+down(backdrop);up(field);click();assert.equal(closed,0,'A pointer released on form content is not a backdrop click');
+down(backdrop);up(backdrop,50,50);click();assert.equal(closed,0,'Dragging the backdrop is not a click');
+down(backdrop);events.pointercancel();click();assert.equal(closed,0);
+down(backdrop,10,10,{button:2});up(backdrop);click();assert.equal(closed,0);
+down(backdrop,10,10,{isPrimary:false});up(backdrop);click();assert.equal(closed,0);
+down(backdrop);up(backdrop,10,10,{pointerId:2});click();assert.equal(closed,0);
+down(backdrop);up(backdrop,12,11);click();assert.equal(closed,1,'A real click on the backdrop still closes the popup');click();assert.equal(closed,1,'A stale click cannot close a newly opened popup');
+const html=fs.readFileSync(path.join(__dirname,'../index.html'),'utf8');assert(html.includes("window.PLANNER_POPUPS?.bindBackdrop($('#taskFormPanel'),closeTaskModal)"));assert(html.includes('popup-gestures.js?v=1'));assert(!html.includes("if(event.target===$('#taskFormPanel'))closeTaskModal()"));
+console.log('Desktop/mobile popup backdrop clicks, text-selection drags, draft preservation, cancellation and pointer identity verified.');

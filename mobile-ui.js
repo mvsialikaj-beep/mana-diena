@@ -14,7 +14,7 @@
   function update(){if(mobile.matches){main.prepend(glance);dialog.append(panel);if(panel.open)openTask()}else{if(dialog.open)dialog.close();glanceHome.after(glance);panelHome.after(panel)}}
   dialog.addEventListener('cancel',()=>{panel.open=false});
   dialog.addEventListener('close',()=>{if(!dialog.open&&mobile.matches&&panel.open)panel.open=false});
-  dialog.addEventListener('click',event=>{if(event.target===dialog){panel.open=false;closeTask()}});
+  window.PLANNER_POPUPS?.bindBackdrop(dialog,()=>{panel.open=false;closeTask()});
   new MutationObserver(()=>{if(!mobile.matches)return;if(panel.open)openTask();else closeTask()}).observe(panel,{attributes:true,attributeFilter:['open']});
   window.visualViewport?.addEventListener('resize',fitTask);window.visualViewport?.addEventListener('scroll',fitTask);window.addEventListener?.('resize',fitTask);dialog.addEventListener('focusin',fitTask);
   mobile.addEventListener('change',update);window.PLANNER_MOBILE_UI={openTask,closeTask,fitTask,active:()=>mobile.matches};update();
