@@ -86,13 +86,14 @@ export function isDone(task, day) {
 
 function repeatStartDay(task, currentDay) {
   if (!task.repeat || task.repeat === 'none') {
-    const start = task.workspace === 'personal' ? task.date : LATVIAN_HOLIDAYS.nextWorkday(task.date, true);
+    const start = task.deferredFrom?.day || (task.workspace === 'personal' ? task.date : LATVIAN_HOLIDAYS.nextWorkday(task.date, true));
     return currentDay >= start && !task.done ? start : null;
   }
   const cursor = dateAtNoon(currentDay);
   const first = dateAtNoon(task.date);
   for (let i = 0; i < 5000 && cursor >= first; i++) {
     const day = cursor.toISOString().slice(0, 10);
+    if (task.postponedDates?.[day]?.taskId) return null;
     if (occurs(task, day)) return isDone(task, day) ? null : day;
     cursor.setUTCDate(cursor.getUTCDate() - 1);
   }
