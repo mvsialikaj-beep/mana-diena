@@ -84,7 +84,7 @@
   trigger.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><rect x="3" y="3" width="10" height="18" rx="2"/><rect x="16" y="3" width="5" height="8" rx="1"/><rect x="16" y="14" width="5" height="7" rx="1"/></svg>';
   document.getElementById('settingsOpen').before(trigger);
   const toolbar = document.createElement('div'); toolbar.className = 'dashboard-toolbar'; toolbar.hidden = true; board.before(toolbar);
-  const hint = document.createElement('span'); hint.textContent = 'Velc aiz roktura, izmēru maini aiz apakšējā stūra.';
+  const hint = document.createElement('span'); hint.textContent = 'Pārvieto aiz augšējā roktura. Platumu maini aiz labās malas, augstumu - aiz apakšējā stūra.';
   const finish = document.createElement('button'); finish.type = 'button'; finish.textContent = 'Gatavs';
   toolbar.append(hint,finish);
   const settings = document.createElement('details'); settings.className = 'settings-section dashboard-settings';
@@ -115,8 +115,9 @@
     hide.onclick=()=>{item.hidden=true;save();render()};bar.append(handle,title,hide);
     const body=document.createElement('div');body.className='dashboard-content';
     const resize=document.createElement('button');resize.type='button';resize.className='dashboard-resize';resize.textContent='◢';resize.setAttribute('aria-label','Mainīt izmēru: '+item.title);resize.title='Velc, lai mainītu izmēru. Bulttaustiņi maina platumu un augstumu. Divreiz nospied, lai atjaunotu automātisku augstumu.';
+    const widthResize=document.createElement('button');widthResize.type='button';widthResize.className='dashboard-width-resize';widthResize.textContent='↔';widthResize.setAttribute('role','slider');widthResize.setAttribute('aria-orientation','horizontal');widthResize.setAttribute('aria-label','Mainīt bloka platumu: '+item.title);widthResize.title='Velc pa labi vai pa kreisi, lai mainītu platumu pa kolonnām. Augstums nemainās.';
     const size=document.createElement('span');size.className='dashboard-size';
-    tile.append(bar,body,size,resize);
+    tile.append(bar,body,size,resize,widthResize);
     if (origins.has(item.id)) body.append(origins.get(item.id).element);
     else {
       const heading=document.createElement('input');heading.className='dashboard-note-title';heading.value=item.title;heading.maxLength=80;heading.setAttribute('aria-label','Bloka nosaukums');
@@ -125,6 +126,8 @@
     }
     if (item.id==='notes') { const newNote=document.createElement('button');newNote.type='button';newNote.textContent='+ Piezīme';newNote.onclick=()=>document.getElementById('noteOpen').click();body.append(newNote); }
     handle.onpointerdown=e=>start(e,tile,'move');resize.onpointerdown=e=>start(e,tile,'resize');
+    widthResize.onpointerdown=e=>start(e,tile,'width');
+    widthResize.onkeydown=e=>{if(!editing||!['ArrowLeft','ArrowRight','Home','End'].includes(e.key))return;e.preventDefault();item.span=e.key==='Home'?1:e.key==='End'?state.columns:clamp(item.span+(e.key==='ArrowRight'?1:-1),1,state.columns,1);save();sizeTile(tile,item)};
     handle.onkeydown=e=>{if(!editing||!['ArrowUp','ArrowDown','ArrowLeft','ArrowRight'].includes(e.key))return;e.preventDefault();const visible=state.items.filter(x=>!x.hidden);const index=visible.indexOf(item),next=visible[index+(['ArrowUp','ArrowLeft'].includes(e.key)?-1:1)];if(next){item.column=Number(widgets.get(next.id)?.dataset.layoutColumn)||0;state.items=move(state.items,item.id,next.id,['ArrowDown','ArrowRight'].includes(e.key));save();render();handle.focus()}};
     resize.onkeydown=e=>{if(!editing)return;const steps={ArrowLeft:[-1,0],ArrowRight:[1,0],ArrowUp:[0,-40],ArrowDown:[0,40]};if(!steps[e.key])return;e.preventDefault();const [x,y]=steps[e.key];item.span=clamp(item.span+x,1,state.columns,1);if(y)item.height=clamp((item.height||tile.offsetHeight)+y,140,1800,0);save();sizeTile(tile,item)};
     resize.ondblclick=()=>{item.height=0;save();sizeTile(tile,item)};
@@ -135,6 +138,7 @@
     tile.style.gridColumn=active?'span '+Math.min(item.span,state.columns):'auto';
     tile.style.height=active&&item.height?item.height+'px':'';
     tile.querySelector('.dashboard-size').textContent=Math.min(item.span,state.columns)+' / '+state.columns+' kol. · '+(item.height?item.height+' px':'auto');
+    const widthHandle=tile.querySelector('.dashboard-width-resize');widthHandle.setAttribute('aria-valuemin','1');widthHandle.setAttribute('aria-valuemax',String(state.columns));widthHandle.setAttribute('aria-valuenow',String(Math.min(item.span,state.columns)));widthHandle.setAttribute('aria-valuetext',Math.min(item.span,state.columns)+' no '+state.columns+' kolonnām');
     scheduleLayout();
   }
   function renderList() {
@@ -173,10 +177,10 @@
   document.addEventListener('pointermove',event=>{
     if(!gesture)return;
     const tile=widgets.get(gesture.id),item=itemById(gesture.id);
-    if(gesture.mode==='resize'){
+    if(gesture.mode==='resize'||gesture.mode==='width'){
       const unit=(board.clientWidth-12*(state.columns-1))/state.columns+12;
       item.span=clamp(gesture.span+Math.round((event.clientX-gesture.x)/unit),1,state.columns,1);
-      item.height=clamp(gesture.height+event.clientY-gesture.y,140,1800,0);sizeTile(tile,item);return;
+      if(gesture.mode==='resize')item.height=clamp(gesture.height+event.clientY-gesture.y,140,1800,0);sizeTile(tile,item);return;
     }
     for(const card of board.children){card.classList.remove('dashboard-drop-before','dashboard-drop-after')}
     let target=document.elementFromPoint(event.clientX,event.clientY)?.closest('.dashboard-widget');
