@@ -44,5 +44,9 @@ fallback.docEvents.click({target:fallback.body});assert.equal(fallbackPopup.pare
 const mobile=harness({desktop:false}),mobilePopup=mobile.open();
 assert.equal(mobilePopup.parent,mobile.wrap);assert(!mobilePopup.classList.contains('calendar-floating'));assert(!mobilePopup.topLayer);
 const days=mobilePopup.children[1].children.filter(x=>x.onclick);days[10].onclick();assert.equal(mobile.input.changed,'change');assert.equal(mobilePopup.parent,null);
+mobile.wrap.events.click({target:mobile.input});const tapped=mobile.wrap.children.find(x=>x.className.includes('calendar-popover'));assert(tapped,'Tapping the visible date opens the calendar even with a display:contents wrapper');assert.equal(tapped.parent,mobile.wrap);
+mobile.wrap.events.click({target:tapped.children[0]});assert.equal(tapped.parent,mobile.wrap,'Interacting with calendar contents must not toggle it closed');
+mobile.wrap.events.click({target:mobile.input});assert.equal(tapped.parent,null,'Tapping the date again closes the calendar');
+assert(html.includes('html .date-input-wrap>input[readonly][inputmode=none]{pointer-events:auto;'));
 const resized=harness(),resizedPopup=resized.open();resized.window.matchMedia=()=>({matches:false});resized.windowEvents.resize();assert.equal(resizedPopup.parent,null);
 console.log('Calendar layer, viewport bounds, fallback, selection, dismissal and mobile behavior verified.');
