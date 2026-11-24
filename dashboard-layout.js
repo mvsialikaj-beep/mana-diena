@@ -2,6 +2,8 @@
   'use strict';
   const defaults = [['tasks','Uzdevumi'],['calendar','Kalendārs un laiks'],['namedays','Vārdadienas'],['progress','Tavs progress']];
   const editorHeight=72; // 48px toolbar and 24px resize footer, never saved as content.
+  const widgetTools=typeof window!=='undefined'?window.PLANNER_WIDGETS:typeof require==='function'?require('./widgets.js'):null;
+  const widgetTypes=['note','focus','countdown','links','checklist','habits','calculator','percent','worldclock'];
   const clamp = (value, low, high, fallback) => Number.isFinite(Number(value)) ? Math.max(low, Math.min(high, Math.round(Number(value)))) : fallback;
   function normalize(value = {}) {
     if (!value || typeof value !== 'object') value = {};
@@ -11,12 +13,14 @@
     for (const item of Array.isArray(value.items) ? value.items.slice(0, 60) : []) {
       if (!item || typeof item.id !== 'string' || seen.has(item.id)) continue;
       const builtin = defaults.find(([id]) => id === item.id);
-      if (!builtin && !/^note-[a-z0-9-]{1,80}$/i.test(item.id)) continue;
+      if (!builtin && !/^(?:note|widget)-[a-z0-9-]{1,80}$/i.test(item.id)) continue;
+      const widgetType=widgetTypes.includes(item.widgetType)?item.widgetType:'note';
       seen.add(item.id);
       items.push({id:item.id, title:builtin ? builtin[1] : String(item.title || 'Piezīmes').slice(0,80),
         text:builtin ? '' : String(item.text || '').slice(0,20000), hidden:!!item.hidden,
         span:clamp(item.span,1,4,item.id === 'tasks' ? 2 : 1), height:clamp(Number(item.height)>0&&value.heightVersion!==2?Math.max(0,Number(item.height)-editorHeight):item.height,0,1800,0),
-        column:Number.isInteger(item.column) ? clamp(item.column,0,3,0) : null});
+        column:Number.isInteger(item.column) ? clamp(item.column,0,3,0) : null,
+        ...(!builtin?{widgetType,widgetData:widgetTools?.normalize?widgetTools.normalize(widgetType,item.widgetData):item.widgetData||{}}:{})});
     }
     for (const [id,title] of defaults) if (!seen.has(id)) items.push({id,title,text:'',hidden:false,span:id === 'tasks' ? 2 : 1,height:0,column:null});
     if(value.calendarFitVersion!==1){const calendar=items.find(item=>item.id==='calendar');if(calendar)calendar.height=0}
@@ -143,7 +147,23 @@
   const add = document.createElement('button'); add.type='button'; add.textContent='+ Piezīmju bloks'; controls.append(add);
   const list = document.createElement('div'); list.className='dashboard-block-list'; controls.append(list);
   const reset = document.createElement('button'); reset.type='button'; reset.textContent='Atjaunot sākotnējo izkārtojumu'; controls.append(reset);
-  const notice = document.createElement('p'); notice.className='muted'; notice.textContent='Izkārtojums un papildu piezīmju bloki saglabājas šajā pārlūkā. Telefonā saglabājas kompakts vienas kolonnas skats.'; controls.append(notice);
+  const notice = document.createElement('p'); notice.className='muted'; notice.textContent='Izkārtojums un logrīku dati saglabājas šajā pārlūkā. Telefonā saglabājas kompakts vienas kolonnas skats.'; controls.append(notice);
+  function addWidget(type){
+    if(state.items.filter(item=>!defaults.some(([id])=>id===item.id)).length>=54){notice.textContent='Var pievienot līdz 54 papildu blokiem.';return}
+    const entry=widgetTools?.catalog.find(item=>item.type===type);
+    const item={id:(type==='note'?'note-':'widget-')+Date.now().toString(36)+'-'+Math.random().toString(36).slice(2,8),title:entry?.title||'Piezīmes',text:'',widgetType:type,widgetData:widgetTools?.normalize(type,{})||{},hidden:false,span:1,height:0,column:null};
+    state.enabled=true;state.items.push(item);save();render();return item;
+  }
+  if(widgetTools?.catalog){
+    const catalog=document.createElement('dialog');catalog.id='widgetCatalog';catalog.setAttribute('aria-labelledby','widgetCatalogTitle');
+    const head=document.createElement('div');head.className='settings-dialog-heading';const title=document.createElement('h3');title.id='widgetCatalogTitle';title.textContent='Logrīku katalogs';const close=document.createElement('button');close.type='button';close.textContent='×';close.setAttribute('aria-label','Aizvērt logrīku katalogu');close.onclick=()=>catalog.close();head.append(title,close);
+    const intro=document.createElement('p');intro.className='widget-catalog-intro';intro.textContent='Pievieno noderīgu rīku un novieto to sev ērtā vietā. Var pievienot arī vairākus vienāda veida logrīkus.';
+    const grid=document.createElement('div');grid.className='widget-catalog-grid';
+    for(const entry of widgetTools.catalog){const choose=document.createElement('button');choose.type='button';choose.className='widget-catalog-choice';choose.setAttribute('aria-label','Pievienot logrīku: '+entry.title);const icon=document.createElement('span');icon.className='widget-catalog-icon';icon.textContent=entry.icon;const label=document.createElement('strong');label.textContent=entry.title;const description=document.createElement('span');description.textContent=entry.description;choose.append(icon,label,description);choose.onclick=()=>{const item=addWidget(entry.type);if(!item)return;catalog.close();if(desktop.matches){editing=true;render()}widgets.get(item.id)?.scrollIntoView({block:'center',behavior:'smooth'})};grid.append(choose)}
+    catalog.append(head,intro,grid);document.body.append(catalog);
+    function openCatalog(){const settings=document.getElementById('settingsDialog');if(settings.open)settings.close();catalog.showModal()}
+    for(const parent of [controls,toolbar]){const shortcut=document.createElement('button');shortcut.type='button';shortcut.className='widget-catalog-open';shortcut.textContent='+ Logrīks';shortcut.setAttribute('aria-haspopup','dialog');shortcut.setAttribute('aria-controls','widgetCatalog');shortcut.onclick=openCatalog;if(parent===toolbar)finish.before(shortcut);else add.after(shortcut)}
+  }
   function save() { try { localStorage.setItem(key,JSON.stringify(state)); } catch { notice.textContent='Neizdevās saglabāt izkārtojumu. Pārbaudi pārlūka brīvo vietu.'; } }
   function itemById(id) { return state.items.find(item => item.id === id); }
   function restoreSources() { for (const {element,marker} of origins.values()) { marker.before(element); element.hidden=false; } }
@@ -160,7 +180,10 @@
     const size=document.createElement('span');size.className='dashboard-size';
     tile.append(bar,body,size,resize);
     if (origins.has(item.id)) body.append(origins.get(item.id).element);
-    else {
+    else if(item.widgetType&&item.widgetType!=='note'&&widgetTools?.mount){
+      const heading=document.createElement('input');heading.className='dashboard-note-title';heading.value=item.title;heading.maxLength=80;heading.setAttribute('aria-label','Logrīka nosaukums');heading.oninput=()=>{item.title=heading.value;title.textContent=item.title;save()};body.append(heading);
+      widgetTools.mount(body,item,()=>{save();scheduleLayout()});
+    }else {
       const heading=document.createElement('input');heading.className='dashboard-note-title';heading.value=item.title;heading.maxLength=80;heading.setAttribute('aria-label','Bloka nosaukums');
       const text=document.createElement('textarea');text.className='dashboard-note-text';text.value=item.text;text.maxLength=20000;text.placeholder='Ātrās piezīmes…';text.setAttribute('aria-label','Piezīmju teksts');
       heading.oninput=()=>{item.title=heading.value;title.textContent=item.title;save()};text.oninput=()=>{item.text=text.value;save()};body.append(heading,text);
@@ -184,7 +207,7 @@
     for(const item of state.items){
       const row=document.createElement('div');row.className='dashboard-block-row';const label=document.createElement('label'),check=document.createElement('input');check.type='checkbox';check.checked=!item.hidden;label.append(check,document.createTextNode(' '+item.title));
       check.onchange=()=>{item.hidden=!check.checked;save();render()};row.append(label);
-      if(item.id.startsWith('note-')){const remove=document.createElement('button');remove.type='button';remove.textContent='Dzēst';remove.onclick=()=>{if(!confirm('Dzēst bloku “'+item.title+'” un tā piezīmes?'))return;state.items=state.items.filter(x=>x.id!==item.id);if(widgets.has(item.id))observer?.unobserve(widgets.get(item.id));widgets.get(item.id)?.remove();widgets.delete(item.id);save();render()};row.append(remove)}
+      if(!origins.has(item.id)){const remove=document.createElement('button');remove.type='button';remove.textContent='Dzēst';remove.onclick=()=>{if(!confirm('Dzēst bloku “'+item.title+'” un tā saturu?'))return;state.items=state.items.filter(x=>x.id!==item.id);widgetTools?.unmount?.(item.id);if(widgets.has(item.id))observer?.unobserve(widgets.get(item.id));widgets.get(item.id)?.remove();widgets.delete(item.id);save();render()};row.append(remove)}
       list.append(row);
     }
   }
@@ -256,8 +279,8 @@
   enabled.onchange=()=>{state.enabled=enabled.checked;editing=false;save();render()};
   columns.onchange=()=>{state.columns=Number(columns.value);state.columnWidths=Array(state.columns).fill(1);save();render()};
   editButton.onclick=()=>{document.getElementById('settingsDialog').close();state.enabled=true;editing=true;save();render()};
-  add.onclick=()=>{if(state.items.filter(x=>x.id.startsWith('note-')).length>=54){notice.textContent='Vienā izkārtojumā var pievienot līdz 54 piezīmju blokiem.';return}state.enabled=true;state.items.push({id:'note-'+Date.now().toString(36)+'-'+Math.random().toString(36).slice(2,8),title:'Piezīmes',text:'',hidden:false,span:1,height:0});save();render()};
-  reset.onclick=()=>{state.enabled=false;state.columns=4;state.columnWidths=[1,1,1,1];for(const item of state.items){item.hidden=false;item.column=null;item.span=item.id==='tasks'?2:1;item.height=0}state.items=[...defaults.map(([id])=>itemById(id)),...state.items.filter(item=>item.id.startsWith('note-'))];editing=false;save();render()};
+  add.onclick=()=>addWidget('note');
+  reset.onclick=()=>{state.enabled=false;state.columns=4;state.columnWidths=[1,1,1,1];for(const item of state.items){item.hidden=false;item.column=null;item.span=item.id==='tasks'?2:1;item.height=0}state.items=[...defaults.map(([id])=>itemById(id)),...state.items.filter(item=>!defaults.some(([id])=>id===item.id))];editing=false;save();render()};
   desktop.addEventListener('change',()=>{editing=false;render()});
   render();
 })();

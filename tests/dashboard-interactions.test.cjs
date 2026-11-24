@@ -21,6 +21,7 @@ class Element {
   setPointerCapture(){this.captured=true}hasPointerCapture(){return !!this.captured}releasePointerCapture(){this.captured=false}
   getBoundingClientRect(){return {top:parseFloat(this.style.top)||0,left:parseFloat(this.style.left)||0,height:parseFloat(this.style.height)||this.offsetHeight,width:parseFloat(this.style.width)||300}}
   focus(){}scrollIntoView(){}click(){this.onclick?.()}
+  showModal(){this.open=true}close(){this.open=false}
 }
 const body=new Element('body'),root=new Element('html');root.append(body);
 const element=(parent,cls,id,tag)=>{const e=new Element(tag);e.className=cls||'';e.id=id;parent.append(e);return e};
@@ -33,7 +34,8 @@ const media={matches:true,addEventListener(k,fn){this.change=fn}},events={},stor
 const doc={body,documentElement:root,createElement:t=>new Element(t),createTextNode:t=>Object.assign(new Element('#text'),{textContent:t}),createComment:t=>new Element('#comment'),
   getElementById:id=>root.walk().find(n=>n.id===id),querySelector:s=>s==='main.main'?main:s==='#settingsDialog .settings-panel'?panel:root.querySelector(s),
   addEventListener:(k,fn)=>events[k]=fn,elementFromPoint:()=>underPointer};
-vm.runInNewContext(fs.readFileSync(path.join(__dirname,'../dashboard-layout.js'),'utf8'),{document:doc,matchMedia:()=>media,localStorage:{getItem:k=>store.get(k),setItem:(k,v)=>store.set(k,v)},window:{scrollBy(){}},innerHeight:900,confirm:()=>true,console});
+const widgetEngine={...require('../widgets.js'),mount(host,item){const content=new Element();content.className='test-widget-'+item.widgetType;host.append(content)},unmount(){}};
+vm.runInNewContext(fs.readFileSync(path.join(__dirname,'../dashboard-layout.js'),'utf8'),{document:doc,matchMedia:()=>media,localStorage:{getItem:k=>store.get(k),setItem:(k,v)=>store.set(k,v)},window:{scrollBy(){},PLANNER_WIDGETS:widgetEngine},innerHeight:900,confirm:()=>true,console});
 const board=doc.querySelector('.dashboard-grid'),button=doc.getElementById('layoutOpen');
 assert.equal(layout.hidden,false);assert.equal(main.parentElement,mainColumn);
 button.onclick();
@@ -94,4 +96,14 @@ saved=JSON.parse(store.get('mana-ikdiena-dashboard-v1'));
 assert.equal(saved.items.find(x=>x.id==='namedays').column,Number(calendarTile.dataset.layoutColumn));
 media.matches=false;media.change();assert.equal(layout.hidden,false);assert.equal(main.parentElement,mainColumn);assert.equal(board.children.length,1);
 assert.equal(board.children[0].querySelector('.dashboard-note-text').value,'Doma pēc atiestatīšanas');
+const catalog=doc.getElementById('widgetCatalog');assert(catalog);
+const calculatorChoice=catalog.walk().find(x=>x.attributes['aria-label']==='Pievienot logrīku: Kalkulators');
+calculatorChoice.onclick();
+saved=JSON.parse(store.get('mana-ikdiena-dashboard-v1'));
+assert(saved.items.some(x=>x.widgetType==='calculator'),'A catalogue choice creates a saved typed widget');
+assert.equal(board.children.length,2,'Additional widgets remain available on mobile');
+assert(board.walk().some(x=>x.className==='test-widget-calculator'));
+reset.onclick();
+saved=JSON.parse(store.get('mana-ikdiena-dashboard-v1'));
+assert(saved.items.some(x=>x.widgetType==='calculator'),'Layout reset must not delete widget data');
 console.log('Dashboard controls, live task preservation, drag, resize, notes, reset and mobile fallback verified.');

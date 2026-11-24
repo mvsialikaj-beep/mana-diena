@@ -20,6 +20,9 @@ assert.equal(normalize({columns:0,items:[{id:'note-a',height:9999,span:-2}]}).it
 assert.equal(normalize({columns:0,items:[{id:'note-a',height:9999,span:-2}]}).items[0].span,1);
 assert.equal(move(custom.items,'missing','tasks',true),custom.items);
 assert.equal(normalize(null).items.length,4);
+const typed=normalize({items:[{id:'widget-calc',title:'Ātrie rēķini',widgetType:'calculator',widgetData:{expression:'250*20%'}}]});
+assert.equal(typed.items.find(x=>x.id==='widget-calc').widgetData.expression,'250*20%');
+assert.deepEqual(normalize(JSON.parse(JSON.stringify(typed))).items,typed.items,'Widget type and configuration survive reload');
 const legacy=normalize({items:[{id:'calendar',height:560},{id:'tasks',height:560}]});
 assert.equal(legacy.items.find(x=>x.id==='calendar').height,0,'Restore a tight automatic calendar height for existing layouts');
 assert.equal(legacy.items.find(x=>x.id==='tasks').height,488,'Remove saved editor toolbar/footer from other legacy heights');
