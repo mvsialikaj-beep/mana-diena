@@ -63,7 +63,7 @@
   ];
   const fineColors = fineGroups.flatMap(([,items])=>items);
   const frameDefaults = {scheduledHeaderBorder:1,scheduledHeaderRadius:9,scheduledHeaderBorderStyle:'solid',scheduledTaskBorder:1,scheduledTaskRadius:12,scheduledTaskBorderStyle:'solid',scheduledBorderStyle:'solid',scheduledBorder:1,scheduledRadius:12,taskBorder:1,categoryBorder:0,holidayBorder:0,cardBorder:1,sectionBorder:1,
-    taskRadius:12,categoryRadius:9,holidayRadius:10,taskShadow:'default',taskBorderStyle:'solid',categoryBorderStyle:'solid'};
+    calendarShape:'default',taskRadius:12,categoryRadius:9,holidayRadius:10,taskShadow:'default',taskBorderStyle:'solid',categoryBorderStyle:'solid'};
   const fonts = {
     default: '',
     system: 'system-ui, -apple-system, "Segoe UI", sans-serif',
@@ -123,7 +123,7 @@
     const value=saved.frames?.[key];
     const max=key==='holidayBorder'?4:key.endsWith('Border')?5:key==='holidayRadius'?18:24;
     if (typeof initial==='number' && Number.isInteger(value) && value>=0 && value<=max) settings.frames[key]=value;
-    if (typeof initial==='string' && (key==='taskShadow'?['default','none','soft','strong']:['solid','dashed','dotted']).includes(value)) settings.frames[key]=value;
+    if (typeof initial==='string' && (key==='calendarShape'?['default','round','soft','square','custom']:key==='taskShadow'?['default','none','soft','strong']:['solid','dashed','dotted']).includes(value)) settings.frames[key]=value;
   }
 
   const details = document.createElement('details');
@@ -448,6 +448,7 @@
     wrap.append(title,input);(key.startsWith('scheduled')?scheduledDesignGroup:frameBody).append(wrap);frameControls.set(key,{input,output});
   }
   for(const [key,label,options] of [
+    ['calendarShape','Kalendāra datumu forma',[['default','Noklusētā'],['round','Apļi / ovāli'],['soft','Noapaļoti taisnstūri'],['square','Taisni stūri'],['custom','Pielāgoti stūri (slīdnis)']]],
     ['scheduledHeaderBorderStyle','Virsraksta iekšējā rāmja līnija',[['solid','Vienlaidu'],['dashed','Pārtraukta'],['dotted','Punktota']]],
     ['scheduledTaskBorderStyle','Uzdevumu kartīšu rāmja līnija',[['solid','Vienlaidu'],['dashed','Pārtraukta'],['dotted','Punktota']]],
     ['scheduledBorderStyle','Ārējā bloka rāmja līnija',[['solid','Vienlaidu'],['dashed','Pārtraukta'],['dotted','Punktota']]],
@@ -544,6 +545,7 @@
       const value=settings.frames[key];root.toggleAttribute('data-frame-'+key.toLowerCase(),value!==initial);
       root.style.setProperty('--frame-'+key,typeof value==='number'?value+'px':value);
     }
+    root.dataset.calendarShape=settings.frames.calendarShape;
     root.dataset.frameTaskshadow=settings.frames.taskShadow;
     for(const [key,input] of gradientControls){
       const gradient=gradients[key];
