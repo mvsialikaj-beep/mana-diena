@@ -20,6 +20,8 @@ function harness({desktop=true,native=true,left=20,top=20}={}){
     querySelector(){return button}
     getBoundingClientRect(){return this===wrap?{left,top,bottom:top+44,width:180,height:44}:{width:330,height:Math.min(360,parseFloat(this.style.maxHeight)||360)}}
     click(){this.onclick()}
+    showModal(){this.open=true}close(){this.open=false}
+    walk(){return [this,...this.children.flatMap(x=>x.walk())]}
   }
   const wrap=new Element(),input=new Element(),button=new Element(),body=new Element();wrap.append(input,button);body.append(wrap);
   const document={body,createElement:()=>new Element(),addEventListener:(k,fn)=>docEvents[k]=fn};
@@ -27,7 +29,7 @@ function harness({desktop=true,native=true,left=20,top=20}={}){
   const setup=new Function('$','document','window','activeWorkspace','isWorkWeekend','workHoliday','LATVIAN_HOLIDAYS','today','Event',html.slice(start,end)+';return setupCalendar')(
     ()=>input,document,window,'work',d=>[0,6].includes(d.getDay()),()=>'',{isWorkday:()=>true},()=>'2026-11-24',class{constructor(type){this.type=type}}
   );setup('date');
-  return {wrap,input,button,body,docEvents,windowEvents,window,open(){button.click();return [...wrap.children,...body.children].find(x=>x.className.includes('calendar-popover'))}};
+  return {wrap,input,button,body,docEvents,windowEvents,window,open(){button.click();return body.walk().find(x=>x.className.includes('calendar-popover'))}};
 }
 const empty=harness();const popup=empty.open();
 assert.equal(popup.topLayer,true,'The calendar must escape even an empty, clipped task card');
@@ -42,10 +44,10 @@ const fallback=harness({native:false}),fallbackPopup=fallback.open();assert.equa
 fallback.docEvents.click({target:fallbackPopup.children[0]});assert.equal(fallbackPopup.parent,fallback.body);
 fallback.docEvents.click({target:fallback.body});assert.equal(fallbackPopup.parent,null);
 const mobile=harness({desktop:false}),mobilePopup=mobile.open();
-assert.equal(mobilePopup.parent,mobile.wrap);assert(!mobilePopup.classList.contains('calendar-floating'));assert(!mobilePopup.topLayer);
+assert.equal(mobilePopup.parent.className,'mobile-calendar-dialog');assert(mobilePopup.parent.open);assert(!mobilePopup.classList.contains('calendar-floating'));assert(!mobilePopup.topLayer);
 const days=mobilePopup.children[1].children.filter(x=>x.onclick);days[10].onclick();assert.equal(mobile.input.changed,'change');assert.equal(mobilePopup.parent,null);
-mobile.wrap.events.click({target:mobile.input});const tapped=mobile.wrap.children.find(x=>x.className.includes('calendar-popover'));assert(tapped,'Tapping the visible date opens the calendar even with a display:contents wrapper');assert.equal(tapped.parent,mobile.wrap);
-mobile.wrap.events.click({target:tapped.children[0]});assert.equal(tapped.parent,mobile.wrap,'Interacting with calendar contents must not toggle it closed');
+mobile.wrap.events.click({target:mobile.input});const tapped=mobile.body.walk().find(x=>x.className.includes('calendar-popover'));assert(tapped,'Tapping the visible date opens the calendar even with a display:contents wrapper');assert.equal(tapped.parent.className,'mobile-calendar-dialog');
+mobile.wrap.events.click({target:tapped.children[0]});assert.equal(tapped.parent.className,'mobile-calendar-dialog','Interacting with calendar contents must not toggle it closed');
 mobile.wrap.events.click({target:mobile.input});assert.equal(tapped.parent,null,'Tapping the date again closes the calendar');
 assert(html.includes('html .date-input-wrap>input[readonly][inputmode=none]{pointer-events:auto;'));
 const resized=harness(),resizedPopup=resized.open();resized.window.matchMedia=()=>({matches:false});resized.windowEvents.resize();assert.equal(resizedPopup.parent,null);

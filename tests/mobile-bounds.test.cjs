@@ -1,0 +1,10 @@
+const assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path'),vm=require('node:vm'),{bounds}=require('../mobile-bounds.js');
+assert.deepEqual(bounds({width:320,height:240,offsetLeft:8,offsetTop:180}),{width:320,height:240,left:8,top:180});
+assert.deepEqual(bounds(null,{width:390,height:844}),{width:390,height:844,left:0,top:0});
+assert.deepEqual(bounds({width:0,height:NaN,offsetLeft:-10,offsetTop:-1}),{width:320,height:640,left:0,top:0});
+const styles={},events={},viewport={width:390,height:844,offsetLeft:0,offsetTop:0,addEventListener:(key,fn)=>events['viewport-'+key]=fn},window={visualViewport:viewport,addEventListener:(key,fn)=>events[key]=fn},document={documentElement:{style:{setProperty:(k,v)=>styles[k]=v}},addEventListener:(key,fn)=>events[key]=fn};
+vm.runInNewContext(fs.readFileSync(path.join(__dirname,'../mobile-bounds.js'),'utf8'),{window,document});assert.equal(styles['--mobile-viewport-width'],'390px');
+viewport.height=280;viewport.width=320;viewport.offsetTop=250;events['viewport-resize']();assert.equal(styles['--mobile-viewport-height'],'280px');assert.equal(styles['--mobile-viewport-width'],'320px');assert.equal(styles['--mobile-viewport-top'],'250px');
+viewport.offsetLeft=15;events['viewport-scroll']();assert.equal(styles['--mobile-viewport-left'],'15px');
+const html=fs.readFileSync(path.join(__dirname,'../index.html'),'utf8');assert(html.includes('mobile-bounds.js?v=1'));assert(html.includes('html body :is(dialog,.design-settings.design-floating,.item-color-picker-panel)'));assert(html.includes("mobileDialog.showModal()"));assert(html.includes('grid-template-columns:minmax(0,156px) minmax(0,1fr)'));assert(html.includes('html body dialog :is(input,select,textarea){max-width:100%;font-size:16px!important}'));
+console.log('Shared mobile viewport bounds, keyboard resizing, scrolling, all-dialog CSS and independent calendar dialog verified.');
