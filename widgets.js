@@ -1,5 +1,6 @@
 (function(root){
   'use strict';
+  const online=root.PLANNER_ONLINE_WIDGETS||(typeof require==='function'?require('./online-widgets.js'):null);
   const catalog=[
     {type:'note',icon:'✎',title:'Piezīmes',description:'Atsevišķa vieta idejām un ātrām domām.'},
     {type:'utm',icon:'↗',title:'UTM saišu veidotājs',fresh:true,description:'Veido marķētas saites e-pastiem, reklāmām un kampaņām.'},
@@ -20,6 +21,7 @@
     {type:'percent',icon:'%',title:'Procentu rēķins',description:'Procenti no summas, atlaide vai summas palielinājums.'},
     {type:'worldclock',icon:'◷',title:'Pasaules pulkstenis',description:'Rīga, Londona, Ņujorka un citas laika joslas.'}
   ];
+  if(online)catalog.push(...online.catalog);
   const zones={'Europe/Riga':'Rīga','Europe/London':'Londona','America/New_York':'Ņujorka','America/Los_Angeles':'Losandželosa','Asia/Dubai':'Dubaija','Asia/Tokyo':'Tokija','Australia/Sydney':'Sidneja'};
   const number=(value,min,max,fallback)=>Number.isFinite(Number(value))?Math.max(min,Math.min(max,Number(value))):fallback;
   const text=(value,max=120)=>typeof value==='string'?value.slice(0,max):'';
@@ -37,6 +39,7 @@
   }
   function normalize(type,value={}){
     const data=value&&typeof value==='object'&&!Array.isArray(value)?value:{};
+    if(online?.types.has(type))return online.normalize(type,data);
     if(type==='utm')return {url:text(data.url,2048),source:text(data.source),medium:text(data.medium),campaign:text(data.campaign,240),content:text(data.content,240),term:text(data.term,240)};
     if(type==='textstats')return {text:text(data.text,20000)};
     if(type==='memory'){
@@ -106,7 +109,8 @@
     unmount(item.id);const container=element('div','planner-widget widget-'+item.widgetType);body.append(container);
     item.widgetData=normalize(item.widgetType,item.widgetData);const data=item.widgetData;
     const save=()=>persist();let tick=null,cleanup=null;
-    if(item.widgetType==='utm'){
+    if(online?.types.has(item.widgetType)){cleanup=online.mount(container,item,persist);
+    }else if(item.widgetType==='utm'){
       const definitions=[['url','Galamērķa saite','https://...'],['source','Avots (utm_source)','newsletter, facebook…'],['medium','Kanāls (utm_medium)','email, social, cpc…'],['campaign','Kampaņa (utm_campaign)','black_friday_2026'],['content','Saturs (nav obligāts)','banner_a'],['term','Atslēgvārds (nav obligāts)','']];
       const fields=definitions.map(([key,label,placeholder])=>{const control=field(label,data[key],placeholder);control.input.maxLength=key==='url'?2048:240;control.input.oninput=()=>{data[key]=control.input.value;save();paint()};return control});
       const output=element('textarea','widget-utm-result');output.readOnly=true;output.rows=3;output.setAttribute('aria-label','Marķētā kampaņas saite');const hint=element('p','widget-hint');

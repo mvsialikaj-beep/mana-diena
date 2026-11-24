@@ -353,6 +353,23 @@ html[data-theme=dark] .item-color-picker-panel{background:#233442;color:#edf5fa}
 .category-dialog-heading{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:12px}
 #categoriesDialog h3{margin:0}
 #categoryOpen{min-width:38px;padding-inline:8px;font-size:18px}
+.widget-online-controls{display:grid;gap:9px;min-width:0}
+.widget-online-content{min-width:0;max-width:100%;overflow:hidden;overflow-wrap:anywhere}
+.widget-online-frame{display:block;width:100%;max-width:100%;height:370px;border:0;border-radius:12px;background:var(--surface,#fff)}
+.widget-diagram .widget-online-frame{height:540px}
+.widget-youtube .widget-online-frame,.widget-lofi .widget-online-frame{height:auto;aspect-ratio:16/9;min-height:180px}
+.widget-soundcloud .widget-online-frame{height:260px}
+.widget-online-image{display:block;width:auto;max-width:100%;max-height:380px;height:auto;object-fit:contain;margin:10px auto;border-radius:10px}
+.widget-online-link{display:block;font-size:12px;margin-top:9px;overflow-wrap:anywhere}
+.widget-online-question{padding:12px 0;border-bottom:1px solid var(--line,#dce3e7)}
+.widget-online-question .widget-button{display:block;width:100%;text-align:left;margin-top:6px;white-space:normal;overflow-wrap:anywhere}
+.widget-online-content .widget-row{gap:10px;align-items:start}
+.widget-online-content .widget-row strong{text-align:right}
+.widget-online-content h4{margin:12px 0 6px}
+.widget-online-content p{line-height:1.5}
+.widget-online-content .tradingview-widget-container{width:100%;max-width:100%;overflow:hidden}
+@media(max-width:850px){.widget-online-frame{height:340px}.widget-diagram .widget-online-frame{height:460px}.widget-online-controls input,.widget-online-controls select{font-size:16px;min-width:0;width:100%;box-sizing:border-box}}
+
 </style><script src="./namedays.js"></script><script src="./holidays.js"></script><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><style>
 /* Sick mode header shortcut */
 .top-controls #sickToggle{align-items:center;justify-content:center;width:44px;min-width:44px;height:44px;padding:10px;flex:0 0 auto}.top-controls #sickToggle svg{width:21px;height:21px;pointer-events:none}html[data-workspace=work] .top-controls #sickToggle{display:inline-flex}.top-controls #sickToggle[aria-pressed=true]{background:#fce8e9!important;color:#9c3341!important;border-color:#cc8792!important;box-shadow:inset 0 0 0 1px #cc8792}
@@ -1264,4 +1281,4 @@ async function activate(u){generation++;user=u;key=guestKey+'-user-'+u.id;try{pe
 async function signIn(signup){let email=document.querySelector('#authEmail').value.trim(),password=document.querySelector('#authPassword').value;if(!email||password.length<6){show('Ievadi e-pastu un paroli ar vismaz 6 rakstzīmēm.');return}show('Lūdzu, uzgaidi...');let result=signup?await client.auth.signUp({email,password,options:{emailRedirectTo:'https://mvsialikaj-beep.github.io/mana-diena/'}}):await client.auth.signInWithPassword({email,password});document.querySelector('#authPassword').value='';if(result.error){show('Pierakstīšanās neizdevās: '+result.error.message);return}if(signup&&!result.data.session)show('Pārbaudi e-pastu un apstiprini kontu. Tad pieraksties abās ierīcēs.');}
 document.querySelector('#login').onclick=()=>signIn(false);document.querySelector('#signup').onclick=()=>signIn(true);out.onclick=async()=>{try{if(user&&'serviceWorker' in navigator){let registration=await navigator.serviceWorker.getRegistration('./'),subscription=await registration?.pushManager?.getSubscription();if(subscription){await client.from('push_subscriptions').delete().eq('user_id',user.id).eq('endpoint',subscription.endpoint);await subscription.unsubscribe()}}}catch{}finally{window.backgroundPushActive=false;try{localStorage.removeItem('mana-diena-push-active')}catch{}await client.auth.signOut()}};client.auth.onAuthStateChange((event,session)=>{if(session?.user){if(user?.id!==session.user.id)setTimeout(()=>activate(session.user),0)}else if(user){generation++;user=null;window.backgroundPushActive=false;try{localStorage.removeItem('mana-diena-push-active')}catch{}key=guestKey;pending={};snapshot=new Map();read();render();form.hidden=false;out.hidden=true;show('Pieraksties, lai sinhronizētu uzdevumus.');document.querySelector('#pushEnable').textContent='Ieslēgt fona paziņojumus';pushMessage('Pieraksties, lai ieslēgtu fona paziņojumus.')}});setInterval(()=>{if(user){if(Object.keys(pending).length)flush();else pull()}},10000);
 })();
-</script><script src="./design-settings.js?v=18"></script><script src="./appearance-sync.js?v=1"></script><script src="./category-dialog.js?v=2"></script><script src="./widgets.js?v=3"></script><script src="./dashboard-layout.js?v=10"></script></body></html>
+</script><script src="./design-settings.js?v=18"></script><script src="./appearance-sync.js?v=1"></script><script src="./category-dialog.js?v=2"></script><script src="./online-widgets.js?v=1"></script><script src="./widgets.js?v=4"></script><script src="./dashboard-layout.js?v=10"></script></body></html>

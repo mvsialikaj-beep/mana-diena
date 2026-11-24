@@ -101,7 +101,7 @@ const catalogSearch=catalog.walk().find(x=>x.attributes['aria-label']==='Meklēt
 catalogSearch.value='noskaņa';catalogSearch.oninput();
 const choices=catalog.querySelector('.widget-catalog-grid').children;
 assert.equal(choices.filter(x=>!x.hidden).length,1);assert.equal(choices.find(x=>!x.hidden).attributes['aria-label'],'Pievienot logrīku: Dienas noskaņa');
-catalogSearch.value='';catalogSearch.oninput();assert.equal(choices.filter(x=>!x.hidden).length,18);
+catalogSearch.value='';catalogSearch.oninput();assert.equal(choices.filter(x=>!x.hidden).length,require('../widgets.js').catalog.length);
 const calculatorChoice=catalog.walk().find(x=>x.attributes['aria-label']==='Pievienot logrīku: Kalkulators');
 calculatorChoice.onclick();
 saved=JSON.parse(store.get('mana-ikdiena-dashboard-v1'));
