@@ -37,8 +37,8 @@ const fields = Object.fromEntries(['taskFormPanel','text','taskDate','descriptio
 fields['#text'].focus = () => {};
 fields['#form'].scrollIntoView = () => {};
 let resets = 0;
-const copy = new Function('$','date','resetForm','validHexColor','syncReminderFields','syncNagFields','syncRepeatFields','syncProjectFields',
-  'let editing=null,copyingColor=null;'+copySource+'return {openTaskFromExisting,getMode:()=>({editing,copyingColor})}')(selector => fields[selector],{value:'2026-11-02'},()=>resets++,value=>/^#[0-9a-f]{6}$/i.test(value),()=>{},()=>{},()=>{},()=>{});
+const copy = new Function('$','date','resetForm','validHexColor','syncReminderFields','syncNagFields','syncRepeatFields','syncProjectFields','window',
+  'let editing=null,copyingColor=null;'+copySource+'return {openTaskFromExisting,getMode:()=>({editing,copyingColor})}')(selector => fields[selector],{value:'2026-11-02'},()=>resets++,value=>/^#[0-9a-f]{6}$/i.test(value),()=>{},()=>{},()=>{},()=>{},{PLANNER_MOBILE_UI:{openTask(){},active:()=>false}});
 const original = {id:'original',text:'Projekts',date:'2026-10-20',description:'- [x] Gatavs\n- [ ] Jādara',category:'Amazon',time:'14:00',nagReminder:true,dayReminder:true,reminderTime:'13:30',repeat:'weekly',repeatInterval:2,project:true,projectDue:'2026-11-04',priority:true,color:'#aabbcc',done:true,comments:[{text:'Vecs komentārs'}],checklist:{single:{0:true}}};
 copy.openTaskFromExisting(original,true);
 assert.equal(resets,1);
