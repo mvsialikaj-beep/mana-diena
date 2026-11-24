@@ -3,7 +3,15 @@ const fs=require('node:fs');
 const path=require('node:path');
 const vm=require('node:vm');
 const tools=require('../widgets.js');
-assert.equal(tools.catalog.length,9);
+assert.equal(tools.catalog.length,15);
+assert.equal(tools.catalog.filter(x=>x.fresh).length,6);
+for(const entry of tools.catalog){const data=tools.normalize(entry.type,{});assert.deepEqual(tools.normalize(entry.type,JSON.parse(JSON.stringify(data))),data,'Widget configuration survives reload: '+entry.type)}
+assert.equal(tools.pickIndex(3,0),0);assert.equal(tools.pickIndex(3,1),2);assert.equal(tools.pickIndex(0),-1);
+assert.equal(tools.periodProgress('2028-02-29','year').total,366);
+assert.equal(tools.periodProgress('2026-11-23','week').elapsed,1);
+assert.equal(tools.periodProgress('2026-11-29','week').percent,100);
+assert.equal(tools.stopwatchElapsed({elapsed:250,running:true,startedAt:1000},3000),2250);
+assert.equal(tools.normalize('goal',{target:0,current:-10}).target,1);
 for(const [expression,result] of [['250 × 20%',50],['(250 + 50) * 20%',60],['-5 * -2',10],['1,5 + 2,5',4],['100 / (2 + 3)',20]])assert.equal(tools.calculate(expression),result);
 for(const bad of ['1/0','alert(1)','1e10','(1+2','NaN','<script>'])assert.throws(()=>tools.calculate(bad));
 assert.equal(tools.safeUrl('example.com'),'https://example.com/');
@@ -16,7 +24,7 @@ assert.equal(tools.normalize('worldclock',{zones:['Bad/Zone','Europe/Riga','Euro
 let now=Date.parse('2026-11-24T10:00:00Z'),interval,visibility,persisted=0;
 class TestDate extends Date{constructor(...args){super(...(args.length?args:[now]))}static now(){return now}}
 class Element{
-  constructor(tag='div'){this.tagName=tag;this.children=[];this.value='';this.textContent='';this.attributes={};this.className=''}
+  constructor(tag='div'){this.tagName=tag;this.children=[];this.value='';this.textContent='';this.attributes={};this.className='';this.style={}}
   append(...nodes){for(const n of nodes){n.parentElement=this;this.children.push(n)}}
   replaceChildren(...nodes){this.children=[];this.append(...nodes)}
   setAttribute(key,value){this.attributes[key]=value}
@@ -42,6 +50,14 @@ const calculator=mount('calculator');const expression=calculator.all().find(n=>n
 const percent=mount('percent'),values=percent.all().filter(n=>n.tagName==='input'),mode=percent.all().find(n=>n.tagName==='select');values[0].value='250';values[1].value='10';mode.value='discount';mode.onchange();assert.equal(percent.find('widget-result').textContent,'225');
 const countdown=mount('countdown',{date:'2026-11-25'});assert.equal(countdown.find('widget-big').textContent,'Šodien');
 const clocks=mount('worldclock');assert.equal(clocks.item.widgetData.zones.length,3);assert(/^\d\d:\d\d$/.test(clocks.find('widget-clock').textContent));
+const wheel=mount('wheel');wheel.button('Griezt ratu').onclick();assert(wheel.item.widgetData.options.includes(wheel.item.widgetData.result));assert(wheel.find('widget-wheel-disc').style.transform.startsWith('rotate('));
+wheel.find('widget-options').value='Darbs A\nDarbs B';wheel.find('widget-options').oninput();assert.equal(wheel.item.widgetData.options.length,2);
+const goal=mount('goal');goal.button('+ Solis').onclick();assert.equal(goal.item.widgetData.current,1);assert.equal(goal.find('widget-big').textContent,'10%');assert.equal(goal.find('widget-goal-track').attributes['aria-valuenow'],'10');
+const mood=mount('mood');const good=mood.all().find(n=>n.attributes['aria-label']==='Labi');good.onclick();assert.equal(Object.values(mood.item.widgetData.days)[0].mood,4);mood.find('widget-mood-note').value='Laba tikšanās';mood.find('widget-mood-note').oninput();assert.equal(Object.values(mood.item.widgetData.days)[0].note,'Laba tikšanās');
+now+=86400000;interval();assert(mood.all().filter(n=>n.attributes['aria-pressed']).every(n=>n.attributes['aria-pressed']==='false'),'A new day starts without changing yesterday\'s mood');
+const stopwatch=mount('stopwatch');stopwatch.button('Sākt').onclick();now+=65000;interval();assert.equal(stopwatch.find('widget-timer').textContent,'00:01:05');stopwatch.button('Aplis').onclick();assert.equal(stopwatch.item.widgetData.laps[0],65000);stopwatch.button('Apturēt').onclick();now+=5000;interval();assert.equal(stopwatch.find('widget-timer').textContent,'00:01:05');
+const ideas=mount('ideas');const topic=ideas.all().find(n=>n.tagName==='input');topic.value='CARELIKA';topic.oninput();ideas.button('Sajaukt ideju').onclick();assert(ideas.item.widgetData.result.includes('CARELIKA'));
+const progress=mount('timeprogress');assert.equal(progress.find('widget-period-ring').children[0].textContent,tools.periodProgress(api.dayInRiga(),'month').percent+'%');
 assert(persisted>=10);
 assert.deepEqual(tools.normalize('checklist',JSON.parse(JSON.stringify(checklist.item.widgetData))).items.map(x=>x.done),[true]);
 console.log('Widget catalogue, calculation safety, links, timers, daily habits, checklists, countdowns, clocks and persistence verified.');

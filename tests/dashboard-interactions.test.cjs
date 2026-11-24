@@ -97,6 +97,11 @@ assert.equal(saved.items.find(x=>x.id==='namedays').column,Number(calendarTile.d
 media.matches=false;media.change();assert.equal(layout.hidden,false);assert.equal(main.parentElement,mainColumn);assert.equal(board.children.length,1);
 assert.equal(board.children[0].querySelector('.dashboard-note-text').value,'Doma pēc atiestatīšanas');
 const catalog=doc.getElementById('widgetCatalog');assert(catalog);
+const catalogSearch=catalog.walk().find(x=>x.attributes['aria-label']==='Meklēt logrīku');
+catalogSearch.value='noskaņa';catalogSearch.oninput();
+const choices=catalog.querySelector('.widget-catalog-grid').children;
+assert.equal(choices.filter(x=>!x.hidden).length,1);assert.equal(choices.find(x=>!x.hidden).attributes['aria-label'],'Pievienot logrīku: Dienas noskaņa');
+catalogSearch.value='';catalogSearch.oninput();assert.equal(choices.filter(x=>!x.hidden).length,15);
 const calculatorChoice=catalog.walk().find(x=>x.attributes['aria-label']==='Pievienot logrīku: Kalkulators');
 calculatorChoice.onclick();
 saved=JSON.parse(store.get('mana-ikdiena-dashboard-v1'));

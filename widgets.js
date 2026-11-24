@@ -2,6 +2,12 @@
   'use strict';
   const catalog=[
     {type:'note',icon:'✎',title:'Piezīmes',description:'Atsevišķa vieta idejām un ātrām domām.'},
+    {type:'wheel',icon:'✺',title:'Izvēles rats',fresh:true,description:'Ieraksti variantus un ļauj ratam izvēlēties vienu.'},
+    {type:'mood',icon:'☺',title:'Dienas noskaņa',fresh:true,description:'Kā šodien jūties? Emocija, īsa piezīme un 7 dienu vēsture.'},
+    {type:'goal',icon:'◎',title:'Mērķa progress',fresh:true,description:'Grāmatas, kampaņas vai cits tavs mērķis ar progresa joslu.'},
+    {type:'stopwatch',icon:'◴',title:'Hronometrs',fresh:true,description:'Izmēri patērēto laiku un saglabā apļu laikus.'},
+    {type:'ideas',icon:'✦',title:'Mārketinga ideju mikseris',fresh:true,description:'Nejaušs satura virziens tavam produktam vai tēmai.'},
+    {type:'timeprogress',icon:'◔',title:'Laika progress',fresh:true,description:'Nedēļas, mēneša vai gada progress un atlikušās dienas.'},
     {type:'focus',icon:'◷',title:'Fokusa taimeris',description:'25 vai 50 minūtes darbam, īsa pauze un tavs ilgums.'},
     {type:'countdown',icon:'◴',title:'Atpakaļskaitīšana',description:'Cik dienu atlicis līdz kampaņai, ceļojumam vai citam datumam.'},
     {type:'links',icon:'↗',title:'Ātrās saites',description:'Tavi darba rīki un biežāk lietotās lapas vienuviet.'},
@@ -28,6 +34,12 @@
   }
   function normalize(type,value={}){
     const data=value&&typeof value==='object'&&!Array.isArray(value)?value:{};
+    if(type==='wheel')return {options:(Array.isArray(data.options)?data.options:['Sākt ar svarīgāko','Pabeigt kādu mazu darbu','Paņemt īsu pauzi']).map(x=>text(x,120).trim()).filter(Boolean).slice(0,30),result:text(data.result),rotation:number(data.rotation,0,1e9,0)};
+    if(type==='mood'){const days={};for(const day of Object.keys(data.days||{}).filter(validDate).sort().slice(-180)){const entry=data.days[day];if(entry&&typeof entry==='object')days[day]={mood:Math.round(number(entry.mood,0,5,0)),note:text(entry.note,500)}}return {days}}
+    if(type==='goal')return {target:number(data.target,1,1e9,10),current:number(data.current,0,1e9,0),step:number(data.step,.01,1e9,1),unit:text(data.unit,30)||'vienības'};
+    if(type==='stopwatch')return {elapsed:number(data.elapsed,0,31536000000,0),running:!!data.running&&Number.isFinite(data.startedAt)&&data.startedAt>0,startedAt:number(data.startedAt,0,1e15,0),laps:(Array.isArray(data.laps)?data.laps:[]).filter(Number.isFinite).map(x=>number(x,0,31536000000,0)).slice(-20)};
+    if(type==='ideas')return {topic:text(data.topic),channel:['social','email','video'].includes(data.channel)?data.channel:'social',result:text(data.result,1000)};
+    if(type==='timeprogress')return {period:['week','month','year'].includes(data.period)?data.period:'month'};
     if(type==='focus')return {minutes:Math.round(number(data.minutes,1,180,25)),remaining:Math.round(number(data.remaining,0,10800,Math.round(number(data.minutes,1,180,25))*60)),running:!!data.running&&Number.isFinite(data.endAt)&&data.endAt>0,endAt:number(data.endAt,0,1e15,0),label:text(data.label)};
     if(type==='countdown')return {date:validDate(data.date)?data.date:''};
     if(type==='links')return {links:(Array.isArray(data.links)?data.links:[]).slice(0,50).filter(link=>link&&safeUrl(link.url)).map((link,i)=>({id:typeof link.id==='string'&&/^[a-z\d-]{1,80}$/i.test(link.id)?link.id:'link-'+i,title:text(link.title)||new URL(safeUrl(link.url)).hostname,url:safeUrl(link.url)}))};
@@ -60,7 +72,15 @@
     const result=sum();if(index!==tokens.length||!Number.isFinite(result))throw Error('Pārbaudi aprēķinu.');return result;
   }
   function remaining(data,now=Date.now()){return data.running?Math.max(0,Math.ceil((data.endAt-now)/1000)):data.remaining}
-  const api={catalog,zones,normalize,calculate,safeUrl,validDate,dayInRiga,remaining};
+  function pickIndex(length,sample=Math.random()){return length>0?Math.min(length-1,Math.max(0,Math.floor(number(sample,0,1,0)*length))):-1}
+  function stopwatchElapsed(data,now=Date.now()){return Math.max(0,data.elapsed+(data.running?Math.max(0,now-data.startedAt):0))}
+  function periodProgress(day,period){
+    if(!validDate(day))return {elapsed:0,total:1,remaining:1,percent:0};
+    const d=new Date(day+'T12:00:00Z'),year=d.getUTCFullYear(),month=d.getUTCMonth();let elapsed,total;
+    if(period==='week'){elapsed=(d.getUTCDay()+6)%7+1;total=7}else if(period==='year'){elapsed=Math.round((d-new Date(Date.UTC(year,0,1,12)))/86400000)+1;total=Math.round((Date.UTC(year+1,0,1)-Date.UTC(year,0,1))/86400000)}else{elapsed=d.getUTCDate();total=new Date(Date.UTC(year,month+1,0)).getUTCDate()}
+    return {elapsed,total,remaining:total-elapsed,percent:Math.round(elapsed/total*100)};
+  }
+  const api={catalog,zones,normalize,calculate,safeUrl,validDate,dayInRiga,remaining,pickIndex,stopwatchElapsed,periodProgress};
   if(typeof module!=='undefined'&&module.exports)module.exports=api;
   root.PLANNER_WIDGETS=api;
   if(typeof document==='undefined')return;
@@ -74,7 +94,45 @@
     unmount(item.id);const container=element('div','planner-widget widget-'+item.widgetType);body.append(container);
     item.widgetData=normalize(item.widgetType,item.widgetData);const data=item.widgetData;
     const save=()=>persist();let tick=null;
-    if(item.widgetType==='focus'){
+    if(item.widgetType==='wheel'){
+      const wheel=element('div','widget-wheel'),disc=element('div','widget-wheel-disc'),pointer=element('span','widget-wheel-pointer','▼'),center=element('span','widget-wheel-center','?');disc.setAttribute('aria-hidden','true');wheel.append(disc,center,pointer);
+      const output=element('p','widget-choice-result',data.result||'Ko šodien izvēlamies?');output.setAttribute('role','status');
+      const options=element('textarea','widget-options');options.value=data.options.join('\n');options.rows=4;options.maxLength=3600;options.setAttribute('aria-label','Izvēles varianti, katrs savā rindā');
+      const palette=['#cbdce8','#e6d3df','#eadfc1','#d4d0e8','#cbdedb','#e8d2c8'];
+      function paint(){const entries=data.options.length?data.options:[''],angle=360/entries.length;disc.style.background='conic-gradient('+entries.map((_,i)=>palette[i%palette.length]+' '+i*angle+'deg '+(i+1)*angle+'deg').join(',')+')';disc.style.transform='rotate('+data.rotation+'deg)'}
+      const spin=button('Griezt ratu',()=>{if(!data.options.length){output.textContent='Vispirms pievieno vismaz vienu variantu.';return}const chosen=pickIndex(data.options.length);data.result=data.options[chosen];const destination=360-(chosen+.5)*360/data.options.length;data.rotation=(Math.floor(data.rotation/360)+4)*360+destination;output.textContent='Izvēle: '+data.result;save();paint()});
+      options.oninput=()=>{data.options=options.value.split('\n').map(x=>x.trim().slice(0,120)).filter(Boolean).slice(0,30);save();paint()};container.append(wheel,output,spin,element('p','widget-hint','Katru izvēles variantu raksti jaunā rindā.'),options);paint();
+    }else if(item.widgetType==='mood'){
+      const faces=['','😞','😕','😐','🙂','😄'],labels=['','Smaga diena','Grūtāk','Vidēji','Labi','Ļoti labi'];
+      const choices=element('div','widget-moods'),history=element('div','widget-history'),note=element('textarea','widget-mood-note'),hint=element('p','widget-hint');note.rows=2;note.maxLength=500;note.placeholder='Īsa piezīme par šodienu…';note.setAttribute('aria-label','Piezīme par dienas noskaņu');
+      function entry(){const day=dayInRiga();if(!data.days[day])data.days[day]={mood:0,note:''};return data.days[day]}
+      const buttons=[];for(let i=1;i<=5;i++){const face=button(faces[i],()=>{entry().mood=i;save();paint()});face.setAttribute('aria-label',labels[i]);buttons.push(face);choices.append(face)}
+      let lastDay=dayInRiga();function paint(){const current=data.days[dayInRiga()]||{mood:0,note:''};buttons.forEach((face,i)=>face.setAttribute('aria-pressed',String(current.mood===i+1)));note.value=current.note;hint.textContent=current.mood?'Šodien: '+labels[current.mood]:'Kā tev šodien klājas?';history.replaceChildren();
+        for(let i=6;i>=0;i--){const d=new Date(dayInRiga()+'T12:00:00Z');d.setUTCDate(d.getUTCDate()-i);const day=d.toISOString().slice(0,10),dot=element('span','widget-day widget-mood-day',faces[data.days[day]?.mood]||'·');dot.title=day+(data.days[day]?.mood?' · '+labels[data.days[day].mood]:'');history.append(dot)}}
+      note.oninput=()=>{entry().note=note.value;save()};container.append(hint,choices,note,history);paint();tick=()=>{if(lastDay!==dayInRiga()){lastDay=dayInRiga();paint()}};
+    }else if(item.widgetType==='goal'){
+      const display=element('div','widget-big'),hint=element('p','widget-hint'),track=element('div','widget-goal-track'),fill=element('div');track.append(fill);track.setAttribute('role','progressbar');track.setAttribute('aria-label','Mērķa izpilde');track.setAttribute('aria-valuemin','0');track.setAttribute('aria-valuemax','100');
+      const current=field('Jau paveikts',data.current),target=field('Mērķis',data.target),unit=field('Mērvienība',data.unit,'grāmatas, kampaņas…'),step=field('Viena soļa lielums',data.step);for(const control of [current.input,target.input,step.input]){control.type='number';control.step='any';control.min=control===current.input?'0':'.01'}
+      const actions=element('div','widget-actions');actions.append(button('− Solis',()=>{data.current=Math.max(0,data.current-data.step);current.input.value=data.current;save();paint()}),button('+ Solis',()=>{data.current=Math.min(1e9,data.current+data.step);current.input.value=data.current;save();paint()}));
+      function paint(){const percent=Math.min(100,Math.round(data.current/data.target*100));display.textContent=percent+'%';fill.style.width=percent+'%';track.setAttribute('aria-valuenow',String(percent));hint.textContent=fmt(data.current)+' / '+fmt(data.target)+' '+data.unit+(percent===100?' · Mērķis sasniegts! 🎉':'')}
+      for(const control of [current.input,target.input,step.input,unit.input])control.onchange=()=>{data.current=number(current.input.value,0,1e9,0);data.target=number(target.input.value,1,1e9,10);data.step=number(step.input.value,.01,1e9,1);data.unit=unit.input.value.slice(0,30)||'vienības';current.input.value=data.current;target.input.value=data.target;step.input.value=data.step;save();paint()};container.append(display,hint,track,actions,current.wrap,target.wrap,unit.wrap,step.wrap);paint();
+    }else if(item.widgetType==='stopwatch'){
+      const display=element('div','widget-big widget-timer'),actions=element('div','widget-actions'),laps=element('div','widget-list');let start;
+      const duration=ms=>{const seconds=Math.floor(ms/1000);return [Math.floor(seconds/3600),Math.floor(seconds/60)%60,seconds%60].map(x=>String(x).padStart(2,'0')).join(':')};
+      function paint(){display.textContent=duration(stopwatchElapsed(data));start.textContent=data.running?'Apturēt':'Sākt'}
+      function paintLaps(){laps.replaceChildren();data.laps.forEach((lap,i)=>laps.append(element('p','widget-hint','Aplis '+(i+1)+' · '+duration(lap))))}
+      start=button('Sākt',()=>{if(data.running){data.elapsed=stopwatchElapsed(data);data.running=false;data.startedAt=0}else{data.startedAt=Date.now();data.running=true}save();paint()});
+      actions.append(start,button('Aplis',()=>{if(data.laps.length>=20)return;data.laps.push(stopwatchElapsed(data));save();paintLaps()}),button('Atiestatīt',()=>{data.elapsed=0;data.running=false;data.startedAt=0;data.laps=[];save();paint();paintLaps()}));container.append(display,actions,laps);paint();paintLaps();tick=paint;
+    }else if(item.widgetType==='ideas'){
+      const topic=field('Produkts vai tēma',data.topic,'Piemēram, CARELIKA'),channel=element('select'),result=element('p','widget-idea-result',data.result||'Ievadi tēmu un sajauc ideju.');topic.input.maxLength=120;channel.setAttribute('aria-label','Satura formāts');for(const [value,label] of [['social','Sociālo tīklu ieraksts'],['email','E-pasts'],['video','Īss video']]){const option=element('option','',label);option.value=value;channel.append(option)}channel.value=data.channel;
+      const directions=['Atbildi uz vienu bieži uzdotu jautājumu par tēmu “{t}”.','Parādi vienu praktisku piemēru par tēmu “{t}”.','Izveido trīs soļu kontrolsarakstu par tēmu “{t}”.','Pastāsti par tēmu “{t}” ar vienu īsu ikdienas situāciju.','Pajautā auditorijai, ko tā gribētu uzzināt par tēmu “{t}”.','Izveido aizkulišu stāstu, kas saistīts ar tēmu “{t}”.'];
+      const endings={social:'Noslēgumā uzdod vienu konkrētu jautājumu komentāriem.',email:'Sāc ar skaidru ieguvumu lasītājam un noslēdz ar vienu aicinājumu rīkoties.',video:'Pirmajās sekundēs parādi jautājumu, pēc tam vienu saprotamu piemēru.'};
+      topic.input.oninput=()=>{data.topic=topic.input.value;save()};channel.onchange=()=>{data.channel=channel.value;save()};container.append(topic.wrap,channel,button('Sajaukt ideju',()=>{const subject=data.topic.trim();if(!subject){result.textContent='Vispirms ieraksti produktu vai tēmu.';return}data.result=directions[pickIndex(directions.length)].replace('{t}',subject)+' '+endings[data.channel];result.textContent=data.result;save()}),result,element('p','widget-hint','Gatavi ideju virzieni. Pielāgo tekstu savam produktam un auditorijai.'));
+    }else if(item.widgetType==='timeprogress'){
+      const select=element('select'),ring=element('div','widget-period-ring'),value=element('strong'),hint=element('p','widget-hint');ring.append(value);select.setAttribute('aria-label','Laika periods');for(const [key,label] of [['week','Nedēļa'],['month','Mēnesis'],['year','Gads']]){const option=element('option','',label);option.value=key;select.append(option)}select.value=data.period;
+      function paint(){const stats=periodProgress(dayInRiga(),data.period);ring.style.background='conic-gradient(var(--blue,#2f6675) '+stats.percent+'%,var(--line,#dce5e8) 0)';value.textContent=stats.percent+'%';hint.textContent='Atlikušas '+stats.remaining+' dienas · '+stats.elapsed+' no '+stats.total+' kalendāra dienām'}
+      select.onchange=()=>{data.period=select.value;save();paint()};container.append(select,ring,hint);paint();let lastDay=dayInRiga();tick=()=>{if(lastDay!==dayInRiga()){lastDay=dayInRiga();paint()}};
+    }else if(item.widgetType==='focus'){
       const label=field('Pie kā strādāsi?',data.label,'Viens konkrēts darbs');label.input.maxLength=120;label.input.oninput=()=>{data.label=label.input.value;save()};
       const display=element('div','widget-big widget-timer'),status=element('p','widget-hint');display.setAttribute('role','timer');
       const actions=element('div','widget-actions');let start;
