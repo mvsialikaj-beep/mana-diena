@@ -20,6 +20,9 @@ assert.equal(normalize({columns:0,items:[{id:'note-a',height:9999,span:-2}]}).it
 assert.equal(normalize({columns:0,items:[{id:'note-a',height:9999,span:-2}]}).items[0].span,1);
 assert.equal(move(custom.items,'missing','tasks',true),custom.items);
 assert.equal(normalize(null).items.length,4);
+const legacy=normalize({items:[{id:'calendar',height:560}]});
+assert.equal(legacy.items.find(x=>x.id==='calendar').height,488,'Remove saved editor toolbar/footer from legacy heights');
+assert.equal(normalize(JSON.parse(JSON.stringify(legacy))).items.find(x=>x.id==='calendar').height,488,'Migrate saved heights only once');
 const tracks=columnGeometry(4,1200,[1,1,1,1]);
 const resized=resizeColumns(tracks.widths,2,17);
 assert.equal(resized[0],tracks.widths[0]);assert.equal(resized[3],tracks.widths[3]);

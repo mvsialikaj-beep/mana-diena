@@ -1,6 +1,7 @@
 (function () {
   'use strict';
   const defaults = [['tasks','Uzdevumi'],['calendar','Kalendārs un laiks'],['namedays','Vārdadienas'],['progress','Tavs progress']];
+  const editorHeight=72; // 48px toolbar and 24px resize footer, never saved as content.
   const clamp = (value, low, high, fallback) => Number.isFinite(Number(value)) ? Math.max(low, Math.min(high, Math.round(Number(value)))) : fallback;
   function normalize(value = {}) {
     if (!value || typeof value !== 'object') value = {};
@@ -14,12 +15,12 @@
       seen.add(item.id);
       items.push({id:item.id, title:builtin ? builtin[1] : String(item.title || 'Piezīmes').slice(0,80),
         text:builtin ? '' : String(item.text || '').slice(0,20000), hidden:!!item.hidden,
-        span:clamp(item.span,1,4,item.id === 'tasks' ? 2 : 1), height:clamp(item.height,0,1800,0),
+        span:clamp(item.span,1,4,item.id === 'tasks' ? 2 : 1), height:clamp(Number(item.height)>0&&value.heightVersion!==2?Math.max(0,Number(item.height)-editorHeight):item.height,0,1800,0),
         column:Number.isInteger(item.column) ? clamp(item.column,0,3,0) : null});
     }
     for (const [id,title] of defaults) if (!seen.has(id)) items.push({id,title,text:'',hidden:false,span:id === 'tasks' ? 2 : 1,height:0,column:null});
     const columnWidths=Array.from({length:columns},(_,i)=>Number.isFinite(value.columnWidths?.[i])&&value.columnWidths[i]>0?Math.max(1,Math.min(10000,value.columnWidths[i])):1);
-    return {enabled:!!value.enabled,columns,items,columnWidths};
+    return {enabled:!!value.enabled,columns,items,columnWidths,heightVersion:2};
   }
   function move(items, id, target, after) {
     const from = items.findIndex(x => x.id === id), to = items.findIndex(x => x.id === target);
@@ -166,14 +167,14 @@
     if (item.id==='notes') { const newNote=document.createElement('button');newNote.type='button';newNote.textContent='+ Piezīme';newNote.onclick=()=>document.getElementById('noteOpen').click();body.append(newNote); }
     handle.onpointerdown=e=>start(e,tile,'move');resize.onpointerdown=e=>start(e,tile,'resize');
     handle.onkeydown=e=>{if(!editing||!['ArrowUp','ArrowDown','ArrowLeft','ArrowRight'].includes(e.key))return;e.preventDefault();const visible=state.items.filter(x=>!x.hidden);const index=visible.indexOf(item),next=visible[index+(['ArrowUp','ArrowLeft'].includes(e.key)?-1:1)];if(next){item.column=Number(widgets.get(next.id)?.dataset.layoutColumn)||0;state.items=move(state.items,item.id,next.id,['ArrowDown','ArrowRight'].includes(e.key));save();render();handle.focus()}};
-    resize.onkeydown=e=>{if(!editing)return;const steps={ArrowLeft:[-1,0],ArrowRight:[1,0],ArrowUp:[0,-40],ArrowDown:[0,40]};if(!steps[e.key])return;e.preventDefault();const [x,y]=steps[e.key];item.span=clamp(item.span+x,1,state.columns,1);if(y)item.height=clamp((item.height||tile.offsetHeight)+y,140,1800,0);save();sizeTile(tile,item)};
+    resize.onkeydown=e=>{if(!editing)return;const steps={ArrowLeft:[-1,0],ArrowRight:[1,0],ArrowUp:[0,-40],ArrowDown:[0,40]};if(!steps[e.key])return;e.preventDefault();const [x,y]=steps[e.key];item.span=clamp(item.span+x,1,state.columns,1);if(y)item.height=clamp((item.height||tile.offsetHeight-editorHeight)+y,140,1800,0);save();sizeTile(tile,item)};
     resize.ondblclick=()=>{item.height=0;save();sizeTile(tile,item)};
     widgets.set(item.id,tile);observer?.observe(tile);return tile;
   }
   function sizeTile(tile,item) {
     const active=desktop.matches;
     tile.style.gridColumn=active?'span '+Math.min(item.span,state.columns):'auto';
-    tile.style.height=active&&item.height?item.height+'px':'';
+    tile.style.height=active&&item.height?(item.height+(editing?editorHeight:0))+'px':'';
     tile.querySelector('.dashboard-size').textContent=Math.min(item.span,state.columns)+' / '+state.columns+' kol. · '+(item.height?item.height+' px':'auto');
     scheduleLayout();
   }
@@ -207,7 +208,7 @@
     if(!editing||!desktop.matches||event.button!==0)return;
     event.preventDefault();
     const target=event.currentTarget;target.setPointerCapture(event.pointerId);
-    gesture={id:tile.dataset.block,mode,target,x:event.clientX,y:event.clientY,width:tile.offsetWidth,height:tile.offsetHeight,span:itemById(tile.dataset.block).span};
+    gesture={id:tile.dataset.block,mode,target,x:event.clientX,y:event.clientY,width:tile.offsetWidth,height:itemById(tile.dataset.block).height||Math.max(140,tile.offsetHeight-editorHeight),span:itemById(tile.dataset.block).span};
     tile.classList.add('dashboard-dragging');
   }
   document.addEventListener('pointermove',event=>{
