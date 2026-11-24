@@ -1,5 +1,5 @@
 const assert = require('node:assert/strict');
-const {normalize,move,arrange} = require('../dashboard-layout.js');
+const {normalize,move,arrange,columnGeometry,resizeColumns} = require('../dashboard-layout.js');
 const initial = normalize();
 assert.equal(initial.enabled,false);
 assert.equal(initial.items.length,4);
@@ -20,6 +20,16 @@ assert.equal(normalize({columns:0,items:[{id:'note-a',height:9999,span:-2}]}).it
 assert.equal(normalize({columns:0,items:[{id:'note-a',height:9999,span:-2}]}).items[0].span,1);
 assert.equal(move(custom.items,'missing','tasks',true),custom.items);
 assert.equal(normalize(null).items.length,4);
+const tracks=columnGeometry(4,1200,[1,1,1,1]);
+const resized=resizeColumns(tracks.widths,2,17);
+assert.equal(resized[0],tracks.widths[0]);assert.equal(resized[3],tracks.widths[3]);
+assert.equal(resized[1],tracks.widths[1]+17);assert.equal(resized[2],tracks.widths[2]-17);
+assert.equal(resized.reduce((a,b)=>a+b),tracks.widths.reduce((a,b)=>a+b));
+assert.deepEqual(normalize({columns:4,columnWidths:resized}).columnWidths,resized);
+assert(resizeColumns(tracks.widths,2,99999)[2]>=120);
+const unequal=arrange([{id:'left',column:0,span:2},{id:'right',column:2,span:1}],4,1200,{left:300,right:300},12,resized);
+assert.equal(unequal[0].width,tracks.widths[0]+tracks.widths[1]+12+17);
+assert.equal(unequal[1].width,tracks.widths[2]-17);
 const stacked=normalize({items:[{id:'tasks',span:2},{id:'calendar'},{id:'namedays',column:2},{id:'progress'}]});
 const positions=arrange(stacked.items,4,1200,{tasks:1200,calendar:300,namedays:120,progress:200});
 const calendar=positions.find(x=>x.id==='calendar'),namedays=positions.find(x=>x.id==='namedays');

@@ -18,7 +18,8 @@
         column:Number.isInteger(item.column) ? clamp(item.column,0,3,0) : null});
     }
     for (const [id,title] of defaults) if (!seen.has(id)) items.push({id,title,text:'',hidden:false,span:id === 'tasks' ? 2 : 1,height:0,column:null});
-    return {enabled:!!value.enabled,columns,items};
+    const columnWidths=Array.from({length:columns},(_,i)=>Number.isFinite(value.columnWidths?.[i])&&value.columnWidths[i]>0?Math.max(1,Math.min(10000,value.columnWidths[i])):1);
+    return {enabled:!!value.enabled,columns,items,columnWidths};
   }
   function move(items, id, target, after) {
     const from = items.findIndex(x => x.id === id), to = items.findIndex(x => x.id === target);
@@ -28,8 +29,21 @@
     return result;
   }
   // Each column stacks independently, including when a neighbouring tile is tall.
-  function arrange(items, columns, width, heights, gap = 12) {
-    const count=clamp(columns,1,4,4), unit=Math.max(1,(width-gap*(count-1))/count), bottoms=Array(count).fill(0);
+  function columnGeometry(columns,width,weights,gap=12){
+    const count=clamp(columns,1,4,4),available=Math.max(count,width-gap*(count-1));
+    const values=Array.from({length:count},(_,i)=>Number.isFinite(weights?.[i])&&weights[i]>0?weights[i]:1),total=values.reduce((a,b)=>a+b,0);
+    const widths=values.map(value=>available*value/total),offsets=[];let x=0;
+    for(const size of widths){offsets.push(x);x+=size+gap}
+    return {widths,offsets};
+  }
+  function resizeColumns(widths,boundary,delta,minimum=120){
+    const result=[...widths];if(boundary<1||boundary>=result.length||!Number.isFinite(delta))return result;
+    const pair=result[boundary-1]+result[boundary],limit=Math.min(minimum,pair/3);
+    const left=Math.max(limit,Math.min(pair-limit,result[boundary-1]+delta));
+    result[boundary-1]=left;result[boundary]=pair-left;return result;
+  }
+  function arrange(items, columns, width, heights, gap = 12, weights) {
+    const count=clamp(columns,1,4,4),tracks=columnGeometry(count,width,weights,gap),bottoms=Array(count).fill(0);
     return items.map(item=>{
       const span=clamp(item.span,1,count,1);
       let column=Number.isInteger(item.column)?clamp(item.column,0,count-span,0):0;
@@ -37,12 +51,13 @@
         let lowest=Infinity;
         for(let i=0;i<=count-span;i++){const top=Math.max(...bottoms.slice(i,i+span));if(top<lowest){column=i;lowest=top}}
       }
-      const y=Math.max(...bottoms.slice(column,column+span)), height=Math.max(0,heights[item.id]||0);
+      const tileWidth=tracks.widths.slice(column,column+span).reduce((a,b)=>a+b,0)+gap*(span-1);
+      const y=Math.max(...bottoms.slice(column,column+span)), height=Math.max(0,(typeof heights==='function'?heights(item,{column,span,width:tileWidth}):heights[item.id])||0);
       for(let i=column;i<column+span;i++)bottoms[i]=y+height+gap;
-      return {id:item.id,column,span,x:column*(unit+gap),y,width:unit*span+gap*(span-1),height};
+      return {id:item.id,column,span,x:tracks.offsets[column],y,width:tileWidth,height};
     });
   }
-  if (typeof module !== 'undefined' && module.exports) module.exports = {normalize,move,arrange};
+  if (typeof module !== 'undefined' && module.exports) module.exports = {normalize,move,arrange,columnGeometry,resizeColumns};
   if (typeof document === 'undefined') return;
   const key = 'mana-ikdiena-dashboard-v1';
   let state;
@@ -50,6 +65,8 @@
   const desktop = matchMedia('(min-width:851px)');
   const layout = document.querySelector('.layout');
   const board = document.createElement('div'); board.className = 'dashboard-grid'; layout.after(board);
+  const dividers=document.createElement('div');dividers.className='dashboard-dividers';board.after(dividers);
+  const separators=new Map();
   const origins = new Map(), widgets = new Map();
   let editing = false, gesture = null;
   let layoutFrame=null;
@@ -61,13 +78,36 @@
   }
   function layoutTiles(){
     const active=state.enabled&&desktop.matches;
-    if(!active){board.style.height='';for(const tile of board.children){tile.style.width='';tile.style.left='';tile.style.top=''}return}
-    const visible=state.items.filter(item=>!item.hidden&&widgets.has(item.id)), heights={};
-    const unit=Math.max(1,(board.clientWidth-12*(state.columns-1))/state.columns);
-    for(const item of visible){const tile=widgets.get(item.id);tile.style.width=(unit*Math.min(item.span,state.columns)+12*(Math.min(item.span,state.columns)-1))+'px';heights[item.id]=tile.offsetHeight}
-    const positions=arrange(visible,state.columns,board.clientWidth,heights);
+    if(!active){board.style.height='';dividers.replaceChildren();for(const tile of board.children){tile.style.width='';tile.style.left='';tile.style.top=''}return}
+    const visible=state.items.filter(item=>!item.hidden&&widgets.has(item.id));
+    const positions=arrange(visible,state.columns,board.clientWidth,(item,position)=>{const tile=widgets.get(item.id);tile.style.width=position.width+'px';return tile.offsetHeight},12,state.columnWidths);
     for(const position of positions){const tile=widgets.get(position.id);tile.style.left=position.x+'px';tile.style.top=position.y+'px';tile.dataset.layoutColumn=String(position.column)}
-    board.style.height=Math.max(0,...positions.map(position=>position.y+position.height))+'px';
+    const height=Math.max(0,...positions.map(position=>position.y+position.height));board.style.height=height+'px';
+    updateDividers(positions,height);
+  }
+  function updateDividers(positions,height){
+    dividers.style.top=-height+'px';
+    const used=new Set(),tracks=columnGeometry(state.columns,board.clientWidth,state.columnWidths);
+    if(editing)for(let boundary=1;boundary<state.columns;boundary++){
+      const left=positions.filter(p=>p.column+p.span===boundary),right=positions.filter(p=>p.column===boundary);
+      for(const a of left)for(const b of right){
+        const top=Math.max(a.y,b.y),bottom=Math.min(a.y+a.height,b.y+b.height);if(bottom-top<28)continue;
+        const key=boundary+':'+a.id+':'+b.id;used.add(key);let divider=separators.get(key);
+        if(!divider){
+          divider=document.createElement('button');divider.type='button';divider.className='dashboard-divider';divider.dataset.boundary=String(boundary);divider.setAttribute('role','separator');divider.setAttribute('aria-orientation','vertical');
+          divider.setAttribute('aria-label','Regulēt platumu starp blokiem: '+itemById(a.id).title+' un '+itemById(b.id).title);divider.title='Velc robežu pa labi vai pa kreisi. Divreiz nospied, lai izlīdzinātu platumus.';
+          divider.onpointerdown=event=>{if(!editing||!desktop.matches||event.button!==0)return;event.preventDefault();event.stopPropagation?.();divider.setPointerCapture(event.pointerId);gesture={mode:'columns',target:divider,boundary,x:event.clientX,widths:columnGeometry(state.columns,board.clientWidth,state.columnWidths).widths};divider.classList.add('dragging')};
+          divider.onkeydown=event=>{if(!editing||!['ArrowLeft','ArrowRight'].includes(event.key))return;event.preventDefault();state.columnWidths=resizeColumns(columnGeometry(state.columns,board.clientWidth,state.columnWidths).widths,boundary,event.key==='ArrowRight'?20:-20);save();scheduleLayout()};
+          divider.ondblclick=()=>{if(!editing)return;const sizes=columnGeometry(state.columns,board.clientWidth,state.columnWidths).widths;state.columnWidths=resizeColumns(sizes,boundary,(sizes[boundary]-sizes[boundary-1])/2);save();scheduleLayout()};
+          separators.set(key,divider);
+        }
+        divider.style.left=tracks.offsets[boundary]-12+'px';divider.style.top=top+4+'px';divider.style.height=bottom-top-8+'px';
+        divider.setAttribute('aria-valuemin','0');divider.setAttribute('aria-valuemax','100');divider.setAttribute('aria-valuenow',String(Math.round((tracks.offsets[boundary]-6)/board.clientWidth*100)));
+        divider.setAttribute('aria-valuetext',Math.round(tracks.widths[boundary-1])+' px / '+Math.round(tracks.widths[boundary])+' px');
+        if(divider.parentElement!==dividers)dividers.append(divider);
+      }
+    }
+    for(const [key,divider] of separators)if(!used.has(key)&&gesture?.target!==divider)divider.remove();
   }
   observer?.observe(board);
   window.addEventListener?.('resize',scheduleLayout);
@@ -84,7 +124,7 @@
   trigger.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><rect x="3" y="3" width="10" height="18" rx="2"/><rect x="16" y="3" width="5" height="8" rx="1"/><rect x="16" y="14" width="5" height="7" rx="1"/></svg>';
   document.getElementById('settingsOpen').before(trigger);
   const toolbar = document.createElement('div'); toolbar.className = 'dashboard-toolbar'; toolbar.hidden = true; board.before(toolbar);
-  const hint = document.createElement('span'); hint.textContent = 'Pārvieto aiz augšējā roktura. Platumu maini aiz labās malas, augstumu - aiz apakšējā stūra.';
+  const hint = document.createElement('span'); hint.textContent = 'Pārvieto aiz augšējā roktura. Platumu regulē aiz līnijas starp blokiem, augstumu - aiz apakšējā stūra.';
   const finish = document.createElement('button'); finish.type = 'button'; finish.textContent = 'Gatavs';
   toolbar.append(hint,finish);
   const settings = document.createElement('details'); settings.className = 'settings-section dashboard-settings';
@@ -115,9 +155,8 @@
     hide.onclick=()=>{item.hidden=true;save();render()};bar.append(handle,title,hide);
     const body=document.createElement('div');body.className='dashboard-content';
     const resize=document.createElement('button');resize.type='button';resize.className='dashboard-resize';resize.textContent='◢';resize.setAttribute('aria-label','Mainīt izmēru: '+item.title);resize.title='Velc, lai mainītu izmēru. Bulttaustiņi maina platumu un augstumu. Divreiz nospied, lai atjaunotu automātisku augstumu.';
-    const widthResize=document.createElement('button');widthResize.type='button';widthResize.className='dashboard-width-resize';widthResize.textContent='↔';widthResize.setAttribute('role','slider');widthResize.setAttribute('aria-orientation','horizontal');widthResize.setAttribute('aria-label','Mainīt bloka platumu: '+item.title);widthResize.title='Velc pa labi vai pa kreisi, lai mainītu platumu pa kolonnām. Augstums nemainās.';
     const size=document.createElement('span');size.className='dashboard-size';
-    tile.append(bar,body,size,resize,widthResize);
+    tile.append(bar,body,size,resize);
     if (origins.has(item.id)) body.append(origins.get(item.id).element);
     else {
       const heading=document.createElement('input');heading.className='dashboard-note-title';heading.value=item.title;heading.maxLength=80;heading.setAttribute('aria-label','Bloka nosaukums');
@@ -126,8 +165,6 @@
     }
     if (item.id==='notes') { const newNote=document.createElement('button');newNote.type='button';newNote.textContent='+ Piezīme';newNote.onclick=()=>document.getElementById('noteOpen').click();body.append(newNote); }
     handle.onpointerdown=e=>start(e,tile,'move');resize.onpointerdown=e=>start(e,tile,'resize');
-    widthResize.onpointerdown=e=>start(e,tile,'width');
-    widthResize.onkeydown=e=>{if(!editing||!['ArrowLeft','ArrowRight','Home','End'].includes(e.key))return;e.preventDefault();item.span=e.key==='Home'?1:e.key==='End'?state.columns:clamp(item.span+(e.key==='ArrowRight'?1:-1),1,state.columns,1);save();sizeTile(tile,item)};
     handle.onkeydown=e=>{if(!editing||!['ArrowUp','ArrowDown','ArrowLeft','ArrowRight'].includes(e.key))return;e.preventDefault();const visible=state.items.filter(x=>!x.hidden);const index=visible.indexOf(item),next=visible[index+(['ArrowUp','ArrowLeft'].includes(e.key)?-1:1)];if(next){item.column=Number(widgets.get(next.id)?.dataset.layoutColumn)||0;state.items=move(state.items,item.id,next.id,['ArrowDown','ArrowRight'].includes(e.key));save();render();handle.focus()}};
     resize.onkeydown=e=>{if(!editing)return;const steps={ArrowLeft:[-1,0],ArrowRight:[1,0],ArrowUp:[0,-40],ArrowDown:[0,40]};if(!steps[e.key])return;e.preventDefault();const [x,y]=steps[e.key];item.span=clamp(item.span+x,1,state.columns,1);if(y)item.height=clamp((item.height||tile.offsetHeight)+y,140,1800,0);save();sizeTile(tile,item)};
     resize.ondblclick=()=>{item.height=0;save();sizeTile(tile,item)};
@@ -138,7 +175,6 @@
     tile.style.gridColumn=active?'span '+Math.min(item.span,state.columns):'auto';
     tile.style.height=active&&item.height?item.height+'px':'';
     tile.querySelector('.dashboard-size').textContent=Math.min(item.span,state.columns)+' / '+state.columns+' kol. · '+(item.height?item.height+' px':'auto');
-    const widthHandle=tile.querySelector('.dashboard-width-resize');widthHandle.setAttribute('aria-valuemin','1');widthHandle.setAttribute('aria-valuemax',String(state.columns));widthHandle.setAttribute('aria-valuenow',String(Math.min(item.span,state.columns)));widthHandle.setAttribute('aria-valuetext',Math.min(item.span,state.columns)+' no '+state.columns+' kolonnām');
     scheduleLayout();
   }
   function renderList() {
@@ -176,6 +212,7 @@
   }
   document.addEventListener('pointermove',event=>{
     if(!gesture)return;
+    if(gesture.mode==='columns'){state.columnWidths=resizeColumns(gesture.widths,gesture.boundary,event.clientX-gesture.x);scheduleLayout();return}
     const tile=widgets.get(gesture.id),item=itemById(gesture.id);
     if(gesture.mode==='resize'||gesture.mode==='width'){
       const unit=(board.clientWidth-12*(state.columns-1))/state.columns+12;
@@ -206,6 +243,7 @@
     if(!gesture)return;
     const current=gesture;gesture=null;
     if(current.target.hasPointerCapture(event.pointerId))current.target.releasePointerCapture(event.pointerId);
+    if(current.mode==='columns'){current.target.classList.remove('dragging');save();layoutTiles();return}
     widgets.get(current.id).classList.remove('dashboard-dragging');
     if(event.type!=='pointercancel'&&current.drop){itemById(current.id).column=current.drop.column;state.items=move(state.items,current.id,current.drop.id,current.drop.after)}
     save();render();
@@ -214,10 +252,10 @@
   trigger.onclick=()=>{if(!desktop.matches){document.getElementById('settingsOpen').click();settings.open=true;settings.scrollIntoView({block:'nearest'});return}state.enabled=true;editing=!editing;save();render()};
   finish.onclick=()=>{editing=false;render()};
   enabled.onchange=()=>{state.enabled=enabled.checked;editing=false;save();render()};
-  columns.onchange=()=>{state.columns=Number(columns.value);save();render()};
+  columns.onchange=()=>{state.columns=Number(columns.value);state.columnWidths=Array(state.columns).fill(1);save();render()};
   editButton.onclick=()=>{document.getElementById('settingsDialog').close();state.enabled=true;editing=true;save();render()};
   add.onclick=()=>{if(state.items.filter(x=>x.id.startsWith('note-')).length>=54){notice.textContent='Vienā izkārtojumā var pievienot līdz 54 piezīmju blokiem.';return}state.enabled=true;state.items.push({id:'note-'+Date.now().toString(36)+'-'+Math.random().toString(36).slice(2,8),title:'Piezīmes',text:'',hidden:false,span:1,height:0});save();render()};
-  reset.onclick=()=>{state.enabled=false;state.columns=4;for(const item of state.items){item.hidden=false;item.column=null;item.span=item.id==='tasks'?2:1;item.height=0}state.items=[...defaults.map(([id])=>itemById(id)),...state.items.filter(item=>item.id.startsWith('note-'))];editing=false;save();render()};
+  reset.onclick=()=>{state.enabled=false;state.columns=4;state.columnWidths=[1,1,1,1];for(const item of state.items){item.hidden=false;item.column=null;item.span=item.id==='tasks'?2:1;item.height=0}state.items=[...defaults.map(([id])=>itemById(id)),...state.items.filter(item=>item.id.startsWith('note-'))];editing=false;save();render()};
   desktop.addEventListener('change',()=>{editing=false;render()});
   render();
 })();
