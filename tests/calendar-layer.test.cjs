@@ -5,7 +5,7 @@ const html=fs.readFileSync(path.join(__dirname,'../index.html'),'utf8');
 const start=html.indexOf('function setupCalendar(inputId)'),end=html.indexOf("setupCalendar('date')",start);
 assert(start>=0&&end>start);
 assert(html.includes('.calendar-popover.calendar-floating{position:fixed!important'));
-function harness({desktop=true,native=true,left=20,top=20}={}){
+function harness({desktop=true,native=true,left=20,top=20,workspace='work'}={}){
   const docEvents={},windowEvents={};
   class Element{
     constructor(){this.children=[];this.style={};this.attrs={};this.events={};this.className='';this.value='2026-11-24';this.classList={contains:c=>this.className.split(' ').includes(c),add:c=>this.className+=' '+c};if(native)this.showPopover=()=>{this.topLayer=true}}
@@ -27,7 +27,7 @@ function harness({desktop=true,native=true,left=20,top=20}={}){
   const document={body,createElement:()=>new Element(),addEventListener:(k,fn)=>docEvents[k]=fn};
   const window={innerWidth:1024,innerHeight:700,matchMedia:()=>({matches:desktop}),addEventListener:(k,fn)=>windowEvents[k]=fn};
   const setup=new Function('$','document','window','activeWorkspace','isWorkWeekend','workHoliday','LATVIAN_HOLIDAYS','today','Event',html.slice(start,end)+';return setupCalendar')(
-    ()=>input,document,window,'work',d=>[0,6].includes(d.getDay()),()=>'',{isWorkday:()=>true},()=>'2026-11-24',class{constructor(type){this.type=type}}
+    ()=>input,document,window,workspace,d=>workspace==='work'&&[0,6].includes(d.getDay()),value=>value==='2026-11-18'?'Svētki':'',{isWorkday:value=>value!=='2026-11-18'},()=>'2026-11-24',class{constructor(type){this.type=type}}
   );setup('date');
   return {wrap,input,button,body,docEvents,windowEvents,window,open(){button.click();return body.walk().find(x=>x.className.includes('calendar-popover'))}};
 }
@@ -50,5 +50,7 @@ mobile.wrap.events.click({target:mobile.input});const tapped=mobile.body.walk().
 mobile.wrap.events.click({target:tapped.children[0]});assert.equal(tapped.parent.className,'mobile-calendar-dialog','Interacting with calendar contents must not toggle it closed');
 mobile.wrap.events.click({target:mobile.input});assert.equal(tapped.parent,null,'Tapping the date again closes the calendar');
 assert(html.includes('html .date-input-wrap>input[readonly][inputmode=none]{pointer-events:auto;'));
+const personalHoliday=harness({desktop:false,workspace:'personal'}).open().children[1].children.find(x=>x.textContent===18&&!x.className.includes('other'));assert(personalHoliday.className.includes('work-holiday'));assert(!personalHoliday.disabled,'Personal holiday dates stay selectable');
+const workHoliday=harness({desktop:false}).open().children[1].children.find(x=>x.textContent===18&&!x.className.includes('other'));assert(workHoliday.className.includes('work-holiday'));
 const resized=harness(),resizedPopup=resized.open();resized.window.matchMedia=()=>({matches:false});resized.windowEvents.resize();assert.equal(resizedPopup.parent,null);
 console.log('Calendar layer, viewport bounds, fallback, selection, dismissal and mobile behavior verified.');

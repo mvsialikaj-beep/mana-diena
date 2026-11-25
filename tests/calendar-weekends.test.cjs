@@ -39,7 +39,9 @@ calendar.renderSideCalendar();
 for (const day of [7,8]) assert(!dayButton(day).className.includes('work-weekend'));
 assert(dayButton(7).className.includes('today'));
 assert(dayButton(7).className.includes('has-tasks'));
-assert(!dayButton(18).className.includes('work-holiday'));
+assert(dayButton(18).className.includes('work-holiday'));
+assert(!dayButton(18).disabled,'Personal holidays remain available for planning');
+assert.equal(sidebar.children[2].textContent,'● Svētku diena');
 assert(planner.includes("let weekend=isWorkWeekend(d),holiday=workHoliday(value)"),
   'The date picker uses the same workspace weekend rule');
 console.log('Work weekends are muted; personal weekends stay active.');
