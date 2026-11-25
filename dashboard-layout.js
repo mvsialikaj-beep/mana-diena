@@ -227,7 +227,7 @@
       if(origins.has(item.id))tile.querySelector('.dashboard-content').prepend(origins.get(item.id).element);
       sizeTile(tile,item);board.append(tile);
     }
-    enabled.checked=state.enabled;columns.value=state.columns;renderList();layoutTiles();
+    enabled.checked=state.enabled;columns.value=state.columns;renderList();window.PLANNER_MOBILE_UI?.update?.();layoutTiles();
   }
   function start(event,tile,mode) {
     if(!editing||!desktop.matches||event.button!==0)return;
