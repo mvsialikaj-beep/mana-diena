@@ -574,6 +574,22 @@ html[data-design-namedays] .namedays{color:var(--design-namedays-ink)}
 .namedays .nameday-date-badge::before{display:none}
 .namedays .nameday-date-badge #namedayWeekday{width:100%;margin:0;padding:0 0 5px;border:0;font-size:10px;line-height:1.2;font-weight:500;letter-spacing:0;opacity:.85;text-transform:capitalize;overflow-wrap:anywhere}
 
+/* Readable date typography with a high-contrast calendar face. */
+.namedays{container-type:inline-size;grid-template-columns:112px minmax(0,1fr);gap:16px}
+.namedays #namedayDate{min-height:128px;padding:12px 8px;gap:8px;background:#f8fbfc;color:#20313d;border:1px solid #d5e1e7;border-radius:14px;box-shadow:0 3px 10px #102c3e12;line-height:1.3}
+#namedayDate #namedayWeekday{font-size:15px;font-weight:400;line-height:1.35;opacity:1;color:#334955;padding:0;white-space:nowrap;overflow-wrap:normal;letter-spacing:0}
+#namedayDate #namedayDay{font-size:48px;font-weight:500;line-height:1.05;letter-spacing:-.03em;color:#20313d}
+#namedayDate #namedayMonth{font-size:15px;font-weight:400;line-height:1.35;letter-spacing:0;color:#334955;padding-top:8px;border-top:1px solid #d5e1e7;white-space:nowrap;overflow-wrap:normal}
+.namedays .namedays-head h4{font-size:14px;line-height:1.5;font-weight:500}
+.namedays #namedayNames{font-size:16px;line-height:1.65;font-weight:400}
+@container(max-width:260px){
+  .namedays #namedayDate{grid-column:1/-1;display:grid;grid-template-columns:60px minmax(0,1fr);column-gap:14px;row-gap:3px;min-height:90px;padding:12px 16px;text-align:left;align-items:center}
+  #namedayDate #namedayDay{grid-column:1;grid-row:1/span 2;text-align:center}
+  #namedayDate #namedayWeekday{grid-column:2;grid-row:1;align-self:end;text-align:left}
+  #namedayDate #namedayMonth{grid-column:2;grid-row:2;align-self:start;text-align:left;padding:0;border:0}
+  .namedays .namedays-body{grid-column:1/-1}
+}
+
 </style><script src="./namedays.js"></script><script src="./holidays.js"></script><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><style>
 /* Sick mode header shortcut */
 .top-controls #sickToggle{align-items:center;justify-content:center;width:44px;min-width:44px;height:44px;padding:10px;flex:0 0 auto}.top-controls #sickToggle svg{width:21px;height:21px;pointer-events:none}html[data-workspace=work] .top-controls #sickToggle{display:inline-flex}.top-controls #sickToggle[aria-pressed=true]{background:#fce8e9!important;color:#9c3341!important;border-color:#cc8792!important;box-shadow:inset 0 0 0 1px #cc8792}
