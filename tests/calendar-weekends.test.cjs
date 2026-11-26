@@ -16,13 +16,13 @@ class Element {
   replaceChildren(...children) { this.children=[...children]; }
   setAttribute(key,value) { this.attributes[key]=value; }
 }
-const sidebar = new Element();
-const calendar = new Function('$','document','date','workspaceTasks','occurs','today',
+const sidebar = new Element(),selectedDate={value:'2026-11-07',dispatchEvent(){}};let savedWeek;const media={matches:true,addEventListener(){}};
+const calendar = new Function('$','document','date','workspaceTasks','occurs','today','matchMedia','localStorage',
   "let activeWorkspace='work';" + planner.slice(start,end) +
   "sideMonth=new Date(2026,10,1);return {renderSideCalendar,setWorkspace:value=>activeWorkspace=value,isWorkWeekend}")(
-    () => sidebar,{createElement:()=>new Element()},{value:'2026-11-07'},
-    () => [{date:'2026-11-07'}],(task,day)=>task.date===day,()=>'2026-11-07');
-const dayButton = day => sidebar.children[1].children.slice(7)
+    () => sidebar,{createElement:()=>new Element()},selectedDate,
+    () => [{date:'2026-11-07'}],(task,day)=>task.date===day,()=>'2026-11-07',()=>media,{getItem:()=>null,setItem:(key,value)=>savedWeek=value});
+const dayButton = day => sidebar.children.find(x=>x.className==='side-calendar-grid').children.slice(7)
   .find(button=>button.textContent===day && !button.className.includes('other'));
 
 calendar.renderSideCalendar();
@@ -41,7 +41,9 @@ assert(dayButton(7).className.includes('today'));
 assert(dayButton(7).className.includes('has-tasks'));
 assert(dayButton(18).className.includes('work-holiday'));
 assert(!dayButton(18).disabled,'Personal holidays remain available for planning');
-assert.equal(sidebar.children[2].textContent,'● Svētku diena');
+assert.equal(sidebar.children.find(x=>x.className==='calendar-legend').textContent,'● Svētku diena');
 assert(planner.includes("let weekend=isWorkWeekend(d),holiday=workHoliday(value)"),
   'The date picker uses the same workspace weekend rule');
 console.log('Work weekends are muted; personal weekends stay active.');
+
+const toggle=()=>sidebar.children.find(x=>x.className==='mobile-calendar-view'),grid=()=>sidebar.children.find(x=>x.className==='side-calendar-grid');toggle().onclick();assert.equal(grid().children.length,14);assert.deepEqual(grid().children.slice(7).map(x=>x.textContent),[2,3,4,5,6,7,8]);assert.equal(savedWeek,'true');assert.equal(toggle().attributes['aria-expanded'],'false');selectedDate.value='2026-12-01';calendar.renderSideCalendar();assert.deepEqual(grid().children.slice(7).map(x=>x.textContent),[30,1,2,3,4,5,6]);media.matches=false;calendar.renderSideCalendar();assert.equal(grid().children.length,49,'Desktop always shows the full month');media.matches=true;calendar.renderSideCalendar();toggle().onclick();assert.equal(grid().children.length,49);assert.equal(savedWeek,'false');console.log('Mobile week view, Monday start, month boundaries, persisted choice and full desktop calendar verified.');
