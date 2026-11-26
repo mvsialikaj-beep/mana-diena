@@ -11,4 +11,4 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '24'
-      - run: node --test tests/news-widget.test.cjs tests/industry-news.test.mjs tests/widgets.test.cjs tests/online-widgets.test.cjs
+      - run: node --test tests/news-section.test.cjs tests/news-widget.test.cjs tests/industry-news.test.mjs tests/widgets.test.cjs tests/online-widgets.test.cjs

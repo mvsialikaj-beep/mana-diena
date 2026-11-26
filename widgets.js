@@ -22,7 +22,6 @@
     {type:'percent',icon:'%',title:'Procentu rēķins',description:'Procenti no summas, atlaide vai summas palielinājums.'},
     {type:'worldclock',icon:'◷',title:'Pasaules pulkstenis',description:'Rīga, Londona, Ņujorka un citas laika joslas.'}
   ];
-  if(news)catalog.splice(1,0,news.entry);
   if(online)catalog.push(...online.catalog);
   const zones={'Europe/Riga':'Rīga','Europe/London':'Londona','America/New_York':'Ņujorka','America/Los_Angeles':'Losandželosa','Asia/Dubai':'Dubaija','Asia/Tokyo':'Tokija','Australia/Sydney':'Sidneja'};
   const number=(value,min,max,fallback)=>Number.isFinite(Number(value))?Math.max(min,Math.min(max,Number(value))):fallback;
