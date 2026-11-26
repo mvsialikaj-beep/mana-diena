@@ -17,10 +17,10 @@ function harness(saved={}){
   return {body,root,column,main,side,calendar,glance,month,namedays,settings,store,media,window,changeWorkspace(value){root.dataset.workspace=value;callbacks.get(root)()}};
 }
 const h=harness(),clock=h.body.walk().find(x=>x.id==='personalClockCard'),calendar=h.body.walk().find(x=>x.id==='personalCalendarCard');
-assert.deepEqual(h.column.children.filter(x=>x.tagName!=='#comment'),[clock,calendar,h.main,h.namedays],'The four mobile blocks have the requested order');assert.equal(h.glance.parentElement,clock);assert.equal(h.month.parentElement,calendar);
+assert.deepEqual(h.column.children.filter(x=>x.tagName!=='#comment'),[clock,calendar,h.main],'The calendar contains name days above tasks');assert.equal(h.glance.parentElement,clock);assert.equal(h.month.parentElement,calendar);assert.equal(h.namedays.parentElement,calendar);
 const toggle=key=>h.settings.walk().find(x=>x.id==='personal-mobile-'+key);
 for(const [key,target]of [['clock',clock],['calendar',calendar],['tasks',h.main],['namedays',h.namedays]]){toggle(key).checked=false;toggle(key).onchange();assert(key==='clock'||key==='calendar'?target.hidden:target.className.includes('personal-mobile-hidden'));assert.equal(JSON.parse(h.store.get('mana-ikdiena-personal-mobile-v1'))[key],false)}
-h.changeWorkspace('work');assert(clock.hidden&&calendar.hidden);assert(!h.main.className.includes('personal-mobile-hidden'));assert(!h.namedays.className.includes('personal-mobile-hidden'));assert.equal(h.glance.parentElement,h.main);assert.equal(h.month.parentElement,h.calendar);assert.equal(h.namedays.parentElement,h.side);
+h.changeWorkspace('work');assert(clock.hidden&&calendar.hidden);assert(!h.main.className.includes('personal-mobile-hidden'));assert(!h.namedays.className.includes('personal-mobile-hidden'));assert.equal(h.glance.parentElement,h.main);assert.equal(h.month.parentElement,h.calendar);assert.equal(h.namedays.parentElement,h.main);
 h.changeWorkspace('personal');assert(clock.hidden&&calendar.hidden,'Hidden preferences survive workspace changes');
 h.media.matches=false;h.media.change();assert.equal(h.glance.parentElement,h.calendar);assert.equal(h.month.parentElement,h.calendar);assert.equal(h.namedays.parentElement,h.side);assert(!h.main.className.includes('personal-mobile-hidden'));
 const custom=new Element('div');h.body.append(custom);custom.append(h.namedays);h.window.PLANNER_MOBILE_UI.update();assert.equal(h.namedays.parentElement,custom,'Desktop dashboard placement is preserved');

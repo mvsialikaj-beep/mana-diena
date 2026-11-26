@@ -25,9 +25,9 @@
     const personal=mobile.matches&&document.documentElement?.dataset.workspace==='personal';
     clockCard.hidden=!personal||!preferences.clock;calendarCard.hidden=!personal||!preferences.calendar;
     main.classList?.toggle('personal-mobile-hidden',personal&&!preferences.tasks);namedays?.classList?.toggle('personal-mobile-hidden',personal&&!preferences.namedays);
-    if(personal){main.before(clockCard);main.before(calendarCard);clockCard.append(glance);if(month)calendarCard.append(month);if(namedays)main.after(namedays)}
-    else{if(month)monthHome.after(month);if(namedays&&namedays.parentElement===main.parentElement)namedaysHome.after(namedays)}
-    if(mobile.matches){if(today&&dateWrap)dateWrap.append(today);if(!personal)main.prepend(glance);dialog.append(panel);if(panel.open)openTask()}
+    if(personal){main.before(clockCard);main.before(calendarCard);clockCard.append(glance);if(month)calendarCard.append(month);if(namedays){if(preferences.calendar)calendarCard.append(namedays);else calendarCard.after(namedays)}}
+    else{if(month)monthHome.after(month);if(namedays&&[main.parentElement,calendarCard,main].includes(namedays.parentElement))namedaysHome.after(namedays)}
+    if(mobile.matches){if(today&&dateWrap)dateWrap.append(today);if(!personal){main.prepend(glance);if(namedays)glance.after(namedays)}dialog.append(panel);if(panel.open)openTask()}
     else{if(today)todayHome.after(today);if(dialog.open)dialog.close();glanceHome.after(glance);panelHome.after(panel)}
   }
   dialog.addEventListener('cancel',()=>{panel.open=false});
