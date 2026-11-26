@@ -10,4 +10,7 @@
   for(const {section}of groups.values())panel.append(section);panel.open=true;trigger.addEventListener('click',labels);
   panel.addEventListener('click',event=>{const button=event.target.closest('button');if(entries.some(entry=>entry.button===button)&&button.id!=='sickToggle'&&dialog.open)dialog.close()},true);
   panel.addEventListener('click',()=>setTimeout(labels,0));
+  // Labels make the four mobile navigation targets clear without changing their handlers.
+  for(const id of ['newsOpen','settingsOpen']){const button=document.getElementById(id);if(button){const label=make('span','bottom-nav-label',id==='newsOpen'?'Ziņas':'Iestatījumi');button.append(label)}}
+  for(const button of top.querySelectorAll('.workspace-switch button')){const icon=make('span','bottom-nav-icon');icon.setAttribute('aria-hidden','true');icon.innerHTML=button.dataset.workspace==='work'?'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="3" y="7" width="18" height="14" rx="3"/><path d="M8 7V4h8v3M3 12h18m-9 0v4"/></svg>':'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"><path d="m3 11 9-8 9 8v10h-6v-7H9v7H3Z"/></svg>';button.append(icon)}
 })();
