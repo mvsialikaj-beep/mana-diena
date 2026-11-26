@@ -1,6 +1,7 @@
 (function(root){
   'use strict';
   const online=root.PLANNER_ONLINE_WIDGETS||(typeof require==='function'?require('./online-widgets.js'):null);
+  const news=root.PLANNER_NEWS_WIDGET||(typeof require==='function'?require('./news-widget.js'):null);
   const catalog=[
     {type:'note',icon:'✎',title:'Piezīmes',description:'Atsevišķa vieta idejām un ātrām domām.'},
     {type:'utm',icon:'↗',title:'UTM saišu veidotājs',fresh:true,description:'Veido marķētas saites e-pastiem, reklāmām un kampaņām.'},
@@ -21,6 +22,7 @@
     {type:'percent',icon:'%',title:'Procentu rēķins',description:'Procenti no summas, atlaide vai summas palielinājums.'},
     {type:'worldclock',icon:'◷',title:'Pasaules pulkstenis',description:'Rīga, Londona, Ņujorka un citas laika joslas.'}
   ];
+  if(news)catalog.splice(1,0,news.entry);
   if(online)catalog.push(...online.catalog);
   const zones={'Europe/Riga':'Rīga','Europe/London':'Londona','America/New_York':'Ņujorka','America/Los_Angeles':'Losandželosa','Asia/Dubai':'Dubaija','Asia/Tokyo':'Tokija','Australia/Sydney':'Sidneja'};
   const number=(value,min,max,fallback)=>Number.isFinite(Number(value))?Math.max(min,Math.min(max,Number(value))):fallback;
@@ -39,6 +41,7 @@
   }
   function normalize(type,value={}){
     const data=value&&typeof value==='object'&&!Array.isArray(value)?value:{};
+    if(type==='industrynews'&&news)return news.normalize(data);
     if(online?.types.has(type))return online.normalize(type,data);
     if(type==='utm')return {url:text(data.url,2048),source:text(data.source),medium:text(data.medium),campaign:text(data.campaign,240),content:text(data.content,240),term:text(data.term,240)};
     if(type==='textstats')return {text:text(data.text,20000)};
@@ -109,7 +112,8 @@
     unmount(item.id);const container=element('div','planner-widget widget-'+item.widgetType);body.append(container);
     item.widgetData=normalize(item.widgetType,item.widgetData);const data=item.widgetData;
     const save=()=>persist();let tick=null,cleanup=null;
-    if(online?.types.has(item.widgetType)){cleanup=online.mount(container,item,persist);
+    if(item.widgetType==='industrynews'&&news?.mount){cleanup=news.mount(container,item,persist);
+    }else if(online?.types.has(item.widgetType)){cleanup=online.mount(container,item,persist);
     }else if(item.widgetType==='utm'){
       const definitions=[['url','Galamērķa saite','https://...'],['source','Avots (utm_source)','newsletter, facebook…'],['medium','Kanāls (utm_medium)','email, social, cpc…'],['campaign','Kampaņa (utm_campaign)','black_friday_2026'],['content','Saturs (nav obligāts)','banner_a'],['term','Atslēgvārds (nav obligāts)','']];
       const fields=definitions.map(([key,label,placeholder])=>{const control=field(label,data[key],placeholder);control.input.maxLength=key==='url'?2048:240;control.input.oninput=()=>{data[key]=control.input.value;save();paint()};return control});
@@ -175,46 +179,9 @@
       }
       start=button('Sākt',()=>{if(data.running){data.remaining=remaining(data);data.running=false;data.endAt=0}else{if(data.remaining===0)data.remaining=data.minutes*60;data.endAt=Date.now()+data.remaining*1000;data.running=true}save();paint()});
       actions.append(start,button('Atiestatīt',()=>{data.running=false;data.endAt=0;data.remaining=data.minutes*60;save();paint()}));
-      const presets=element('div','widget-actions');for(const minutes of [5,25,50])presets.append(button(minutes===5?'5 min pauze':minutes+' min',()=>{data.minutes=minutes;data.remaining=minutes*60;data.running=false;data.endAt=0;duration.input.value=minutes;save();paint()}));
-      const duration=field('Ilgums minūtēs',data.minutes);duration.input.type='number';duration.input.min=1;duration.input.max=180;duration.input.onchange=()=>{data.minutes=Math.round(number(duration.input.value,1,180,25));duration.input.value=data.minutes;data.remaining=data.minutes*60;data.running=false;data.endAt=0;save();paint()};
-      container.append(label.wrap,display,actions,presets,duration.wrap,status);tick=paint;paint();
-    }else if(item.widgetType==='countdown'){
-      const display=element('div','widget-big'),hint=element('p','widget-hint'),target=field('Mērķa datums',data.date);target.input.type='date';
-      function paint(){if(!data.date){display.textContent='Izvēlies datumu';hint.textContent='Piemēram, kampaņas sākumu vai ceļojumu.';return}
-        const days=Math.round((Date.parse(data.date+'T12:00:00Z')-Date.parse(dayInRiga()+'T12:00:00Z'))/86400000);display.textContent=days===0?'Šodien':Math.abs(days)+' '+(Math.abs(days)===1?'diena':'dienas');hint.textContent=days<0?'kopš izvēlētā datuma':'līdz '+new Intl.DateTimeFormat('lv-LV',{dateStyle:'long',timeZone:'UTC'}).format(new Date(data.date+'T12:00:00Z'));
-      }target.input.onchange=()=>{data.date=validDate(target.input.value)?target.input.value:'';save();paint()};container.append(display,hint,target.wrap);tick=paint;paint();
-    }else if(item.widgetType==='links'){
-      const list=element('div','widget-list'),form=element('form','widget-form'),title=field('Nosaukums','','Piemēram, Mailjet'),url=field('Saite','','https://...'),message=element('p','widget-hint');url.input.type='text';
-      function paint(){list.replaceChildren();for(const link of data.links){const row=element('div','widget-row'),anchor=element('a','widget-link',link.title);anchor.href=link.url;anchor.target='_blank';anchor.rel='noopener noreferrer';anchor.title=link.url;const remove=button('×',()=>{data.links=data.links.filter(x=>x.id!==link.id);save();paint()});remove.setAttribute('aria-label','Dzēst saiti '+link.title);row.append(anchor,remove);list.append(row)}if(!data.links.length)list.append(element('p','widget-hint','Pievieno savas biežāk lietotās lapas.'))}
-      const submit=button('+ Saite',()=>{});submit.type='submit';form.append(title.wrap,url.wrap,submit,message);form.onsubmit=e=>{e.preventDefault();const value=safeUrl(url.input.value);if(!value){message.textContent='Ievadi derīgu http vai https saiti.';return}if(data.links.length>=50){message.textContent='Šeit var saglabāt līdz 50 saitēm.';return}data.links.push({id:id(),title:title.input.value.trim().slice(0,120)||new URL(value).hostname,url:value});title.input.value='';url.input.value='';message.textContent='';save();paint()};container.append(list,form);paint();
-    }else if(item.widgetType==='checklist'||item.widgetType==='habits'){
-      const habit=item.widgetType==='habits',progress=element('p','widget-hint'),list=element('div','widget-list'),history=element('div','widget-history'),form=element('form','widget-inline-form'),input=element('input');input.placeholder=habit?'Jauns ieradums':'Jauns punkts';input.maxLength=240;input.setAttribute('aria-label',input.placeholder);const submit=button('+',()=>{});submit.type='submit';submit.setAttribute('aria-label',habit?'Pievienot ieradumu':'Pievienot punktu');form.append(input,submit);
-      const checked=entry=>habit?!!data.checks[dayInRiga()]?.[entry.id]:entry.done;
-      let lastDay=dayInRiga();
-      function paint(){list.replaceChildren();let done=0;
-        for(const entry of data.items){const row=element('div','widget-row'),label=element('label','widget-check-label'),check=element('input');check.type='checkbox';check.checked=checked(entry);if(check.checked)done++;check.onchange=()=>{if(habit){const day=dayInRiga();data.checks[day]=data.checks[day]||{};if(check.checked)data.checks[day][entry.id]=true;else delete data.checks[day][entry.id]}else entry.done=check.checked;save();paint()};label.append(check,element('span',check.checked?'widget-checked':'',entry.text));const remove=button('×',()=>{data.items=data.items.filter(x=>x.id!==entry.id);for(const checks of Object.values(data.checks||{}))delete checks[entry.id];save();paint()});remove.setAttribute('aria-label','Dzēst '+entry.text);row.append(label,remove);list.append(row)}
-        progress.textContent=(habit?'Šodien: ':'')+done+' no '+data.items.length+' paveikti';if(!data.items.length)list.append(element('p','widget-hint',habit?'Pievieno ieradumu, kuru vēlies atzīmēt katru dienu.':'Pievieno pirmo kontrolsaraksta punktu.'));
-        if(habit){history.replaceChildren();for(let i=6;i>=0;i--){const d=new Date(dayInRiga()+'T12:00:00Z');d.setUTCDate(d.getUTCDate()-i);const day=d.toISOString().slice(0,10),count=data.items.filter(x=>data.checks[day]?.[x.id]).length;const dot=element('span','widget-day'+(count?' has-progress':''),new Intl.DateTimeFormat('lv-LV',{weekday:'short',timeZone:'UTC'}).format(d));dot.title=day+': '+count+'/'+data.items.length;history.append(dot)}}
-      }
-      form.onsubmit=e=>{e.preventDefault();const value=input.value.trim();if(!value||data.items.length>=100)return;data.items.push({id:id(),text:value,done:false});input.value='';save();paint()};container.append(progress,list,history,form);paint();if(habit)tick=()=>{const day=dayInRiga();if(day!==lastDay){lastDay=day;paint()}};
-    }else if(item.widgetType==='calculator'){
-      const input=field('Aprēķins',data.expression,'(250 + 50) × 20%'),result=element('output','widget-result'),hint=element('p','widget-hint','Piemērs: 250 × 20% = 50. Var izmantot komatu un iekavas.');input.input.maxLength=200;
-      function paint(){try{result.textContent=input.input.value.trim()?fmt(calculate(input.input.value)):'0'}catch(error){result.textContent=error.message}}
-      input.input.oninput=()=>{data.expression=input.input.value;save();paint()};container.append(input.wrap,result,hint);paint();
-    }else if(item.widgetType==='percent'){
-      const base=field('Summa',data.base,'100'),rate=field('Procenti',data.rate,'20'),mode=element('select'),result=element('output','widget-result'),hint=element('p','widget-hint');base.input.inputMode='decimal';rate.input.inputMode='decimal';mode.setAttribute('aria-label','Aprēķina veids');for(const [value,label] of [['of','Procenti no summas'],['discount','Summa pēc atlaides'],['increase','Palielināt summu']]){const option=element('option','',label);option.value=value;mode.append(option)}mode.value=data.mode;
-      function paint(){const a=Number(base.input.value.replace(',','.')),b=Number(rate.input.value.replace(',','.'));if(!base.input.value.trim()||!rate.input.value.trim()||!Number.isFinite(a)||!Number.isFinite(b)){result.textContent='Ievadi skaitļus';return}const value=a*b/100;result.textContent=fmt(data.mode==='discount'?a-value:data.mode==='increase'?a+value:value);hint.textContent='Procentu daļa: '+fmt(value)}
-      for(const field of [base.input,rate.input,mode])field.oninput=()=>{data.base=base.input.value;data.rate=rate.input.value;data.mode=mode.value;save();paint()};mode.onchange=mode.oninput;container.append(base.wrap,rate.wrap,mode,result,hint);paint();
-    }else if(item.widgetType==='worldclock'){
-      const list=element('div','widget-list'),form=element('div','widget-inline-form'),select=element('select');select.setAttribute('aria-label','Pievienot laika joslu');for(const [zone,label] of Object.entries(zones)){const option=element('option','',label);option.value=zone;select.append(option)}form.append(select,button('+',()=>{if(!data.zones.includes(select.value)){data.zones.push(select.value);save();paint()}}));
-      let lastMinute=-1;
-      function paint(){list.replaceChildren();for(const zone of data.zones){const row=element('div','widget-row'),labels=element('div'),time=element('strong','widget-clock',new Intl.DateTimeFormat('lv-LV',{timeZone:zone,hour:'2-digit',minute:'2-digit',hourCycle:'h23'}).format(new Date()));labels.append(element('span','',zones[zone]),element('small','widget-hint',new Intl.DateTimeFormat('lv-LV',{timeZone:zone,day:'numeric',month:'short'}).format(new Date())));const remove=button('×',()=>{data.zones=data.zones.filter(x=>x!==zone);save();paint()});remove.setAttribute('aria-label','Noņemt '+zones[zone]);row.append(labels,time,remove);list.append(row)}}
-      container.append(list,form);tick=()=>{const minute=Math.floor(Date.now()/60000);if(minute!==lastMinute){lastMinute=minute;paint()}};tick();
-    }
-    live.set(item.id,{container,tick,cleanup});return container;
-  }
-  function unmount(id){live.get(id)?.cleanup?.();live.delete(id)}
-  api.mount=mount;api.unmount=unmount;
-  setInterval(()=>{if(document.hidden)return;for(const view of live.values())if(view.container.isConnected&&view.tick)view.tick()},1000);
-  document.addEventListener('visibilitychange',()=>{if(!document.hidden)for(const view of live.values())if(view.container.isConnected&&view.tick)view.tick()});
-})(typeof window!=='undefined'?window:globalThis);
+      const presets=element('div','widget-actions…2721 tokens truncated…sync(url,options)=>{calls++;assert.equal(options.credentials,'omit');assert(options.headers.apikey.startsWith('sb_publishable_'));return fetcher?fetcher():{ok:true,json:async()=>payload}}});const api=window.PLANNER_NEWS_WIDGET,host=new Element('div'),item={widgetData:api.normalize({})},cleanup=api.mount(host,item,()=>saves++);return {api,host,item,cleanup,all:()=>host.walk(),status:()=>host.walk().find(x=>x.attributes.role==='status').textContent,stats:()=>({calls,saves,intervals:intervals.size,listeners:listeners.size})}}
+const flush=()=>new Promise(resolve=>setImmediate(resolve));
+(async()=>{const widget=setup();await flush();assert.equal(widget.stats().calls,1);assert.equal(widget.all().filter(x=>x.tagName==='a').length,3);assert(widget.status().includes('Atjaunots'));const api=widget.api;assert.equal(api.safeUrl('javascript:alert(1)','kursors'),null);assert.equal(api.safeUrl('https://kursors.lv.evil.test/x','kursors'),null);assert.equal(api.safeUrl('https://u:p@kursors.lv/x','kursors'),null);assert.equal(api.sanitize({...payload,articles:[...payload.articles,{...payload.articles[0],url:'https://evil.test'}]}).articles.length,3);assert.throws(()=>api.sanitize({...payload,fetchedAt:'bad'}));const selects=widget.all().filter(x=>x.tagName==='select');selects[0].value='ai';selects[0].onchange();assert.equal(widget.item.widgetData.category,'ai');assert.equal(widget.stats().saves,1);assert.equal(widget.all().filter(x=>x.tagName==='a').length,1);assert.equal(widget.all().find(x=>x.tagName==='a').textContent,'AI headline');await widget.all().find(x=>x.title==='Atjaunot ziņas').onclick();assert.equal(widget.stats().calls,1,'Fast refresh reuses cached response');widget.cleanup();assert.equal(widget.stats().intervals,0);assert.equal(widget.stats().listeners,0);
+const old={...payload,fetchedAt:new Date(now-3600000).toISOString()},offline=setup(old,()=>{throw Error('offline')});await flush();assert(offline.status().includes('Saglabātās ziņas'));assert.equal(offline.all().filter(x=>x.tagName==='a').length,3);offline.cleanup();
+let finish;const late=setup(null,()=>new Promise(resolve=>finish=resolve));late.cleanup();finish({ok:true,json:async()=>payload});await flush();assert.equal(late.all().filter(x=>x.tagName==='a').length,0,'Unmounted widget ignores late result');assert.equal(late.stats().intervals,0);
+const html=fs.readFileSync(path.join(__dirname,'../index.html'),'utf8');assert(html.indexOf('news-widget.js')<html.indexOf('src="./widgets.js'));const dist=path.join(__dirname,'../dist/news-widget.js');if(fs.existsSync(dist))assert.equal(fs.readFileSync(dist,'utf8'),fs.readFileSync(path.join(__dirname,'../news-widget.js'),'utf8'));console.log('News widget initial load, filters, safe links, cache, offline fallback, refresh throttling and cleanup verified.');})().catch(error=>{console.error(error);process.exitCode=1});

@@ -1,0 +1,23 @@
+import assert from 'node:assert/strict';
+import fs from 'node:fs';
+import {SOURCES,plain,articleUrl,parseFeed,mergeArticles,fetchFeed} from '../supabase/functions/industry-news/core.mjs';
+const now=Date.parse('2026-11-26T12:00:00Z'),source=SOURCES.find(x=>x.id==='kursors'),item=(title,link,date='Thu, 26 Nov 2026 10:00:00 GMT')=>`<item><title><![CDATA[${title}]]></title><link>${link}</link><pubDate>${date}</pubDate></item>`;
+assert.equal(plain('A &amp; B &#8212; &#x41;'),'A & B - A');
+const articles=parseFeed('<rss>'+item('AI &amp; MI jaunumi','https://kursors.lv/a/?utm_source=x')+item('Bad','javascript:alert(1)')+item('Future','https://kursors.lv/future/','2027-01-01')+item('Old','https://kursors.lv/old/','2025-01-01')+'</rss>',source,now);
+assert.equal(articles.length,1);assert.equal(articles[0].category,'ai');assert.equal(articles[0].title,'AI & MI jaunumi');assert.equal(articles[0].url,'https://kursors.lv/a/');
+const atom=parseFeed('<feed><entry><title>Launch</title><link rel="self" href="https://example.com/"/><link rel="alternate" href="https://www.theverge.com/new"/><published>2026-11-26T09:00:00Z</published></entry></feed>',SOURCES.find(x=>x.id==='verge'),now);assert.equal(atom.length,1);
+for(const link of ['http://kursors.lv/a','https://kursors.lv.evil.test/a','https://user:pass@kursors.lv/a','https://kursors.lv:8443/a','https://127.0.0.1/a'])assert.equal(articleUrl(link,source),null);
+assert.throws(()=>parseFeed('<!DOCTYPE rss><rss/>',source,now));assert.throws(()=>parseFeed('x'.repeat(1500001),source,now));
+const duplicate={...articles[0]},older={...articles[0],url:'https://kursors.lv/older',publishedAt:'2026-11-25T09:00:00Z'};assert.deepEqual(mergeArticles([[older,articles[0]],[duplicate]],now).map(x=>x.url),[articles[0].url,older.url]);
+let redirectMode;const parsed=await fetchFeed(source,async(url,options)=>{redirectMode=options.redirect;return new Response('<rss>'+item('AI','https://kursors.lv/a/')+'</rss>',{headers:{'content-length':'9900000'}})},now);assert.equal(parsed.length,1);assert.equal(redirectMode,'error');
+await assert.rejects(fetchFeed(source,async()=>new Response('x'.repeat(1500001)),now));
+const originalDeno=globalThis.Deno,originalFetch=globalThis.fetch;let handler,calls=0;
+globalThis.Deno={env:{get:()=>undefined},serve:fn=>handler=fn};
+globalThis.fetch=async url=>{calls++;const feed=SOURCES.find(x=>x.url===url);assert(feed,'Only fixed, approved feeds may be requested');return new Response('<rss>'+item('Fresh AI news',feed.site+'news/',new Date().toUTCString())+'</rss>')};
+try{await import('../supabase/functions/industry-news/index.ts');const key=fs.readFileSync(new URL('../news-widget.js',import.meta.url),'utf8').match(/publicKey='([^']+)'/)[1];
+  assert.equal((await handler(new Request('https://local/news'))).status,401);assert.equal((await handler(new Request('https://local/news',{method:'OPTIONS'}))).status,200);
+  assert.equal((await handler(new Request('https://local/news',{method:'POST',headers:{apikey:key}}))).status,405);
+  const response=await handler(new Request('https://local/news',{headers:{apikey:key}})),payload=await response.json();assert.equal(response.status,200);assert.equal(payload.articles.length,6);assert.equal(calls,6);assert.equal(response.headers.get('access-control-allow-origin'),'*');
+  assert.equal((await handler(new Request('https://local/news?url=http://169.254.169.254',{headers:{apikey:key}}))).status,200);assert.equal(calls,6,'Cached requests do not refetch feeds or follow supplied URLs');
+}finally{globalThis.fetch=originalFetch;globalThis.Deno=originalDeno}
+console.log('Industry RSS/Atom parsing, dates, categories, deduplication, auth, CORS, size limits and fixed-source caching verified.');

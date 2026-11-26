@@ -1,6 +1,6 @@
 const assert=require('node:assert/strict'),fs=require('node:fs'),vm=require('node:vm'),path=require('node:path');
 const pure=require('../online-widgets.js'),widgets=require('../widgets.js');
-assert.equal(pure.catalog.length,30);assert.equal(new Set(widgets.catalog.map(x=>x.type)).size,48);
+assert.equal(pure.catalog.length,30);assert.equal(new Set(widgets.catalog.map(x=>x.type)).size,49);
 for(const entry of pure.catalog){const normalized=widgets.normalize(entry.type,{url:'https://example.com',lat:999,lon:-999,amount:-5});assert.equal(normalized.lat,85);assert.equal(normalized.lon,-180);assert.equal(normalized.amount,0);assert.deepEqual(widgets.normalize(entry.type,JSON.parse(JSON.stringify(normalized))),normalized)}
 for(const url of ['javascript:alert(1)','data:text/html,bad','https://u:p@youtube.com/watch?v=abcdefghijk','https://youtube.com.evil.test/watch?v=abcdefghijk'])assert.equal(pure.frameUrl('youtube',{url}),null);
 assert.equal(pure.frameUrl('youtube',{url:'https://youtu.be/abcdefghijk'}),'https://www.youtube-nocookie.com/embed/abcdefghijk');

@@ -590,6 +590,20 @@ html[data-design-namedays] .namedays{color:var(--design-namedays-ink)}
   .namedays .namedays-body{grid-column:1/-1}
 }
 
+/* Compact industry news, readable on both narrow and wide widget columns. */
+.news-controls{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr) 38px;gap:6px;align-items:center;min-width:0}
+.news-controls select{width:100%;min-width:0;padding:8px;font-size:13px}
+.news-controls .widget-button{width:38px;min-width:38px;min-height:38px;padding:0;font-size:21px}
+.news-list{min-width:0;max-width:100%}
+.news-article{padding:13px 0;border-top:1px solid var(--line,#dce3e7);min-width:0}
+.news-meta{display:flex;flex-wrap:wrap;justify-content:space-between;gap:3px 8px;margin-bottom:5px;font-size:11px;color:var(--muted,#60707e);line-height:1.5}
+.news-title{display:block;color:var(--ink,#23313d);font-size:15px;font-weight:500;line-height:1.55;text-decoration:none;overflow-wrap:anywhere}
+.news-title:hover{text-decoration:underline;text-underline-offset:3px}
+.news-topic{display:inline-block;margin-top:7px;padding:2px 7px;border-radius:5px;background:color-mix(in srgb,var(--blue,#2f6675) 9%,var(--surface,#fff));color:var(--blue,#2f6675);font-size:11px}
+.news-status{line-height:1.5}.news-note{border-top:1px solid var(--line,#dce3e7);padding-top:9px}
+.widget-industrynews [hidden]{display:none!important}
+@media(max-width:850px){.news-controls select{font-size:16px}.news-title{font-size:16px}.news-controls{grid-template-columns:minmax(0,1fr) minmax(0,1fr) 40px}}
+
 </style><script src="./namedays.js"></script><script src="./holidays.js"></script><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><style>
 /* Sick mode header shortcut */
 .top-controls #sickToggle{align-items:center;justify-content:center;width:44px;min-width:44px;height:44px;padding:10px;flex:0 0 auto}.top-controls #sickToggle svg{width:21px;height:21px;pointer-events:none}html[data-workspace=work] .top-controls #sickToggle{display:inline-flex}.top-controls #sickToggle[aria-pressed=true]{background:#fce8e9!important;color:#9c3341!important;border-color:#cc8792!important;box-shadow:inset 0 0 0 1px #cc8792}
@@ -1499,4 +1513,4 @@ async function activate(u){generation++;user=u;key=guestKey+'-user-'+u.id;try{pe
 async function signIn(signup){let email=document.querySelector('#authEmail').value.trim(),password=document.querySelector('#authPassword').value;if(!email||password.length<6){show('Ievadi e-pastu un paroli ar vismaz 6 rakstzīmēm.');return}show('Lūdzu, uzgaidi...');let result=signup?await client.auth.signUp({email,password,options:{emailRedirectTo:'https://mvsialikaj-beep.github.io/mana-diena/'}}):await client.auth.signInWithPassword({email,password});document.querySelector('#authPassword').value='';if(result.error){show('Pierakstīšanās neizdevās: '+result.error.message);return}if(signup&&!result.data.session)show('Pārbaudi e-pastu un apstiprini kontu. Tad pieraksties abās ierīcēs.');}
 document.querySelector('#login').onclick=()=>signIn(false);document.querySelector('#signup').onclick=()=>signIn(true);out.onclick=async()=>{try{if(user&&'serviceWorker' in navigator){let registration=await navigator.serviceWorker.getRegistration('./'),subscription=await registration?.pushManager?.getSubscription();if(subscription){await client.from('push_subscriptions').delete().eq('user_id',user.id).eq('endpoint',subscription.endpoint);await subscription.unsubscribe()}}}catch{}finally{window.backgroundPushActive=false;try{localStorage.removeItem('mana-diena-push-active')}catch{}await client.auth.signOut()}};client.auth.onAuthStateChange((event,session)=>{if(session?.user){if(user?.id!==session.user.id)setTimeout(()=>activate(session.user),0)}else if(user){generation++;user=null;window.backgroundPushActive=false;try{localStorage.removeItem('mana-diena-push-active')}catch{}key=guestKey;pending={};snapshot=new Map();read();render();form.hidden=false;out.hidden=true;show('Pieraksties, lai sinhronizētu uzdevumus.');document.querySelector('#pushEnable').textContent='Ieslēgt fona paziņojumus';pushMessage('Pieraksties, lai ieslēgtu fona paziņojumus.')}});setInterval(()=>{if(user){if(Object.keys(pending).length)flush();else pull()}},10000);
 })();
-</script><script src="./design-settings.js?v=19"></script><script src="./appearance-sync.js?v=1"></script><script src="./category-dialog.js?v=2"></script><script src="./online-widgets.js?v=1"></script><script src="./widgets.js?v=4"></script><script src="./dashboard-layout.js?v=11"></script><script src="./mobile-ui.js?v=5"></script><script src="./mobile-tools.js?v=1"></script></body></html>
+</script><script src="./design-settings.js?v=19"></script><script src="./appearance-sync.js?v=1"></script><script src="./category-dialog.js?v=2"></script><script src="./online-widgets.js?v=1"></script><script src="./news-widget.js?v=1"></script><script src="./widgets.js?v=5"></script><script src="./dashboard-layout.js?v=11"></script><script src="./mobile-ui.js?v=5"></script><script src="./mobile-tools.js?v=1"></script></body></html>
