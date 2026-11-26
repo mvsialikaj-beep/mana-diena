@@ -1,16 +1,13 @@
 (function(){
   'use strict';
-  const top=document.querySelector('.top-controls');if(!top)return;
-  const media=window.matchMedia('(max-width:850px)'),items=[...top.querySelectorAll('button')].filter(button=>!button.closest('.workspace-switch'));
-  const entries=items.map(button=>{const marker=document.createComment('tools-'+button.id);button.before(marker);const label=document.createElement('span');label.className='mobile-action-label';button.append(label);return {button,marker,label}});
-  const trigger=document.createElement('button');trigger.type='button';trigger.id='mobileToolsOpen';trigger.textContent='☰';trigger.title='Rīki un iestatījumi';trigger.setAttribute('aria-label','Rīki un iestatījumi');trigger.setAttribute('aria-haspopup','dialog');trigger.setAttribute('aria-expanded','false');trigger.setAttribute('aria-controls','mobileToolsDialog');top.append(trigger);
-  const dialog=document.createElement('dialog');dialog.id='mobileToolsDialog';dialog.setAttribute('aria-labelledby','mobileToolsTitle');
-  const head=document.createElement('div');head.className='mobile-tools-heading';const title=document.createElement('h3');title.id='mobileToolsTitle';title.textContent='Rīki un iestatījumi';const close=document.createElement('button');close.type='button';close.textContent='×';close.setAttribute('aria-label','Aizvērt rīkus');close.onclick=()=>dialog.close();head.append(title,close);
-  const list=document.createElement('div');list.className='mobile-tools-list';dialog.append(head,list);document.body.append(dialog);
-  trigger.onclick=()=>{for(const entry of entries)entry.label.textContent=entry.button.getAttribute('aria-label')||entry.button.title||entry.button.textContent;dialog.showModal();trigger.setAttribute('aria-expanded','true')};
-  dialog.addEventListener('close',()=>trigger.setAttribute('aria-expanded','false'));
-  list.addEventListener('click',event=>{const button=event.target.closest('button');if(entries.some(entry=>entry.button===button))dialog.close()},true);
-  window.PLANNER_POPUPS?.bindBackdrop(dialog,()=>dialog.close());
-  function update(){if(dialog.open)dialog.close();for(const entry of entries){if(media.matches)list.append(entry.button);else entry.marker.after(entry.button)}}
-  media.addEventListener('change',update);update();
+  const dialog=document.getElementById('settingsDialog'),trigger=document.getElementById('settingsOpen'),top=document.querySelector('.top-controls'),panel=dialog?.querySelector('.settings-panel');if(!panel||!trigger||!top)return;
+  const make=(tag,cls,text)=>{const node=document.createElement(tag);if(cls)node.className=cls;if(text)node.textContent=text;return node};
+  const groups=new Map();for(const [id,title]of [['appearance','Izskats un izkārtojums'],['planning','Uzdevumi un plānošana'],['reminders','Atgādinājumi'],['tools','Piezīmes un ziņas'],['account','Konts un dati'],['application','Aplikācija']]){const section=make('details','settings-topic'),summary=make('summary','',title),body=make('div','settings-topic-body'),actions=make('div','settings-topic-actions');section.dataset.topic=id;body.append(actions);section.append(summary,body);groups.set(id,{section,body,actions})}
+  const entries=[];for(const [id,group]of [['fontOpen','appearance'],['layoutOpen','appearance'],['categoryOpen','planning'],['sickToggle','planning'],['noteOpen','tools'],['newsOpen','tools'],['refresh','application']]){const button=document.getElementById(id);if(!button)continue;const label=make('span','settings-action-label');button.append(label);groups.get(group).actions.append(button);entries.push({button,label})}
+  function labels(){for(const {button,label}of entries)label.textContent=button.getAttribute('aria-label')||button.title}
+  labels();trigger.title='Iestatījumi';trigger.setAttribute('aria-label','Iestatījumi');const title=document.getElementById('settingsTitle');if(title)title.textContent='Iestatījumi';
+  for(const section of [...panel.querySelectorAll(':scope > .settings-section')]){const name=section.querySelector('summary')?.textContent||'';const group=section.classList.contains('dashboard-settings')?'appearance':name.includes('pārcelšana')?'planning':name.includes('Atgādinājumi')?'reminders':'account';groups.get(group).body.append(section)}
+  for(const {section}of groups.values())panel.append(section);panel.open=true;trigger.addEventListener('click',labels);
+  panel.addEventListener('click',event=>{const button=event.target.closest('button');if(entries.some(entry=>entry.button===button)&&button.id!=='sickToggle'&&dialog.open)dialog.close()},true);
+  panel.addEventListener('click',()=>setTimeout(labels,0));
 })();
